@@ -1,6 +1,8 @@
 export const PREGUNTAS_POR_PRUEBA = 15;
 export const MINUTOS_DEFAULT = 15;
 
+const IMAGEN = /\.(png|jpe?g|webp|gif)$/i;
+
 function repoDesdePages() {
   const host = location.hostname;
   if (!host.endsWith(".github.io")) return null;
@@ -16,6 +18,20 @@ function rutaCarpeta(id) {
 
 export function urlPng(tema, archivo) {
   return `${rutaCarpeta(tema.id)}/${encodeURIComponent(archivo)}`;
+}
+
+function esCarpetaDeTema(nombre) {
+  const base = String(nombre || "")
+    .normalize("NFD")
+    .replace(/\p{M}/gu, "")
+    .toLowerCase();
+  return !base.startsWith("sondeo");
+}
+
+function ordenarArchivos(nombres) {
+  return [...nombres].sort((a, b) =>
+    a.localeCompare(b, "es", { numeric: true, sensitivity: "base" })
+  );
 }
 
 /** Orden estable por icono (01, 02…), no por el orden que devuelve GitHub. */
@@ -35,62 +51,91 @@ async function desdeGitHub() {
   if (!info) return null;
   try {
     const res = await fetch(
-      `https://api.github.com/repos/${info.owner}/${info.repo}/contents/preguntas`
+      `https://api.github.com/repos/${info.owner}/${info.repo}/contents/preguntas`,
+      { cache: "no-store" }
     );
     if (!res.ok) return null;
     const items = await res.json();
     if (!Array.isArray(items)) return null;
-    const dirs = items.filter((x) => x.type === "dir");
+    const dirs = items.filter((x) => x.type === "dir" && esCarpetaDeTema(x.name));
     const temas = [];
     for (let i = 0; i < dirs.length; i += 1) {
       const d = dirs[i];
-      const filesRes = await fetch(d.url);
+      const filesRes = await fetch(d.url, { cache: "no-store" });
       if (!filesRes.ok) continue;
       const files = await filesRes.json();
-      const pngs = files
-        .filter((f) => /\.png$/i.test(f.name))
-        .map((f) => f.name)
-        .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
-      if (!pngs.length) continue;
+      if (!Array.isArray(files)) continue;
+      const imagenes = ordenarArchivos(
+        files.filter((f) => IMAGEN.test(f.name)).map((f) => f.name)
+      );
+      if (!imagenes.length) continue;
       let meta = {};
       const temaFile = files.find((f) => f.name.toLowerCase() === "tema.json");
       if (temaFile?.download_url) {
-        const mj = await fetch(temaFile.download_url);
+        const mj = await fetch(`${temaFile.download_url}?t=${Date.now()}`, { cache: "no-store" });
         if (mj.ok) meta = await mj.json();
       }
       temas.push({
         id: d.name,
         titulo: meta.titulo || d.name.replace(/_/g, " "),
         subtitulo: meta.subtitulo || "Matemáticas Saber 11",
-        descripcion: meta.descripcion || `${pngs.length} preguntas en esta carpeta.`,
+        descripcion: meta.descripcion || `${imagenes.length} preguntas en esta carpeta.`,
         icono: meta.icono || String(i + 1).padStart(2, "0"),
         carpeta: `preguntas/${d.name}`,
-        preguntas: pngs,
+        preguntas: imagenes,
         respuestas: meta.respuestas || {},
         explicaciones: meta.explicaciones || {},
       });
     }
-    return temas.length ? ordenarTemas(temas) : null;
+    return temas.length ? temas : null;
   } catch {
     return null;
   }
 }
 
-export async function cargarTemas() {
-  // Preferir indice.json: conserva el orden pedagógico (icono 01, 02…).
-  // En GitHub Pages la API lista carpetas en desorden alfabético.
+async function leerIndice() {
   try {
-    const r = await fetch("preguntas/indice.json");
-    if (r.ok) {
-      const data = await r.json();
-      const temas = data.temas || [];
-      if (temas.length) return ordenarTemas(temas);
-    }
+    const r = await fetch(`preguntas/indice.json?t=${Date.now()}`, { cache: "no-store" });
+    if (!r.ok) return [];
+    const data = await r.json();
+    return Array.isArray(data.temas) ? data.temas : [];
   } catch {
-    /* fallback a la API de GitHub */
+    return [];
   }
+}
+
+/** En GitHub la lista viva de imágenes manda, para que una pregunta nueva se vea aunque indice.json esté viejo. */
+function fusionar(indice, vivos) {
+  const porId = new Map(indice.map((t) => [t.id, t]));
+  const vistos = new Set();
+  const temas = vivos.map((vivo) => {
+    vistos.add(vivo.id);
+    const base = porId.get(vivo.id) || {};
+    const preguntas = vivo.preguntas?.length ? vivo.preguntas : base.preguntas || [];
+    return {
+      ...base,
+      ...vivo,
+      titulo: vivo.titulo || base.titulo,
+      subtitulo: vivo.subtitulo || base.subtitulo || "Matemáticas Saber 11",
+      descripcion:
+        base.descripcion || vivo.descripcion || `${preguntas.length} preguntas en esta carpeta.`,
+      icono: vivo.icono || base.icono,
+      preguntas,
+      respuestas: { ...(base.respuestas || {}), ...(vivo.respuestas || {}) },
+      explicaciones: { ...(base.explicaciones || {}), ...(vivo.explicaciones || {}) },
+    };
+  });
+  for (const base of indice) {
+    if (!vistos.has(base.id) && esCarpetaDeTema(base.id)) temas.push(base);
+  }
+  return ordenarTemas(temas);
+}
+
+export async function cargarTemas() {
+  const indice = await leerIndice();
   const github = await desdeGitHub();
-  if (github) return github;
+  if (github?.length) return fusionar(indice, github);
+  if (indice.length) return ordenarTemas(indice.filter((t) => esCarpetaDeTema(t.id)));
   throw new Error("No se pudo leer preguntas/indice.json");
 }
 
@@ -111,7 +156,7 @@ export function elegirPreguntas(tema) {
 
 export async function cargarContacto() {
   try {
-    const r = await fetch("contacto.json");
+    const r = await fetch(`contacto.json?t=${Date.now()}`, { cache: "no-store" });
     if (!r.ok) return null;
     return await r.json();
   } catch {

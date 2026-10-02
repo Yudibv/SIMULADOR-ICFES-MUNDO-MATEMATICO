@@ -1,4 +1,4 @@
-import { cargarTemas, PREGUNTAS_POR_PRUEBA } from "./temas.js";
+import { cargarTemas, PREGUNTAS_POR_PRUEBA } from "./temas.js?v=4";
 
 const rejilla = document.getElementById("rejilla");
 const aviso = document.getElementById("aviso");

@@ -1,10 +1,10 @@
 :root {
-  --azul: #035ca7;
-  --verde: #9acc64;
+  --azul: #5c2d91;
+  --rojo: #c62828;
   --texto: #111111;
   --fondo: #ffffff;
-  --suave: #f4f7fb;
-  --borde: #d9e4f0;
+  --suave: #f7f4fa;
+  --borde: #e3d9ea;
 }
 
 * { box-sizing: border-box; }
@@ -28,6 +28,7 @@ a { color: var(--azul); }
   gap: 1rem;
   padding: 1rem 1.5rem;
   border-bottom: 3px solid var(--azul);
+  box-shadow: 0 3px 0 var(--rojo);
   position: sticky;
   top: 0;
   background: #fff;
@@ -42,7 +43,7 @@ a { color: var(--azul); }
 }
 
 .marca-icfes { color: var(--azul); font-weight: 800; letter-spacing: 0.08em; }
-.marca-area { color: var(--verde); font-weight: 700; }
+.marca-area { color: var(--rojo); font-weight: 700; }
 
 .modo-todas, .temporizador {
   margin: 0;
@@ -51,7 +52,7 @@ a { color: var(--azul); }
   font-size: 0.95rem;
 }
 
-.temporizador.aviso { color: #b42318; }
+.temporizador.aviso { color: var(--rojo); }
 
 .contenedor {
   max-width: 980px;
@@ -74,7 +75,7 @@ a { color: var(--azul); }
 }
 
 .etiqueta {
-  color: var(--verde);
+  color: var(--rojo);
   font-weight: 700;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -102,7 +103,7 @@ a { color: var(--azul); }
 }
 
 .tarjeta h2 { color: var(--azul); margin: 0.4rem 0 0.2rem; font-size: 1.25rem; }
-.subtitulo { color: var(--verde); font-weight: 600; margin: 0 0 0.6rem; }
+.subtitulo { color: var(--rojo); font-weight: 600; margin: 0 0 0.6rem; }
 
 .badge {
   display: inline-flex;
@@ -133,13 +134,13 @@ a { color: var(--azul); }
 }
 
 .boton:hover { filter: brightness(1.08); }
-.boton-verde { background: var(--verde); color: #113300; }
+.boton-rojo { background: var(--rojo); color: #fff; }
 .tarjeta .boton { margin-top: 0.5rem; align-self: flex-start; }
 
 .bloque-todas {
   margin-top: 2rem;
   padding: 1.4rem 1.5rem;
-  border: 2px dashed var(--verde);
+  border: 2px dashed var(--rojo);
   display: flex;
   flex-wrap: wrap;
   gap: 1rem;
@@ -155,6 +156,8 @@ a { color: var(--azul); }
   padding: 1.4rem 1.5rem 1.6rem;
   background: var(--fondo);
 }
+
+.panel h2 { color: var(--azul); margin: 0.2rem 0 0.45rem; }
 
 .migas { font-size: 0.9rem; margin-bottom: 1rem; }
 .h-seccion { color: var(--azul); font-size: 1.1rem; }
@@ -178,7 +181,7 @@ a { color: var(--azul); }
   margin-bottom: 0.4rem;
 }
 
-.progreso-barra { height: 100%; background: var(--verde); }
+.progreso-barra { height: 100%; background: var(--rojo); }
 .progreso-texto { margin: 0 0 1rem; color: var(--azul); font-weight: 600; font-size: 0.95rem; }
 
 .opciones {
@@ -204,7 +207,7 @@ a { color: var(--azul); }
   background: var(--suave);
 }
 
-.letra { color: var(--verde); font-weight: 800; min-width: 1.2rem; }
+.letra { color: var(--rojo); font-weight: 800; min-width: 1.2rem; }
 
 .alerta {
   background: #fff4e5;
@@ -213,12 +216,48 @@ a { color: var(--azul); }
 }
 
 .puntaje { font-size: 1.15rem; }
-.puntaje .num { color: var(--verde); font-size: 2.4rem; font-weight: 800; }
+.puntaje .num { color: var(--azul); font-size: 2.4rem; font-weight: 800; }
 .puntaje-mini { color: var(--azul); font-weight: 700; }
 
+.tablero {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.8rem;
+  margin-top: 1rem;
+}
+
+.tablero article {
+  border: 1px solid var(--borde);
+  border-top: 4px solid var(--azul);
+  padding: 0.85rem 0.9rem;
+  text-align: center;
+}
+
+.tablero article:nth-child(2) { border-top-color: var(--rojo); }
+
+.tablero-num {
+  margin: 0;
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: var(--azul);
+  line-height: 1.1;
+}
+
+.tablero article:nth-child(2) .tablero-num,
+.tablero-num.fallo { color: var(--rojo); }
+
+.tablero p { margin: 0.25rem 0 0; }
+
+.nivel { color: var(--rojo); font-weight: 700; font-size: 0.85rem; }
+
+.nota-puntaje { color: #333; font-size: 0.92rem; }
+
+.lista-areas { padding-left: 1.2rem; margin-bottom: 0; }
+.lista-areas li { margin-bottom: 0.65rem; }
+
 .revision { margin-top: 1rem; }
-.revision.ok { border-left: 5px solid var(--verde); }
-.revision.mal { border-left: 5px solid #b42318; }
+.revision.ok { border-left: 5px solid var(--azul); }
+.revision.mal { border-left: 5px solid var(--rojo); }
 .explicacion { color: #222; }
 .revision img { max-width: 100%; height: auto; border: 1px solid var(--borde); margin: 0.5rem 0; }
 
@@ -247,7 +286,7 @@ a { color: var(--azul); }
 
 .contacto {
   margin-top: 1.5rem;
-  border-top: 4px solid var(--verde);
+  border-top: 4px solid var(--rojo);
 }
 
 .contacto h2 { color: var(--azul); margin: 0.3rem 0 0.6rem; }
