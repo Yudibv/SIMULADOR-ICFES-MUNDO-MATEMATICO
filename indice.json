@@ -8,26 +8,15 @@
       "icono": "01",
       "carpeta": "preguntas/Aritmetica",
       "preguntas": [
-        "CA,MBIAR.png",
-        "Empleados.png",
-        "P2 y 3 20211.jpg",
         "p04.png",
         "p09.png",
         "p10.png",
         "p11.png",
         "p13.png",
-        "P14.png",
-        "P15.png",
-        "p17.png",
-        "p20.png",
         "p25.png",
         "p27.png",
         "p39.png",
-        "p45.png",
-        "P72020.png",
-        "P112022.png",
-        "P172022.png",
-        "P520211.png"
+        "p45.png"
       ],
       "respuestas": {
         "p04.png": "C",
@@ -76,10 +65,7 @@
         "p06.png",
         "p19.png",
         "p21.png",
-        "p31.png",
-        "P102022.png",
-        "P120211.png",
-        "P142022.png"
+        "p31.png"
       ],
       "respuestas": {
         "p06.png": "D",
@@ -100,7 +86,6 @@
         "p07.png",
         "p14.png",
         "p15.png",
-        "p16.png",
         "p17.png",
         "p18.png",
         "p22.png",
@@ -114,14 +99,7 @@
         "p43.png",
         "p44.png",
         "p49.png",
-        "p50.png",
-        "P22023.png",
-        "P52022.png",
-        "P122020.png",
-        "P182022.png",
-        "P202022.jpg",
-        "P620211.png",
-        "P1420211.png"
+        "p50.png"
       ],
       "respuestas": {
         "p07.png": "C",
@@ -158,7 +136,6 @@
         "p08.png",
         "p12.png",
         "p16.png",
-        "p18.png",
         "p20.png",
         "p26.png",
         "p28.png",
@@ -167,15 +144,7 @@
         "p36.png",
         "p38.png",
         "p46.png",
-        "p48.png",
-        "P12020.png",
-        "P12022.jpg",
-        "P82020.png",
-        "P82022.png",
-        "P112020.png",
-        "P152022.png",
-        "P420211.png",
-        "P2020211.png"
+        "p48.png"
       ],
       "respuestas": {
         "p01.png": "B",
@@ -194,50 +163,6 @@
         "p46.png": "C",
         "p48.png": "B"
       },
-      "explicaciones": {}
-    },
-    {
-      "id": "Funciones",
-      "titulo": "Funciones",
-      "subtitulo": "Relaciones, gráficas y variación",
-      "descripcion": "Ítems del cuadernillo Icfes Saber 11. Uso académico.",
-      "icono": "06",
-      "carpeta": "preguntas/Funciones",
-      "preguntas": [
-        "P9.png",
-        "p19.png",
-        "p20.png",
-        "p43.png",
-        "P22022.jpg",
-        "P32022.png",
-        "P72022.png",
-        "P92020.png",
-        "P92022.png",
-        "P122022.png",
-        "P132022.png",
-        "P142023.png",
-        "P152023.png",
-        "P162022.png",
-        "P1320211.png",
-        "P1820211.png",
-        "P1920211.png"
-      ],
-      "respuestas": {},
-      "explicaciones": {}
-    },
-    {
-      "id": "Trigonometría",
-      "titulo": "Trigonometría",
-      "subtitulo": "Razones, ángulos y relaciones",
-      "descripcion": "Ítems del cuadernillo Icfes Saber 11. Uso académico.",
-      "icono": "07",
-      "carpeta": "preguntas/Trigonometría",
-      "preguntas": [
-        "P62022.png",
-        "P102020.png",
-        "P112023.png"
-      ],
-      "respuestas": {},
       "explicaciones": {}
     }
   ]
