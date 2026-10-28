@@ -8,7 +8,16 @@
       "icono": "01",
       "carpeta": "Aritmetica",
       "preguntas": [
-        "p04.png", "p09.png", "p10.png", "p11.png", "p13.png", "p25.png", "p27.png", "p39.png", "p45.png"
+        ""preguntas": [
+  "p04.png",
+  "p05.png",
+  "p06.png"
+],
+"respuestas": {
+  "p04.png": "C",
+  "p05.png": "B",
+  "p06.png": "D"
+}", "p09.png", "p10.png", "p11.png", "p13.png", "p25.png", "p27.png", "p39.png", "p45.png"
       ],
       "respuestas": {
         "p04.png": "C", "p09.png": "C", "p10.png": "C", "p11.png": "B", "p13.png": "D", "p25.png": "A", "p27.png": "A", "p39.png": "C", "p45.png": "D"
