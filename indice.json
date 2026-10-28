@@ -1,29 +1,55 @@
 {
   "temas": [
     {
-      "id": "Aritmetica",
-      "titulo": "1. Aritmética",
-      "subtitulo": "Números, operaciones y situaciones cuantitativas",
-      "descripcion": "Ítems del cuadernillo Icfes Saber 11 (marzo 2026). Uso académico.",
-      "icono": "01",
-      "carpeta": "Aritmetica",
-      "preguntas": [
-        ""preguntas": [
-  "p04.png",
-  "p05.png",
-  "p06.png"
-],
-"respuestas": {
-  "p04.png": "C",
-  "p05.png": "B",
-  "p06.png": "D"
-}", "p09.png", "p10.png", "p11.png", "p13.png", "p25.png", "p27.png", "p39.png", "p45.png"
-      ],
-      "respuestas": {
-        "p04.png": "C", "p09.png": "C", "p10.png": "C", "p11.png": "B", "p13.png": "D", "p25.png": "A", "p27.png": "A", "p39.png": "C", "p45.png": "D"
-      },
-      "explicaciones": {}
-    },
+  "id": "Aritmetica",
+  "titulo": "1. Aritmética",
+  "subtitulo": "Números, proporciones y operaciones básicas",
+  "descripcion": "Ítems del cuadernillo Icfes Saber 11. Uso académico.",
+  "icono": "01",
+  "carpeta": "Aritmetica",
+  "preguntas": [
+    "P2 y 3 20211 B B.png",
+    "P3 50 B.png",
+    "P 4 al 6 50 C B D.png",
+    "P 4 al 6 50 C B D.png",
+    "P 4 al 6 50 C B D.png",
+    "P13 OCHOA B.png",
+    "P13 D.png",
+    "P14 C.png",
+    "P15 C.png",
+    "P17 B.png",
+    "P20 A.png",
+    "P27 50 A.png",
+    "P34 50 C.png",
+    "P38 50 C.png",
+    "P72020 A.png",
+    "P112022 C.png",
+    "P172022 B.png",
+    "P520211 B.png"
+  ],
+  "respuestas": {
+    "P2 y 3 20211 B B.png": "B",
+    "P3 50 B.png": "B",
+    "P 4 al 6 50 C B D.png": "C",
+    "P 4 al 6 50 C B D.png": "B",
+    "P 4 al 6 50 C B D.png": "D",
+    "P13 OCHOA B.png": "B",
+    "P13 D.png": "D",
+    "P14 C.png": "C",
+    "P15 C.png": "C",
+    "P17 B.png": "B",
+    "P20 A.png": "A",
+    "P27 50 A.png": "A",
+    "P34 50 C.png": "C",
+    "P38 50 C.png": "C",
+    "P72020 A.png": "A",
+    "P112022 C.png": "C",
+    "P172022 B.png": "B",
+    "P520211 B.png": "B"
+  },
+  "explicaciones": {}
+}
+    ,
     {
       "id": "Porcentajes y proporcionalidad",
       "titulo": "2. Porcentajes y proporcionalidad",
