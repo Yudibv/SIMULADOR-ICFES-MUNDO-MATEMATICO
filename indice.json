@@ -92,20 +92,50 @@
   "explicaciones": {}
 },
     {
-      "id": "Algebra",
-      "titulo": "3. Álgebra",
-      "subtitulo": "Relaciones, expresiones y ecuaciones",
-      "descripcion": "Ítems del cuadernillo Icfes Saber 11 (marzo 2026). Uso académico.",
-      "icono": "03",
-      "carpeta": "Algebra",
-      "preguntas": [
-        "p06.png", "p19.png", "p21.png", "p31.png"
-      ],
-      "respuestas": {
-        "p06.png": "D", "p19.png": "B", "p21.png": "A", "p31.png": "B"
-      },
-      "explicaciones": {}
-    },
+  "id": "Algebra",
+  "titulo": "Álgebra y Cálculo",
+  "subtitulo": "Ecuaciones, expresiones algebraicas y polinomios",
+  "descripcion": "Ítems del cuadernillo Icfes Saber 11. Uso académico.",
+  "icono": "03",
+  "carpeta": "Algebra",
+  "preguntas": [
+    "P1 D.png",
+    "P15 OCHOA D.png",
+    "P16 OCHOA B.png",
+    "P17 50 D.png",
+    "P17 2018 B.png",
+    "P18 2018 D.png",
+    "P19 50 B.png",
+    "P19 OCHOA C.png",
+    "P20 OCHOA B.png",
+    "P21 50 A.png",
+    "P31 50 B.png",
+    "P40 50 B.png",
+    "P66 2012 D.png",
+    "P102022 B.png",
+    "P120211 C.png",
+    "P142022 A.png"
+  ],
+  "respuestas": {
+    "P1 D.png": "D",
+    "P15 OCHOA D.png": "D",
+    "P16 OCHOA B.png": "B",
+    "P17 50 D.png": "D",
+    "P17 2018 B.png": "B",
+    "P18 2018 D.png": "D",
+    "P19 50 B.png": "B",
+    "P19 OCHOA C.png": "C",
+    "P20 OCHOA B.png": "B",
+    "P21 50 A.png": "A",
+    "P31 50 B.png": "B",
+    "P40 50 B.png": "B",
+    "P66 2012 D.png": "D",
+    "P102022 B.png": "B",
+    "P120211 C.png": "C",
+    "P142022 A.png": "A"
+  },
+  "explicaciones": {}
+},
     {
       "id": "Funciones",
       "titulo": "4. Funciones",
