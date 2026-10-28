@@ -77,15 +77,19 @@ async function desdeGitHub() {
 }
 
 export async function cargarTemas() {
-  // Preferir indice.json: conserva el orden pedagógico (icono 01, 02…).
-  // En GitHub Pages la API lista carpetas en desorden alfabético.
   try {
-    const r = await fetch("indice.json");
-    if (r.ok) {
-      const data = await r.json();
-      const temas = data.temas || [];
-      if (temas.length) return ordenarTemas(temas);
+    const respuesta = await fetch('indice.json');
+    if (!respuesta.ok) {
+      throw new Error(`Error al cargar el índice: ${respuesta.statusText}`);
     }
+    const datos = await respuesta.json();
+    // Compatible tanto si es un array directo como si es un objeto con la clave "temas"
+    return Array.isArray(datos) ? datos : (datos.temas || []);
+  } catch (error) {
+    console.error("Error en cargarTemas:", error);
+    return [];
+  }
+}
   } catch {
     /* fallback a la API de GitHub */
   }
