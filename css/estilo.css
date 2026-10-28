@@ -1,10 +1,10 @@
 :root {
-  --azul: #035ca7;
-  --verde: #9acc64;
+  --azul: #1d4ed8;       /* Azul principal fuerte y moderno */
+  --rojo: #dc2626;       /* Rojo corporativo Mundo Matemático para acentos */
   --texto: #111111;
   --fondo: #ffffff;
-  --suave: #f4f7fb;
-  --borde: #d9e4f0;
+  --suave: #f8fafc;
+  --borde: #e2e8f0;
 }
 
 * { box-sizing: border-box; }
@@ -42,7 +42,7 @@ a { color: var(--azul); }
 }
 
 .marca-icfes { color: var(--azul); font-weight: 800; letter-spacing: 0.08em; }
-.marca-area { color: var(--verde); font-weight: 700; }
+.marca-area { color: var(--rojo); font-weight: 700; }
 
 .modo-todas, .temporizador {
   margin: 0;
@@ -51,7 +51,7 @@ a { color: var(--azul); }
   font-size: 0.95rem;
 }
 
-.temporizador.aviso { color: #b42318; }
+.temporizador.aviso { color: var(--rojo); }
 
 .contenedor {
   max-width: 980px;
@@ -74,7 +74,7 @@ a { color: var(--azul); }
 }
 
 .etiqueta {
-  color: var(--verde);
+  color: var(--rojo);
   font-weight: 700;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -102,7 +102,7 @@ a { color: var(--azul); }
 }
 
 .tarjeta h2 { color: var(--azul); margin: 0.4rem 0 0.2rem; font-size: 1.25rem; }
-.subtitulo { color: var(--verde); font-weight: 600; margin: 0 0 0.6rem; }
+.subtitulo { color: var(--rojo); font-weight: 600; margin: 0 0 0.6rem; }
 
 .badge {
   display: inline-flex;
@@ -133,13 +133,13 @@ a { color: var(--azul); }
 }
 
 .boton:hover { filter: brightness(1.08); }
-.boton-verde { background: var(--verde); color: #113300; }
+.boton-verde { background: var(--rojo); color: #fff; } /* Reemplazado botón verde por rojo */
 .tarjeta .boton { margin-top: 0.5rem; align-self: flex-start; }
 
 .bloque-todas {
   margin-top: 2rem;
   padding: 1.4rem 1.5rem;
-  border: 2px dashed var(--verde);
+  border: 2px dashed var(--rojo);
   display: flex;
   flex-wrap: wrap;
   gap: 1rem;
@@ -178,7 +178,7 @@ a { color: var(--azul); }
   margin-bottom: 0.4rem;
 }
 
-.progreso-barra { height: 100%; background: var(--verde); }
+.progreso-barra { height: 100%; background: var(--rojo); }
 .progreso-texto { margin: 0 0 1rem; color: var(--azul); font-weight: 600; font-size: 0.95rem; }
 
 .opciones {
@@ -204,7 +204,7 @@ a { color: var(--azul); }
   background: var(--suave);
 }
 
-.letra { color: var(--verde); font-weight: 800; min-width: 1.2rem; }
+.letra { color: var(--rojo); font-weight: 800; min-width: 1.2rem; }
 
 .alerta {
   background: #fff4e5;
@@ -213,12 +213,12 @@ a { color: var(--azul); }
 }
 
 .puntaje { font-size: 1.15rem; }
-.puntaje .num { color: var(--verde); font-size: 2.4rem; font-weight: 800; }
+.puntaje .num { color: var(--rojo); font-size: 2.4rem; font-weight: 800; }
 .puntaje-mini { color: var(--azul); font-weight: 700; }
 
 .revision { margin-top: 1rem; }
-.revision.ok { border-left: 5px solid var(--verde); }
-.revision.mal { border-left: 5px solid #b42318; }
+.revision.ok { border-left: 5px solid #16a34a; }
+.revision.mal { border-left: 5px solid var(--rojo); }
 .explicacion { color: #222; }
 .revision img { max-width: 100%; height: auto; border: 1px solid var(--borde); margin: 0.5rem 0; }
 
@@ -247,7 +247,7 @@ a { color: var(--azul); }
 
 .contacto {
   margin-top: 1.5rem;
-  border-top: 4px solid var(--verde);
+  border-top: 4px solid var(--rojo);
 }
 
 .contacto h2 { color: var(--azul); margin: 0.3rem 0 0.6rem; }
