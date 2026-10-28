@@ -80,7 +80,7 @@ export async function cargarTemas() {
   // Preferir indice.json: conserva el orden pedagógico (icono 01, 02…).
   // En GitHub Pages la API lista carpetas en desorden alfabético.
   try {
-    const r = await fetch("preguntas/indice.json");
+    const r = await fetch("indice.json");
     if (r.ok) {
       const data = await r.json();
       const temas = data.temas || [];
