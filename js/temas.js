@@ -6,8 +6,8 @@ export function urlPng(tema, archivo) {
   return `${tema.carpeta || tema.id}/${encodeURIComponent(archivo)}`;
 }
 
-export function urlPng(tema, archivo) {
-  return `${rutaCarpeta(tema.id)}/${encodeURIComponent(archivo)}`;
+function rutaCarpeta(id) {
+  return `preguntas/${id.split("/").map(encodeURIComponent).join("/")}`;
 }
 
 /** Orden estable por icono (01, 02…), no por el orden que devuelve GitHub. */
