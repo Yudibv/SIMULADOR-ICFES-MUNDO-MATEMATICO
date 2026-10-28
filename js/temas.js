@@ -7,6 +7,7 @@ export function urlPng(tema, archivo) {
 }
 
 function rutaCarpeta(id) {
+  // Asegura que busque dentro de la carpeta "preguntas"
   return `preguntas/${id.split("/").map(encodeURIComponent).join("/")}`;
 }
 
