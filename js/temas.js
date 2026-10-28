@@ -1,8 +1,9 @@
 export const PREGUNTAS_POR_PRUEBA = 15;
 export const MINUTOS_DEFAULT = 15;
 
-function rutaCarpeta(id) {
-  return id.split("/").map(encodeURIComponent).join("/");
+export function urlPng(tema, archivo) {
+  // Apunta directamente al id o carpeta en la raíz
+  return `${tema.carpeta || tema.id}/${encodeURIComponent(archivo)}`;
 }
 
 export function urlPng(tema, archivo) {
