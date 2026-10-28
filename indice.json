@@ -2,11 +2,11 @@
   "temas": [
     {
       "id": "Aritmetica",
-      "titulo": "Aritmética",
+      "titulo": "1. Aritmética",
       "subtitulo": "Números, operaciones y situaciones cuantitativas",
       "descripcion": "Ítems del cuadernillo Icfes Saber 11 (marzo 2026). Uso académico.",
       "icono": "01",
-      "carpeta": "preguntas/Aritmetica",
+      "carpeta": "Aritmetica",
       "preguntas": [
         "p04.png", "p09.png", "p10.png", "p11.png", "p13.png", "p25.png", "p27.png", "p39.png", "p45.png"
       ],
@@ -17,11 +17,11 @@
     },
     {
       "id": "Porcentajes y proporcionalidad",
-      "titulo": "Porcentajes y proporcionalidad",
+      "titulo": "2. Porcentajes y proporcionalidad",
       "subtitulo": "Razones, porcentajes y variaciones",
       "descripcion": "Ítems del cuadernillo Icfes Saber 11 (marzo 2026). Uso académico.",
       "icono": "02",
-      "carpeta": "preguntas/Porcentajes y proporcionalidad",
+      "carpeta": "Porcentajes y proporcionalidad",
       "preguntas": [
         "p02.png", "p34.png", "p35.png", "p40.png", "p47.png"
       ],
@@ -32,11 +32,11 @@
     },
     {
       "id": "Algebra",
-      "titulo": "Álgebra",
-      "subtitulo": "Relaciones, expresiones y funciones",
+      "titulo": "3. Álgebra",
+      "subtitulo": "Relaciones, expresiones y ecuaciones",
       "descripcion": "Ítems del cuadernillo Icfes Saber 11 (marzo 2026). Uso académico.",
       "icono": "03",
-      "carpeta": "preguntas/Algebra",
+      "carpeta": "Algebra",
       "preguntas": [
         "p06.png", "p19.png", "p21.png", "p31.png"
       ],
@@ -46,12 +46,23 @@
       "explicaciones": {}
     },
     {
-      "id": "Geometria",
-      "titulo": "Geometría",
-      "subtitulo": "Figuras, medidas y argumentación espacial",
+      "id": "Funciones",
+      "titulo": "4. Funciones",
+      "subtitulo": "Comportamiento y modelación gráfica",
       "descripcion": "Ítems del cuadernillo Icfes Saber 11 (marzo 2026). Uso académico.",
       "icono": "04",
-      "carpeta": "preguntas/Geometria",
+      "carpeta": "Funciones",
+      "preguntas": [],
+      "respuestas": {},
+      "explicaciones": {}
+    },
+    {
+      "id": "Geometria",
+      "titulo": "5. Geometría",
+      "subtitulo": "Figuras, medidas y argumentación espacial",
+      "descripcion": "Ítems del cuadernillo Icfes Saber 11 (marzo 2026). Uso académico.",
+      "icono": "05",
+      "carpeta": "Geometria",
       "preguntas": [
         "p07.png", "p14.png", "p15.png", "p17.png", "p18.png", "p22.png", "p23.png", "p24.png", "p29.png", "p32.png", "p37.png", "p41.png", "p42.png", "p43.png", "p44.png", "p49.png", "p50.png"
       ],
@@ -61,12 +72,23 @@
       "explicaciones": {}
     },
     {
+      "id": "Trigonometria",
+      "titulo": "6. Trigonometría",
+      "subtitulo": "Razones trigonométricas y triángulos",
+      "descripcion": "Ítems del cuadernillo Icfes Saber 11 (marzo 2026). Uso académico.",
+      "icono": "06",
+      "carpeta": "Trigonometría",
+      "preguntas": [],
+      "respuestas": {},
+      "explicaciones": {}
+    },
+    {
       "id": "Estadistica y probabilidad",
-      "titulo": "Estadística y probabilidad",
+      "titulo": "7. Estadística y probabilidad",
       "subtitulo": "Datos, azar e interpretación",
       "descripcion": "Ítems del cuadernillo Icfes Saber 11 (marzo 2026). Uso académico.",
-      "icono": "05",
-      "carpeta": "preguntas/Estadistica y probabilidad",
+      "icono": "07",
+      "carpeta": "Estadistica y probabilidad",
       "preguntas": [
         "p01.png", "p03.png", "p05.png", "p08.png", "p12.png", "p16.png", "p20.png", "p26.png", "p28.png", "p30.png", "p33.png", "p36.png", "p38.png", "p46.png", "p48.png"
       ],
@@ -77,11 +99,11 @@
     },
     {
       "id": "Sondeo de preguntas",
-      "titulo": "Sondeo de preguntas",
+      "titulo": "8. Sondeo general",
       "subtitulo": "Simulacro general integrador",
       "descripcion": "Evaluación general de práctica institucional.",
-      "icono": "06",
-      "carpeta": "preguntas/Sondeo de preguntas",
+      "icono": "08",
+      "carpeta": "Sondeo de preguntas",
       "preguntas": [],
       "respuestas": {},
       "explicaciones": {}
