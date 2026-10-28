@@ -34,11 +34,12 @@ function fmt(seg) {
 function detenerTimer() {
   if (timerId) clearInterval(timerId);
   timerId = null;
-  reloj.classList.add("oculto");
+  if (reloj) reloj.classList.add("oculto");
 }
 
 function iniciarTimer(st) {
   detenerTimer();
+  if (!reloj) return;
   reloj.classList.remove("oculto");
   const tick = () => {
     const ahora = Date.now();
@@ -60,10 +61,13 @@ function temaPorId(id) {
 
 function renderInstrucciones(st) {
   const tema = temaPorId(st.cola[st.indiceTema]);
+  if (!tema) return;
   const n = st.seleccion.length;
-  etiquetaModo.classList.toggle("oculto", !st.todas);
-  if (st.todas) {
-    etiquetaModo.textContent = `Recorrido completo · ${st.indiceTema + 1} de ${st.cola.length}`;
+  if (etiquetaModo) {
+    etiquetaModo.classList.toggle("oculto", !st.todas);
+    if (st.todas) {
+      etiquetaModo.textContent = `Recorrido completo · ${st.indiceTema + 1} de ${st.cola.length}`;
+    }
   }
   root.innerHTML = `
     <p class="migas"><a href="index.html">Menú</a> / ${tema.titulo}</p>
@@ -74,7 +78,7 @@ function renderInstrucciones(st) {
       <h2 class="h-seccion">Instrucciones</h2>
       <ol class="lista-instrucciones">
         <li>Las imágenes salen del cuadernillo de práctica Icfes Saber 11 (marzo 2026), para uso académico. El Icfes es el titular de esos ítems.</li>
-        <li>Se eligen 15 preguntas al azar de este tema.</li>
+        <li>Se eligen ${n} preguntas al azar de este tema.</li>
         <li>Cada ítem es de selección múltiple con única respuesta (A, B, C o D).</li>
         <li>Hay un temporizador. Por defecto dura 15 minutos; puedes cambiarlo abajo.</li>
         <li>Si se acaba el tiempo, la prueba se cierra con lo que hayas alcanzado a responder.</li>
@@ -106,7 +110,7 @@ function renderPregunta(st) {
   const tema = temaPorId(st.cola[st.indiceTema]);
   const archivo = st.seleccion[st.item];
   const total = st.seleccion.length;
-  etiquetaModo.classList.toggle("oculto", !st.todas);
+  if (etiquetaModo) etiquetaModo.classList.toggle("oculto", !st.todas);
   iniciarTimer(st);
   root.innerHTML = `
     <p class="migas"><a href="index.html">Menú</a> / ${tema.titulo} / Ejercicio ${st.item + 1}</p>
@@ -167,7 +171,7 @@ function resumenTema(st, tema, seleccion, respuestas) {
     if (ok) correctas += 1;
     return {
       archivo,
-      marcada,
+      marked: marcada,
       buena: buena || null,
       ok,
       explicacion: (tema.explicaciones || {})[archivo] || "",
@@ -220,7 +224,7 @@ function bloqueRevision(res) {
         <article class="panel revision ${cls}">
           <p class="meta">Ejercicio ${i + 1}</p>
           <img class="pregunta-img" alt="" src="${urlPng(tema, d.archivo)}">
-          <p>Tu respuesta: <strong>${d.marcada || "sin marcar"}</strong>${claveTxt}</p>
+          <p>Tu respuesta: <strong>${d.marked || "sin marcar"}</strong>${claveTxt}</p>
           ${d.explicacion ? `<p class="explicacion">${d.explicacion}</p>` : ""}
         </article>`;
     })
@@ -228,7 +232,7 @@ function bloqueRevision(res) {
 }
 
 function renderResultado(st) {
-  etiquetaModo.classList.add("oculto");
+  if (etiquetaModo) etiquetaModo.classList.add("oculto");
   const bloques = st.historico || [];
   const totalOk = bloques.reduce((a, b) => a + (b.hayClave ? b.correctas : 0), 0);
   const totalPreg = bloques.reduce((a, b) => a + (b.hayClave ? b.total : 0), 0);
@@ -259,7 +263,8 @@ function renderResultado(st) {
       <a class="boton" href="index.html">Volver al menú</a>
     </div>
   `;
-  document.getElementById("caja-contacto").innerHTML = htmlContacto(contacto);
+  const cajaContacto = document.getElementById("caja-contacto");
+  if (cajaContacto) cajaContacto.innerHTML = htmlContacto(contacto);
   sessionStorage.removeItem(CLAVE);
 }
 
