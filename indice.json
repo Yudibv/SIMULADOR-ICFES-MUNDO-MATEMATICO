@@ -51,20 +51,46 @@
 }
     ,
     {
-      "id": "Porcentajes y proporcionalidad",
-      "titulo": "2. Porcentajes y proporcionalidad",
-      "subtitulo": "Razones, porcentajes y variaciones",
-      "descripcion": "Ítems del cuadernillo Icfes Saber 11 (marzo 2026). Uso académico.",
-      "icono": "02",
-      "carpeta": "Porcentajes y proporcionalidad",
-      "preguntas": [
-        "p02.png", "p34.png", "p35.png", "p40.png", "p47.png"
-      ],
-      "respuestas": {
-        "p02.png": "C", "p34.png": "C", "p35.png": "B", "p40.png": "B", "p47.png": "D"
-      },
-      "explicaciones": {}
-    },
+  "id": "Porcentajes_y_proporcionalidad",
+  "titulo": "Porcentajes y Proporcionalidad",
+  "subtitulo": "Razones, proporciones y problemas de porcentaje",
+  "descripcion": "Ítems del cuadernillo Icfes Saber 11. Uso académico.",
+  "icono": "02",
+  "carpeta": "Porcentajes y proporcionalidad",
+  "preguntas": [
+    "P 8y9 TyT B B.png",
+    "P 19y20 2010 D B.png",
+    "P2 2018 C.png",
+    "P3 OCHOA D.png",
+    "P7y8 2014 B B.png",
+    "P7y8 2018 B D.png",
+    "P12y13 PRO D B.png",
+    "P24 PRO B.png",
+    "P34 y 35 2018 B C.png",
+    "P35 50 B.png",
+    "P35 2018 C.png",
+    "P36 2018 B.png",
+    "P 40 50 B.png",
+    "P47 50 D.png"
+  ],
+  "respuestas": {
+    "P 8y9 TyT B B.png": "B",
+    "P 19y20 2010 D B.png": "D",
+    "P2 2018 C.png": "C",
+    "P3 OCHOA D.png": "D",
+    "P7y8 2014 B B.png": "B",
+    "P7y8 2018 B D.png": "B",
+    "P12y13 PRO D B.png": "D",
+    "P24 PRO B.png": "B",
+    "P34 y 35 2018 B C.png": "B",
+    "P35 50 B.png": "B",
+    "P35 2018 C.png": "C",
+    "P36 2018 B.png": "B",
+    "P 40 50 B.png": "B",
+    "P47 50 D.png": "D"
+  },
+  "explicaciones": {}
+},
     {
       "id": "Algebra",
       "titulo": "3. Álgebra",
