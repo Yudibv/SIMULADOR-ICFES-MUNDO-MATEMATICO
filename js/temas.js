@@ -2,7 +2,7 @@ export const PREGUNTAS_POR_PRUEBA = 15;
 export const MINUTOS_DEFAULT = 15;
 
 function rutaCarpeta(id) {
-  return `preguntas/${id.split("/").map(encodeURIComponent).join("/")}`;
+  return id.split("/").map(encodeURIComponent).join("/");
 }
 
 export function urlPng(tema, archivo) {
