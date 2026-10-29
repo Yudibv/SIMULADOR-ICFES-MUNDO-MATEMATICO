@@ -1,0 +1,14 @@
+{
+  "titulo": "Álgebra",
+  "subtitulo": "Relaciones, expresiones y funciones",
+  "descripcion": "Ítems del cuadernillo Icfes Saber 11 (marzo 2026). Uso académico.",
+  "icono": "03",
+  "respuestas": {
+    "p06.png": "D",
+    "p19.png": "B",
+    "p21.png": "A",
+    "p31.png": "B"
+  },
+  "explicaciones": {},
+  "fuente": "Icfes, (2026). Prueba Matemáticas, Cuadernillo de preguntas. Saber 11. Uso académico."
+}
