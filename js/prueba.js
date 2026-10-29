@@ -59,6 +59,15 @@ function temaPorId(id) {
   return temas.find((t) => t.id === id);
 }
 
+// CORRECCIÓN SEGURA PARA ASEGURAR QUE LA RUTA INCLUYA LA CARPETA
+function obtenerRutaImagen(tema, archivo) {
+  if (typeof urlPng === "function") {
+    const res = urlPng(tema, archivo);
+    if (res && res.includes("/")) return res; // Si ya trae la ruta completa, se usa
+  }
+  return `preguntas/${tema.carpeta}/${archivo}`;
+}
+
 function renderInstrucciones(st) {
   const tema = temaPorId(st.cola[st.indiceTema]);
   if (!tema) return;
@@ -112,12 +121,15 @@ function renderPregunta(st) {
   const total = st.seleccion.length;
   if (etiquetaModo) etiquetaModo.classList.toggle("oculto", !st.todas);
   iniciarTimer(st);
+  
+  const rutaImagenFinal = obtenerRutaImagen(tema, archivo);
+
   root.innerHTML = `
     <p class="migas"><a href="index.html">Menú</a> / ${tema.titulo} / Ejercicio ${st.item + 1}</p>
     <div class="progreso"><div class="progreso-barra" style="width:${((st.item + 1) / total) * 100}%"></div></div>
     <p class="progreso-texto">Ejercicio ${st.item + 1} de ${total}</p>
     <section class="panel">
-      <img class="pregunta-img" alt="Pregunta ${st.item + 1}" src="${urlPng(tema, archivo)}">
+      <img class="pregunta-img" alt="Pregunta ${st.item + 1}" src="${rutaImagenFinal}">
       <p id="error" class="alerta oculto">Selecciona una opción para continuar.</p>
       <form id="form-opciones">
         <fieldset class="opciones">
@@ -220,10 +232,11 @@ function bloqueRevision(res) {
         ? ` · Correcta: <strong>${d.buena}</strong>`
         : " · (esta carpeta no trae clave de respuestas)";
       const tema = temaPorId(res.id);
+      const rutaImgRev = obtenerRutaImagen(tema, d.archivo);
       return `
         <article class="panel revision ${cls}">
           <p class="meta">Ejercicio ${i + 1}</p>
-          <img class="pregunta-img" alt="" src="${urlPng(tema, d.archivo)}">
+          <img class="pregunta-img" alt="" src="${rutaImgRev}">
           <p>Tu respuesta: <strong>${d.marked || "sin marcar"}</strong>${claveTxt}</p>
           ${d.explicacion ? `<p class="explicacion">${d.explicacion}</p>` : ""}
         </article>`;
