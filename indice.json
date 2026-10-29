@@ -349,15 +349,74 @@
   "explicaciones": {}
 },
     {
-      "id": "Sondeo de preguntas",
-      "titulo": "8. Sondeo general",
-      "subtitulo": "Simulacro general integrador",
-      "descripcion": "Evaluación general de práctica institucional.",
-      "icono": "08",
-      "carpeta": "Sondeo de preguntas",
-      "preguntas": [],
-      "respuestas": {},
-      "explicaciones": {}
-    }
+  "preguntas": [
+    "P 7 AL10 20211 B C D A",
+    "P 9 AL 13 50 C C B A C",
+    "P1 2018 B",
+    "P1y2 BANCO C D",
+    "P2a62020 C C D A",
+    "P11Y1220211 A A",
+    "P13 y 14 B C",
+    "P14 OCHOA B",
+    "P15AL1720211 B C B",
+    "P17y18 BANCO B B",
+    "P21 2018 B",
+    "P37 2018 B",
+    "p38 A",
+    "P12023 B",
+    "P42022 B",
+    "P192022 C"
+  ],
+  "respuestas": {
+    "P 7 AL10 20211 B C D A": {
+      "7": "B",
+      "8": "C",
+      "9": "D",
+      "10": "A"
+    },
+    "P 9 AL 13 50 C C B A C": {
+      "9": "C",
+      "10": "C",
+      "11": "B",
+      "12": "A",
+      "13": "C"
+    },
+    "P1 2018 B": "B",
+    "P1y2 BANCO C D": {
+      "1": "C",
+      "2": "D"
+    },
+    "P2a62020 C C D A": {
+      "2": "C",
+      "3": "C",
+      "4": "D",
+      "5": "A"
+    },
+    "P11Y1220211 A A": {
+      "11": "A",
+      "12": "A"
+    },
+    "P13 y 14 B C": {
+      "13": "B",
+      "14": "C"
+    },
+    "P14 OCHOA B": "B",
+    "P15AL1720211 B C B": {
+      "15": "B",
+      "16": "C",
+      "17": "B"
+    },
+    "P17y18 BANCO B B": {
+      "17": "B",
+      "18": "B"
+    },
+    "P21 2018 B": "B",
+    "P37 2018 B": "B",
+    "p38 A": "A",
+    "P12023 B": "B",
+    "P42022 B": "B",
+    "P192022 C": "C"
+  }
+}
   ]
 }
