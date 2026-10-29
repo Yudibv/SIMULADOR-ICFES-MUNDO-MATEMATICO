@@ -187,21 +187,61 @@
   },
   "explicaciones": {}
 },
-    {
-      "id": "Geometria",
-      "titulo": "5. Geometría",
-      "subtitulo": "Figuras, medidas y argumentación espacial",
-      "descripcion": "Ítems del cuadernillo Icfes Saber 11 (marzo 2026). Uso académico.",
-      "icono": "05",
-      "carpeta": "Geometria",
-      "preguntas": [
-        "p07.png", "p14.png", "p15.png", "p17.png", "p18.png", "p22.png", "p23.png", "p24.png", "p29.png", "p32.png", "p37.png", "p41.png", "p42.png", "p43.png", "p44.png", "p49.png", "p50.png"
-      ],
-      "respuestas": {
-        "p07.png": "C", "p14.png": "B", "p15.png": "C", "p17.png": "D", "p18.png": "C", "p22.png": "C", "p23.png": "B", "p24.png": "D", "p29.png": "C", "p32.png": "B", "p37.png": "B", "p41.png": "B", "p42.png": "D", "p43.png": "B", "p44.png": "B", "p49.png": "D", "p50.png": "A"
-      },
-      "explicaciones": {}
-    },
+    {{
+  "id": "Geometria",
+  "titulo": "Geometría",
+  "subtitulo": "Formas, áreas, volúmenes y propiedades espaciales",
+  "descripcion": "Ítems del cuadernillo Icfes Saber 11. Uso académico.",
+  "icono": "05",
+  "carpeta": "Geometria",
+  "preguntas": [
+    "P69 C.png",
+    "P2 B.png",
+    "P5 2014 A.png",
+    "P07 C.png",
+    "P14 50 B.png",
+    "P16 A.png",
+    "P22 C.png",
+    "P23 B.png",
+    "P24 50 D.png",
+    "P29 C.png",
+    "P32 50 B.png",
+    "P37 50 B.png",
+    "P41 50 B.png",
+    "P42 50 D.png",
+    "P50 50 A.png",
+    "P22023 A.png",
+    "P52022 C.png",
+    "P122020 B.png",
+    "P182022 B.png",
+    "P202022 C.png",
+    "P1420211 C.png"
+  ],
+  "respuestas": {
+    "P69 C.png": "C",
+    "P2 B.png": "B",
+    "P5 2014 A.png": "A",
+    "P07 C.png": "C",
+    "P14 50 B.png": "B",
+    "P16 A.png": "A",
+    "P22 C.png": "C",
+    "P23 B.png": "B",
+    "P24 50 D.png": "D",
+    "P29 C.png": "C",
+    "P32 50 B.png": "B",
+    "P37 50 B.png": "B",
+    "P41 50 B.png": "B",
+    "P42 50 D.png": "D",
+    "P50 50 A.png": "A",
+    "P22023 A.png": "A",
+    "P52022 C.png": "C",
+    "P122020 B.png": "B",
+    "P182022 B.png": "B",
+    "P202022 C.png": "C",
+    "P1420211 C.png": "C"
+  },
+  "explicaciones": {}
+},
     {
       "id": "Trigonometria",
       "titulo": "6. Trigonometría",
