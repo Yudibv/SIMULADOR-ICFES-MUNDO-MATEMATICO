@@ -1,16 +1,28 @@
-function renderPregunta(st) {
+import { cargarTemas, PREGUNTAS_POR_PRUEBA } from "./temas.js";
+
+// Puedes pegar este código completo en tu archivo prueba.js
+export function renderPregunta(st) {
   const tema = temaPorId(st.cola[st.indiceTema]);
   const archivo = st.seleccion[st.item];
   const total = st.seleccion.length;
-  if (etiquetaModo) etiquetaModo.classList.toggle("oculto", !st.todas);
-  iniciarTimer(st);
   
-  const rutaImagenFinal = obtenerRutaImagen(tema, archivo);
+  if (typeof etiquetaModo !== 'undefined' && etiquetaModo) {
+    etiquetaModo.classList.toggle("oculto", !st.todas);
+  }
+  
+  if (typeof iniciarTimer === 'function') {
+    iniciarTimer(st);
+  }
+  
+  const rutaImagenFinal = typeof obtenerRutaImagen === 'function' ? obtenerRutaImagen(tema, archivo) : archivo;
 
   // Verificamos si la respuesta es un objeto (múltiples preguntas internas) o una sola letra
   const respuestasClave = (tema.respuestas || {})[archivo];
   const esMulti = respuestasClave && typeof respuestasClave === "object";
   const subPreguntas = esMulti ? Object.keys(respuestasClave) : [null];
+
+  const root = document.getElementById("root");
+  if (!root) return;
 
   root.innerHTML = `
     <p class="migas"><a href="index.html">Menú</a> / ${tema.titulo} / Ejercicio ${st.item + 1}</p>
@@ -22,7 +34,7 @@ function renderPregunta(st) {
       
       <form id="form-opciones">
         ${subPreguntas.map((num) => `
-          ${num ? `<h3 class="subtitulo-pregunta">Pregunta ${num}</h3>` : ""}
+          ${num ? `<h3 class="subtitulo-pregunta" style="color: var(--azul); margin-top: 15px;">Pregunta ${num}</h3>` : ""}
           <fieldset class="opciones" style="margin-bottom: 20px;">
             <legend class="sr">Elige una respuesta</legend>
             ${["A", "B", "C", "D"]
@@ -35,7 +47,7 @@ function renderPregunta(st) {
         `).join("")}
 
         <div class="acciones">
-          <button class="boton" type="submit">${textoBoton(st)}</button>
+          <button class="boton" type="submit">${typeof textoBoton === 'function' ? textoBoton(st) : 'Siguiente'}</button>
         </div>
       </form>
     </section>
@@ -67,10 +79,10 @@ function renderPregunta(st) {
 
     if (st.item + 1 < total) {
       st.item += 1;
-      guardar(st);
+      if (typeof guardar === 'function') guardar(st);
       renderPregunta(st);
     } else {
-      terminarPrueba(st, false);
+      if (typeof terminarPrueba === 'function') terminarPrueba(st, false);
     }
   };
 }
