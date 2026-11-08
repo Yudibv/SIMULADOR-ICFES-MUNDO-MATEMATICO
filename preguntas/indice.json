@@ -1,0 +1,169 @@
+{
+  "temas": [
+    {
+      "id": "Aritmetica",
+      "titulo": "Aritmética",
+      "subtitulo": "Números, operaciones y situaciones cuantitativas",
+      "descripcion": "Ítems del cuadernillo Icfes Saber 11 (marzo 2026). Uso académico.",
+      "icono": "01",
+      "carpeta": "preguntas/Aritmetica",
+      "preguntas": [
+        "p04.png",
+        "p09.png",
+        "p10.png",
+        "p11.png",
+        "p13.png",
+        "p25.png",
+        "p27.png",
+        "p39.png",
+        "p45.png"
+      ],
+      "respuestas": {
+        "p04.png": "C",
+        "p09.png": "C",
+        "p10.png": "C",
+        "p11.png": "B",
+        "p13.png": "D",
+        "p25.png": "A",
+        "p27.png": "A",
+        "p39.png": "C",
+        "p45.png": "D"
+      },
+      "explicaciones": {}
+    },
+    {
+      "id": "Porcentajes y proporcionalidad",
+      "titulo": "Porcentajes y proporcionalidad",
+      "subtitulo": "Razones, porcentajes y variaciones",
+      "descripcion": "Ítems del cuadernillo Icfes Saber 11 (marzo 2026). Uso académico.",
+      "icono": "02",
+      "carpeta": "preguntas/Porcentajes y proporcionalidad",
+      "preguntas": [
+        "p02.png",
+        "p34.png",
+        "p35.png",
+        "p40.png",
+        "p47.png"
+      ],
+      "respuestas": {
+        "p02.png": "C",
+        "p34.png": "C",
+        "p35.png": "B",
+        "p40.png": "B",
+        "p47.png": "D"
+      },
+      "explicaciones": {}
+    },
+    {
+      "id": "Algebra",
+      "titulo": "Álgebra",
+      "subtitulo": "Relaciones, expresiones y funciones",
+      "descripcion": "Ítems del cuadernillo Icfes Saber 11 (marzo 2026). Uso académico.",
+      "icono": "03",
+      "carpeta": "preguntas/Algebra",
+      "preguntas": [
+        "p06.png",
+        "p19.png",
+        "p21.png",
+        "p31.png"
+      ],
+      "respuestas": {
+        "p06.png": "D",
+        "p19.png": "B",
+        "p21.png": "A",
+        "p31.png": "B"
+      },
+      "explicaciones": {}
+    },
+    {
+      "id": "Geometria",
+      "titulo": "Geometría",
+      "subtitulo": "Figuras, medidas y argumentación espacial",
+      "descripcion": "Ítems del cuadernillo Icfes Saber 11 (marzo 2026). Uso académico.",
+      "icono": "04",
+      "carpeta": "preguntas/Geometria",
+      "preguntas": [
+        "p07.png",
+        "p14.png",
+        "p15.png",
+        "p17.png",
+        "p18.png",
+        "p22.png",
+        "p23.png",
+        "p24.png",
+        "p29.png",
+        "p32.png",
+        "p37.png",
+        "p41.png",
+        "p42.png",
+        "p43.png",
+        "p44.png",
+        "p49.png",
+        "p50.png"
+      ],
+      "respuestas": {
+        "p07.png": "C",
+        "p14.png": "B",
+        "p15.png": "C",
+        "p17.png": "D",
+        "p18.png": "C",
+        "p22.png": "C",
+        "p23.png": "B",
+        "p24.png": "D",
+        "p29.png": "C",
+        "p32.png": "B",
+        "p37.png": "B",
+        "p41.png": "B",
+        "p42.png": "D",
+        "p43.png": "B",
+        "p44.png": "B",
+        "p49.png": "D",
+        "p50.png": "A"
+      },
+      "explicaciones": {}
+    },
+    {
+      "id": "Estadistica y probabilidad",
+      "titulo": "Estadística y probabilidad",
+      "subtitulo": "Datos, azar e interpretación",
+      "descripcion": "Ítems del cuadernillo Icfes Saber 11 (marzo 2026). Uso académico.",
+      "icono": "05",
+      "carpeta": "preguntas/Estadistica y probabilidad",
+      "preguntas": [
+        "p01.png",
+        "p03.png",
+        "p05.png",
+        "p08.png",
+        "p12.png",
+        "p16.png",
+        "p20.png",
+        "p26.png",
+        "p28.png",
+        "p30.png",
+        "p33.png",
+        "p36.png",
+        "p38.png",
+        "p46.png",
+        "p48.png"
+      ],
+      "respuestas": {
+        "p01.png": "B",
+        "p03.png": "B",
+        "p05.png": "B",
+        "p08.png": "C",
+        "p12.png": "B",
+        "p16.png": "D",
+        "p20.png": "A",
+        "p26.png": "C",
+        "p28.png": "A",
+        "p30.png": "B",
+        "p33.png": "D",
+        "p36.png": "C",
+        "p38.png": "C",
+        "p46.png": "C",
+        "p48.png": "B"
+      },
+      "explicaciones": {}
+    }
+  ]
+}
