@@ -1,14 +1,14 @@
-export const PREGUNTAS_POR_PRUEBA = 15;
+export const PREGUNTAS_POR_PRUEBA = 10;
 export const MINUTOS_DEFAULT = 15;
 
 export function urlPng(tema, archivo) {
-  // Se incluye la carpeta "preguntas/" y la carpeta específica del tema correspondiente
+  // Asegura que tome la carpeta específica del tema (por ejemplo "Aritmetica", "Algebra", etc.)
   const carpetaTema = tema.carpeta || tema.id;
-  return `preguntas/${carpetaTema}/${encodeURIComponent(archivo)}`;
+  // Limpia espacios por seguridad y arma la ruta hacia la carpeta de preguntas
+  return `preguntas/${carpetaTema}/${encodeURIComponent(archivo.trim())}`;
 }
 
 function rutaCarpeta(id) {
-  // Asegura que busque dentro de la carpeta "preguntas"
   return `preguntas/${id.split("/").map(encodeURIComponent).join("/")}`;
 }
 
