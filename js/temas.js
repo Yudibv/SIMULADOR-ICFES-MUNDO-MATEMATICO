@@ -1,4 +1,4 @@
-export const PREGUNTAS_POR_PRUEBA = 15;
+export const PREGUNTAS_POR_PRUEBA = 10;
 export const MINUTOS_DEFAULT = 15;
 
 export function urlPng(tema, archivo) {
