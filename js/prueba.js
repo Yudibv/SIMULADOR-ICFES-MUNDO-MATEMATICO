@@ -1,15 +1,28 @@
+/**
+ * ==============================================================================
+ * MÓDULO DE PRUEBAS Y SIMULADOR - MUNDO MATEMÁTICO
+ * Maneja la lógica de visualización de preguntas, selección aleatoria por carpetas,
+ * evaluación de respuestas y la monetización del informe predictivo global.
+ * ==============================================================================
+ */
+
 import { cargarTemas, urlPng, PREGUNTAS_POR_PRUEBA } from "./temas.js";
 
+// Estado global de la prueba actual
 let state = {
-  temas: [],
-  cola: [],
-  indiceTema: 0,
-  seleccion: [],
-  item: 0,
-  respuestas: {},
-  todas: false
+  temas: [],          // Lista completa de temas cargados desde indice.json
+  cola: [],           // Cola de temas activos
+  indiceTema: 0,      // Índice del tema actual
+  seleccion: [],      // Archivos de preguntas seleccionados para la prueba
+  seleccionGlobal: [],// Metadata detallada para el modo de prueba global (mixto)
+  item: 0,            // Pregunta actual en la que va el estudiante
+  respuestas: {},     // Respuestas dadas por el usuario
+  todas: false        // Bandera para saber si es el Simulacro Global (Todas las áreas)
 };
 
+/**
+ * Obtiene o crea dinámicamente el contenedor principal en el DOM donde se renderiza la prueba.
+ */
 function obtenerContenedor() {
   let root = document.getElementById("vista") || document.getElementById("root") || document.getElementById("panel") || document.querySelector("main");
   if (!root) {
@@ -20,6 +33,10 @@ function obtenerContenedor() {
   return root;
 }
 
+/**
+ * Función de inicialización asíncrona: Lee los parámetros de la URL, 
+ * carga los temas y define si se ejecuta una carpeta individual o el simulacro global.
+ */
 async function init() {
   const params = new URLSearchParams(window.location.search);
   const temaId = params.get("tema");
@@ -35,6 +52,7 @@ async function init() {
     return;
   }
 
+  // Configurar modo de prueba según los parámetros de la URL
   if (esTodas) {
     state.todas = true;
     state.cola = state.temas.map(t => t.id);
@@ -48,6 +66,9 @@ async function init() {
   renderPregunta(state);
 }
 
+/**
+ * Asegura que cada tema tenga un ID válido basado en su identificador o carpeta.
+ */
 function aliasTemas(temas) {
   return temas.map(t => ({
     ...t,
@@ -55,24 +76,66 @@ function aliasTemas(temas) {
   }));
 }
 
+/**
+ * Busca y retorna un objeto tema específico utilizando su ID o carpeta.
+ */
 function temaPorId(id) {
   return state.temas.find(t => t.id === id || t.carpeta === id) || state.temas[0];
 }
 
+/**
+ * Prepara las preguntas que se van a mostrar:
+ * - Si es "Simulacro Global" (todas): Extrae preguntas aleatorias de CADA una de las carpetas y las mezcla.
+ * - Si es "Carpeta Individual": Selecciona un subconjunto aleatorio limitado por PREGUNTAS_POR_PRUEBA.
+ */
 function prepararTemaActual() {
-  const tema = temaPorId(state.cola[state.indiceTema]);
-  const todasLasPreguntas = tema.preguntas || [];
-  state.seleccion = todasLasPreguntas.slice(0, PREGUNTAS_POR_PRUEBA);
-  state.item = 0;
-  state.respuestas = {};
+  if (state.todas) {
+    let todasLasSeleccionadas = [];
+    
+    // Recorre cada carpeta para extraer preguntas de forma equitativa y aleatoria
+    state.temas.forEach(tema => {
+      const preguntasTema = tema.preguntas || [];
+      const preguntasMezcladas = [...preguntasTema].sort(() => Math.random() - 0.5);
+      
+      // Saca hasta 3 preguntas al azar de cada carpeta para armar el simulacro robusto
+      const subConjunto = preguntasMezcladas.slice(0, 3); 
+      
+      subConjunto.forEach(p => {
+        todasLasSeleccionadas.push({ carpetaId: tema.id, archivo: p });
+      });
+    });
+
+    // Mezcla todo el conjunto global de preguntas
+    state.seleccionGlobal = todasLasSeleccionadas.sort(() => Math.random() - 0.5);
+    state.seleccion = state.seleccionGlobal.map(item => item.archivo);
+    state.item = 0;
+    state.respuestas = {};
+  } else {
+    // Modo práctica focalizada por carpeta individual
+    const tema = temaPorId(state.cola[state.indiceTema]);
+    const todasLasPreguntas = tema.preguntas || [];
+    state.seleccion = [...todasLasPreguntas].sort(() => Math.random() - 0.5).slice(0, PREGUNTAS_POR_PRUEBA);
+    state.item = 0;
+    state.respuestas = {};
+  }
 }
 
+/**
+ * Renderiza la interfaz de la pregunta actual, manejando imágenes, opciones de respuesta 
+ * y la barra de progreso.
+ */
 export function renderPregunta(st) {
-  const tema = temaPorId(st.cola[st.indiceTema]);
+  // Identifica el tema actual (en modo global, lo busca dinámicamente según la pregunta)
+  let tema = temaPorId(st.cola[st.indiceTema]);
+  if (st.todas && st.seleccionGlobal && st.seleccionGlobal[st.item]) {
+    tema = temaPorId(st.seleccionGlobal[st.item].carpetaId);
+  }
+
   const archivo = st.seleccion[st.item];
   const total = st.seleccion.length;
   const root = obtenerContenedor();
 
+  // Si ya no hay más preguntas, pasa a la pantalla de resultados
   if (!archivo) {
     mostrarResultadosFinales(st, tema);
     return;
@@ -80,6 +143,7 @@ export function renderPregunta(st) {
 
   const rutaImagenFinal = urlPng(tema, archivo);
   
+  // Soporte para preguntas con múltiples incisos (subpreguntas) o única respuesta
   const respuestasClave = (tema.respuestas || {})[archivo];
   const esMulti = respuestasClave && typeof respuestasClave === "object";
   const subPreguntas = esMulti ? Object.keys(respuestasClave) : [null];
@@ -118,6 +182,7 @@ export function renderPregunta(st) {
     </section>
   `;
 
+  // Manejador del envío del formulario (validación y avance)
   document.getElementById("form-opciones").onsubmit = (ev) => {
     ev.preventDefault();
     const formData = new FormData(ev.target);
@@ -142,6 +207,7 @@ export function renderPregunta(st) {
       st.respuestas[st.item] = marcada;
     }
 
+    // Avanza a la siguiente pregunta o finaliza la prueba
     if (st.item + 1 < total) {
       st.item += 1;
       renderPregunta(st);
@@ -151,12 +217,23 @@ export function renderPregunta(st) {
   };
 }
 
+/**
+ * Calcula los resultados finales y genera la vista correspondiente:
+ * - Si es Simulacro Global: Muestra puntaje básico y bloquea el Informe Analítico Predictivo de pago (WhatsApp).
+ * - Si es Carpeta Individual: Muestra diagnóstico detallado e invita a tutorías de refuerzo.
+ */
 function mostrarResultadosFinales(st, tema) {
   let aciertos = 0;
   let totalPreguntas = st.seleccion.length;
 
+  // Calificación de respuestas correctas vs marcadas por el usuario
   st.seleccion.forEach((archivo, index) => {
-    const respuestaCorrecta = (tema.respuestas || {})[archivo];
+    let temaActual = tema;
+    if (st.todas && st.seleccionGlobal && st.seleccionGlobal[index]) {
+      temaActual = temaPorId(st.seleccionGlobal[index].carpetaId);
+    }
+
+    const respuestaCorrecta = (temaActual.respuestas || {})[archivo];
     const respuestaUsuario = st.respuestas[index];
 
     if (typeof respuestaCorrecta === "object") {
@@ -179,6 +256,7 @@ function mostrarResultadosFinales(st, tema) {
   const esSimulacroGlobal = st.todas;
 
   if (esSimulacroGlobal) {
+    // VISTA COMERCIAL: Simulacro Global con Informe Predictivo de Pago
     root.innerHTML = `
       <section class="panel" style="text-align: center; padding: 30px;">
         <h2 style="color: var(--azul);">Resultados del Simulacro Global ICFES</h2>
@@ -212,6 +290,7 @@ function mostrarResultadosFinales(st, tema) {
       </section>
     `;
   } else {
+    // VISTA DE CARPETA INDIVIDUAL: Práctica gratuita con gancho a tutorías
     let mensajeDesempeno = "";
     if (porcentaje >= 80) {
       mensajeDesempeno = `¡Excelente nivel en <strong>${tema.titulo}</strong>! Tienes bases muy sólidas. Te invitamos a mantener este ritmo con simulacros completos para asegurar tu puntaje máximo en el ICFES.`;
@@ -254,4 +333,5 @@ function mostrarResultadosFinales(st, tema) {
   }
 }
 
+// Ejecutar la aplicación al cargar
 init();
