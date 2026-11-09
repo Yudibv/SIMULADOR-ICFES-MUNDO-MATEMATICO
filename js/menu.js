@@ -14,12 +14,10 @@ function tarjeta(tema, indice) {
     <h2>${tema.titulo}</h2>
     <p class="subtitulo">${tema.subtitulo || ""}</p>
     <p>${tema.descripcion || ""}</p>
-    //`<p class="meta">${n} en la carpeta · se eligen ${Math.min(PREGUNTAS_POR_PRUEBA, n)} al azar</p>`
     <a class="boton" href="prueba.html?tema=${encodeURIComponent(tema.id)}">Empezar</a>
   `;
   return articulo;
 }
-
 async function inicializarMenu() {
   try {
     const temas = await cargarTemas();
