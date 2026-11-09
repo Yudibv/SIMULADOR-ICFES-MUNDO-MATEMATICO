@@ -11,10 +11,10 @@ let state = {
 };
 
 function obtenerContenedor() {
-  let root = document.getElementById("root") || document.getElementById("panel") || document.getElementById("app") || document.querySelector("main");
+  let root = document.getElementById("vista") || document.getElementById("root") || document.getElementById("panel") || document.querySelector("main");
   if (!root) {
     root = document.createElement("main");
-    root.id = "root";
+    root.id = "vista";
     document.body.appendChild(root);
   }
   return root;
@@ -72,25 +72,15 @@ export function renderPregunta(st) {
   const root = obtenerContenedor();
 
   if (!archivo) {
-    root.innerHTML = `
-      <section class="panel" style="text-align: center; padding: 30px;">
-        <h2>¡Prueba finalizada!</h2>
-        <p>Has completado las preguntas de este módulo con éxito.</p>
-        <br>
-        <a class="boton" href="index.html">Volver al Menú Principal</a>
-      </section>
-    `;
+    mostrarResultadosFinales(st, tema);
     return;
   }
 
+  // AQUÍ ESTABLECEMOS LA RUTA EXACTA DE LA IMAGEN USANDO LA CARPETA DEL TEMA
   const rutaImagenFinal = urlPng(tema, archivo);
-
-  // Verificamos si este archivo tiene respuestas múltiples en el objeto
+  
   const respuestasClave = (tema.respuestas || {})[archivo];
   const esMulti = respuestasClave && typeof respuestasClave === "object";
-
-  // Si es un objeto con varias preguntas (ej: {"2": "B", "3": "B"}), tomamos las claves
-  // Si no, manejamos la única pregunta asociada al archivo
   const subPreguntas = esMulti ? Object.keys(respuestasClave) : [null];
 
   root.innerHTML = `
@@ -100,7 +90,7 @@ export function renderPregunta(st) {
     <section class="panel">
       <div style="text-align: center; margin-bottom: 20px;">
         <img class="pregunta-img" alt="Pregunta ${st.item + 1}" src="${rutaImagenFinal}" onerror="this.style.display='none'; document.getElementById('img-error').style.display='block';">
-        <p id="img-error" style="display:none; color: red; font-size: 0.9rem;">[No se pudo cargar la imagen: ${archivo}]</p>
+        <p id="img-error" style="display:none; color: red; font-size: 0.9rem;">[No se pudo cargar la imagen: ${archivo} en la carpeta ${tema.carpeta}]</p>
       </div>
       <p id="error" class="alerta oculto" style="margin-bottom: 15px; color: red;">Por favor responde la pregunta para continuar.</p>
       
@@ -121,7 +111,7 @@ export function renderPregunta(st) {
         `).join("")}
 
         <div class="acciones">
-          <button class="boton" type="submit">${st.item + 1 < total ? 'Siguiente' : 'Finalizar'}</button>
+          <button class="boton" type="submit">${st.item + 1 < total ? 'Siguiente' : 'Ver Diagnóstico y Resultados'}</button>
         </div>
       </form>
     </section>
@@ -155,147 +145,76 @@ export function renderPregunta(st) {
       st.item += 1;
       renderPregunta(st);
     } else {
-      root.innerHTML = `
-        <section class="panel" style="text-align: center; padding: 30px;">
-          <h2>¡Has completado este módulo!</h2>
-          <p>Tus respuestas han sido registradas correctamente.</p>
-          <br>
-          <a class="boton" href="index.html">Volver al Menú Principal</a>
-        </section>
-      `;
+      mostrarResultadosFinales(st, tema);
     }
   };
 }
 
+function mostrarResultadosFinales(st, tema) {
+  let aciertos = 0;
+  let totalPreguntas = st.seleccion.length;
+
+  st.seleccion.forEach((archivo, index) => {
+    const respuestaCorrecta = (tema.respuestas || {})[archivo];
+    const respuestaUsuario = st.respuestas[index];
+
+    if (typeof respuestaCorrecta === "object") {
+      let todasCorrectas = true;
+      for (const subKey in respuestaCorrecta) {
+        if (respuestaUsuario?.[subKey] !== respuestaCorrecta[subKey]) {
+          todasCorrectas = false;
+        }
+      }
+      if (todasCorrectas) aciertos++;
+    } else {
+      if (respuestaUsuario === respuestaCorrecta) {
+        aciertos++;
+      }
+    }
+  });
+
+  const porcentaje = Math.round((aciertos / totalPreguntas) * 100);
+  const root = obtenerContenedor();
+
+  let mensajeDesempeno = "";
+  if (porcentaje >= 80) {
+    mensajeDesempeno = `¡Excelente nivel en <strong>${tema.titulo}</strong>! Tienes bases muy sólidas. Te invitamos a mantener este ritmo con simulacros completos para asegurar tu puntaje máximo en el ICFES.`;
+  } else if (porcentaje >= 50) {
+    mensajeDesempeno = `Tienes bases regulares en <strong>${tema.titulo}</strong>, pero hay vacíos conceptuales en preguntas clave que el ICFES suele evaluar con trampa.`;
+  } else {
+    mensajeDesempeno = `Identificamos oportunidades de mejora críticas en <strong>${tema.titulo}</strong>. Este puntaje en el componente real te restará puntos decisivos para tu ingreso a la universidad.`;
+  }
+
+  root.innerHTML = `
+    <section class="panel" style="text-align: center; padding: 30px;">
+      <h2 style="color: var(--azul);">Diagnóstico: ${tema.titulo}</h2>
+      <p class="lead" style="margin: 0 auto 20px auto;">Reporte de resultados del simulador focalizado.</p>
+      
+      <div class="puntaje" style="margin: 20px 0;">
+        <span class="num">${aciertos} / ${totalPreguntas}</span>
+        <p style="margin: 5px 0; font-weight: 600; color: #555;">Aciertos logrados (${porcentaje}%)</p>
+      </div>
+
+      <div style="background: var(--suave); border: 1px solid var(--borde); padding: 20px; margin: 20px 0; border-radius: 6px; text-align: left;">
+        <h3 style="color: var(--rojo); margin-top: 0;">Análisis personalizado:</h3>
+        <p style="margin: 0; line-height: 1.6;">${mensajeDesempeno}</p>
+      </div>
+
+      <div style="border: 2px dashed var(--rojo); padding: 20px; margin-top: 25px; border-radius: 6px; background: #fffcfc;">
+        <h3 style="color: var(--azul); margin-top: 0;">¿Quieres asegurar tu cupo en la universidad?</h3>
+        <p style="margin-bottom: 15px;">No dejes tu puntaje al azar. Recibe acompañamiento profesional con las clases y tutorías de <strong>Mundo Matemático</strong>.</p>
+        
+        <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+          <a class="boton" href="https://wa.me/573000000000?text=Hola,%20hice%20el%20simulador%20en%20el%20módulo%20de%20${encodeURIComponent(tema.titulo)}%20y%20quiero%20información%20sobre%20las%20clases%20personalizadas" target="_blank" style="background: #25d366; color: white; text-decoration: none; padding: 10px 20px; border-radius: 4px; font-weight: bold;">
+            💬 Agendar Tutoría de Refuerzo
+          </a>
+          <a class="boton" href="index.html" style="text-decoration: none; padding: 10px 20px;">
+            Volver al Menú Principal
+          </a>
+        </div>
+      </div>
+    </section>
+  `;
+}
+
 init();
-function mostrarResultadosFinales(st, tema) {
-  let aciertos = 0;
-  let totalPreguntas = st.seleccion.length;
-
-  // Evaluar cuántas respuestas fueron correctas
-  st.seleccion.forEach((archivo, index) => {
-    const respuestaCorrecta = (tema.respuestas || {})[archivo];
-    const respuestaUsuario = st.respuestas[index];
-
-    if (typeof respuestaCorrecta === "object") {
-      // Manejo de preguntas múltiples en una misma imagen
-      let todasCorrectas = true;
-      for (const subKey in respuestaCorrecta) {
-        if (respuestaUsuario?.[subKey] !== respuestaCorrecta[subKey]) {
-          todasCorrectas = false;
-        }
-      }
-      if (todasCorrectas) aciertos++;
-    } else {
-      // Pregunta única
-      if (respuestaUsuario === respuestaCorrecta) {
-        aciertos++;
-      }
-    }
-  });
-
-  const porcentaje = Math.round((aciertos / totalPreguntas) * 100);
-  const root = document.getElementById("vista") || document.getElementById("root");
-
-  // Renderizar la vista de resultados y monetización
-  root.innerHTML = `
-    <section class="panel" style="text-align: center; padding: 30px;">
-      <h2 style="color: var(--azul);">Diagnóstico de Aritmética - ICFES Saber 11</h2>
-      <p class="lead" style="margin: 0 auto 20px auto;">Has completado el simulador focalizado de este módulo.</p>
-      
-      <div class="puntaje" style="margin: 20px 0;">
-        <span class="num">${aciertos} / ${totalPreguntas}</span>
-        <p style="margin: 5px 0; font-weight: 600; color: #555;">Respuestas correctas (${porcentaje}%)</p>
-      </div>
-
-      <div style="background: var(--suave); border: 1px solid var(--borde); padding: 20px; margin: 20px 0; border-radius: 6px; text-align: left;">
-        <h3 style="color: var(--rojo); margin-top: 0;">Análisis de tu desempeño:</h3>
-        <p>${porcentaje >= 70 ? 
-          "¡Buen trabajo! Tienes bases sólidas en Aritmética, pero para asegurar los primeros puestos en el ICFES necesitas pulir velocidad y ejercicios tipo trampa." : 
-          "Identificamos vacíos importantes en operaciones básicas y proporciones. Este puntaje en el ICFES real te restaría puntos clave para tu carrera."}
-        </p>
-      </div>
-
-      <!-- SECCIÓN DE MONETIZACIÓN / LLAMADO A LA ACCIÓN (CTA) -->
-      <div style="border: 2px dashed var(--rojo); padding: 20px; margin-top: 25px; border-radius: 6px; background: #fffcfc;">
-        <h3 style="color: var(--azul); margin-top: 0;">¿Quieres asegurar tu cupo en la universidad?</h3>
-        <p style="margin-bottom: 15px;">No dejes que la aritmética te baje el puntaje global. Refuerza con nuestro equipo en <strong>Mundo Matemático</strong>.</p>
-        
-        <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
-          <a class="boton" href="https://wa.me/573000000000?text=Hola,%20hice%20el%20simulador%20de%20Aritmética%20y%20quiero%20información%20sobre%20las%20clases%20personalizadas" target="_blank" style="background: #25d366; color: white; text-decoration: none; padding: 10px 20px; border-radius: 4px; font-weight: bold;">
-            💬 Agendar Tutoría de Refuerzo
-          </a>
-          <a class="boton" href="index.html" style="text-decoration: none; padding: 10px 20px;">
-            Volver al Menú Principal
-          </a>
-        </div>
-      </div>
-    </section>
-  `;
-}
-
-function mostrarResultadosFinales(st, tema) {
-  let aciertos = 0;
-  let totalPreguntas = st.seleccion.length;
-
-  // Evaluar cuántas respuestas fueron correctas
-  st.seleccion.forEach((archivo, index) => {
-    const respuestaCorrecta = (tema.respuestas || {})[archivo];
-    const respuestaUsuario = st.respuestas[index];
-
-    if (typeof respuestaCorrecta === "object") {
-      // Manejo de preguntas múltiples en una misma imagen
-      let todasCorrectas = true;
-      for (const subKey in respuestaCorrecta) {
-        if (respuestaUsuario?.[subKey] !== respuestaCorrecta[subKey]) {
-          todasCorrectas = false;
-        }
-      }
-      if (todasCorrectas) aciertos++;
-    } else {
-      // Pregunta única
-      if (respuestaUsuario === respuestaCorrecta) {
-        aciertos++;
-      }
-    }
-  });
-
-  const porcentaje = Math.round((aciertos / totalPreguntas) * 100);
-  const root = document.getElementById("vista") || document.getElementById("root");
-
-  // Renderizar la vista de resultados y monetización
-  root.innerHTML = `
-    <section class="panel" style="text-align: center; padding: 30px;">
-      <h2 style="color: var(--azul);">Diagnóstico de Aritmética - ICFES Saber 11</h2>
-      <p class="lead" style="margin: 0 auto 20px auto;">Has completado el simulador focalizado de este módulo.</p>
-      
-      <div class="puntaje" style="margin: 20px 0;">
-        <span class="num">${aciertos} / ${totalPreguntas}</span>
-        <p style="margin: 5px 0; font-weight: 600; color: #555;">Respuestas correctas (${porcentaje}%)</p>
-      </div>
-
-      <div style="background: var(--suave); border: 1px solid var(--borde); padding: 20px; margin: 20px 0; border-radius: 6px; text-align: left;">
-        <h3 style="color: var(--rojo); margin-top: 0;">Análisis de tu desempeño:</h3>
-        <p>${porcentaje >= 70 ? 
-          "¡Buen trabajo! Tienes bases sólidas en Aritmética, pero para asegurar los primeros puestos en el ICFES necesitas pulir velocidad y ejercicios tipo trampa." : 
-          "Identificamos vacíos importantes en operaciones básicas y proporciones. Este puntaje en el ICFES real te restaría puntos clave para tu carrera."}
-        </p>
-      </div>
-
-      <!-- SECCIÓN DE MONETIZACIÓN / LLAMADO A LA ACCIÓN (CTA) -->
-      <div style="border: 2px dashed var(--rojo); padding: 20px; margin-top: 25px; border-radius: 6px; background: #fffcfc;">
-        <h3 style="color: var(--azul); margin-top: 0;">¿Quieres asegurar tu cupo en la universidad?</h3>
-        <p style="margin-bottom: 15px;">No dejes que la aritmética te baje el puntaje global. Refuerza con nuestro equipo en <strong>Mundo Matemático</strong>.</p>
-        
-        <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
-          <a class="boton" href="https://wa.me/573000000000?text=Hola,%20hice%20el%20simulador%20de%20Aritmética%20y%20quiero%20información%20sobre%20las%20clases%20personalizadas" target="_blank" style="background: #25d366; color: white; text-decoration: none; padding: 10px 20px; border-radius: 4px; font-weight: bold;">
-            💬 Agendar Tutoría de Refuerzo
-          </a>
-          <a class="boton" href="index.html" style="text-decoration: none; padding: 10px 20px;">
-            Volver al Menú Principal
-          </a>
-        </div>
-      </div>
-    </section>
-  `;
-}
