@@ -85,9 +85,12 @@ export function renderPregunta(st) {
 
   const rutaImagenFinal = urlPng(tema, archivo);
 
-  // Detecta si la imagen contiene varias preguntas internas (ej. {"4": "C", "5": "B"})
+  // Verificamos si este archivo tiene respuestas múltiples en el objeto
   const respuestasClave = (tema.respuestas || {})[archivo];
   const esMulti = respuestasClave && typeof respuestasClave === "object";
+
+  // Si es un objeto con varias preguntas (ej: {"2": "B", "3": "B"}), tomamos las claves
+  // Si no, manejamos la única pregunta asociada al archivo
   const subPreguntas = esMulti ? Object.keys(respuestasClave) : [null];
 
   root.innerHTML = `
@@ -95,18 +98,21 @@ export function renderPregunta(st) {
     <div class="progreso"><div class="progreso-barra" style="width:${((st.item + 1) / total) * 100}%"></div></div>
     <p class="progreso-texto">Ejercicio ${st.item + 1} de ${total}</p>
     <section class="panel">
-      <img class="pregunta-img" alt="Pregunta ${st.item + 1}" src="${rutaImagenFinal}">
-      <p id="error" class="alerta oculto" style="margin-bottom: 15px; color: red;">Por favor responde todas las preguntas de la imagen.</p>
+      <div style="text-align: center; margin-bottom: 20px;">
+        <img class="pregunta-img" alt="Pregunta ${st.item + 1}" src="${rutaImagenFinal}" onerror="this.style.display='none'; document.getElementById('img-error').style.display='block';">
+        <p id="img-error" style="display:none; color: red; font-size: 0.9rem;">[No se pudo cargar la imagen: ${archivo}]</p>
+      </div>
+      <p id="error" class="alerta oculto" style="margin-bottom: 15px; color: red;">Por favor responde la pregunta para continuar.</p>
       
       <form id="form-opciones">
         ${subPreguntas.map((num) => `
-          ${num ? `<h3 class="subtitulo-pregunta" style="color: var(--azul); margin-top: 15px;">Pregunta ${num}</h3>` : ""}
-          <fieldset class="opciones" style="margin-bottom: 20px; border: none;">
+          ${num ? `<h3 class="subtitulo-pregunta" style="color: var(--azul); margin-top: 15px; margin-bottom: 8px;">Pregunta ${num}</h3>` : ""}
+          <fieldset class="opciones" style="margin-bottom: 20px; border: none; padding: 0;">
             <legend class="sr">Elige una respuesta</legend>
             ${["A", "B", "C", "D"]
               .map(
                 (l) => `<label class="opcion" style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; cursor: pointer;">
-                  <input type="radio" name="opcion_${num || 'unica'}" value="${l}">
+                  <input type="radio" name="opcion_${num || 'unica'}" value="${l}" required>
                   <span class="letra" style="font-weight: bold;">${l}</span><span>Opción ${l}</span>
                 </label>`
               )
