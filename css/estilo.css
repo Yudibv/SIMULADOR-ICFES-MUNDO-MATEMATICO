@@ -130,10 +130,11 @@ a { color: var(--azul); }
   cursor: pointer;
   font-size: 1rem;
   font-family: inherit;
+  border-radius: 4px;
 }
 
 .boton:hover { filter: brightness(1.08); }
-.boton-verde { background: var(--rojo); color: #fff; } /* Reemplazado botón verde por rojo */
+.boton-verde { background: var(--rojo); color: #fff; }
 .tarjeta .boton { margin-top: 0.5rem; align-self: flex-start; }
 
 .bloque-todas {
@@ -145,6 +146,7 @@ a { color: var(--azul); }
   gap: 1rem;
   align-items: center;
   justify-content: space-between;
+  background: var(--suave);
 }
 
 .bloque-todas h2 { color: var(--azul); margin: 0 0 0.35rem; }
@@ -152,22 +154,27 @@ a { color: var(--azul); }
 
 .panel {
   border: 1px solid var(--borde);
-  padding: 1.4rem 1.5rem 1.6rem;
+  padding: 1.5rem;
   background: var(--fondo);
-  max-width: 800px;     /* Limita el ancho máximo para que no se vea gigantesco */
-  margin: 20px auto;    /* Centra el panel en la pantalla */
+  max-width: 850px;     /* Ancho perfecto y estético para leer la prueba */
+  margin: 25px auto;    /* Centra el panel en la pantalla */
   box-sizing: border-box;
+  border-radius: 6px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 }
 
-/* Y asegúrate de agregar esto justo debajo para controlar la imagen */
+/* Control estricto de las imágenes de las preguntas para que nunca rebasen el panel */
 .pregunta-img {
-  max-width: 100%;      /* Evita que la imagen rebase el ancho del panel */
-  height: auto;         /* Mantiene las proporciones originales para que no se deforme */
+  max-width: 100%;       
+  max-height: 65vh;      /* Evita que imágenes muy altas excedan la pantalla verticalmente */
+  height: auto;          
   display: block;
-  margin: 0 auto 20px auto; /* Centra la imagen y le da espacio abajo */
+  margin: 0 auto 1.2rem auto; /* Centra la imagen y le da espacio hacia las opciones */
+  object-fit: contain;
+  border-radius: 4px;
 }
 
-.migas { font-size: 0.9rem; margin-bottom: 1rem; }
+.migas { font-size: 0.9rem; margin-bottom: 1rem; color: #555; }
 .h-seccion { color: var(--azul); font-size: 1.1rem; }
 .lista-instrucciones { padding-left: 1.2rem; }
 .lista-instrucciones li { margin-bottom: 0.55rem; }
@@ -187,9 +194,11 @@ a { color: var(--azul); }
   background: var(--suave);
   border: 1px solid var(--borde);
   margin-bottom: 0.4rem;
+  border-radius: 4px;
+  overflow: hidden;
 }
 
-.progreso-barra { height: 100%; background: var(--rojo); }
+.progreso-barra { height: 100%; background: var(--rojo); transition: width 0.3s ease; }
 .progreso-texto { margin: 0 0 1rem; color: var(--azul); font-weight: 600; font-size: 0.95rem; }
 
 .opciones {
@@ -208,6 +217,8 @@ a { color: var(--azul); }
   border: 1px solid var(--borde);
   padding: 0.75rem 0.9rem;
   cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.2s, border-color 0.2s;
 }
 
 .opcion:hover, .opcion:has(input:checked) {
@@ -221,6 +232,7 @@ a { color: var(--azul); }
   background: #fff4e5;
   border: 1px solid #e0b15a;
   padding: 0.6rem 0.8rem;
+  border-radius: 4px;
 }
 
 .puntaje { font-size: 1.15rem; }
@@ -232,14 +244,6 @@ a { color: var(--azul); }
 .revision.mal { border-left: 5px solid var(--rojo); }
 .explicacion { color: #222; }
 .revision img { max-width: 100%; height: auto; border: 1px solid var(--borde); margin: 0.5rem 0; }
-
-.pregunta-img {
-  max-width: 100%;    /* Hace que la imagen nunca rebase el ancho de su contenedor */
-  height: auto;       /* Mantiene la proporción original para que no se deforme */
-  display: block;
-  margin: 0 auto;     /* Centra la imagen de forma elegante */
-  object-fit: contain;
-}
 
 .campo-tiempo {
   display: flex;
@@ -254,6 +258,7 @@ a { color: var(--azul); }
   padding: 0.45rem 0.5rem;
   font-size: 1rem;
   border: 1px solid var(--borde);
+  border-radius: 4px;
 }
 
 .contacto {
