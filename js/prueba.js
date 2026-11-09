@@ -205,7 +205,7 @@ function mostrarResultadosFinales(st, tema) {
         <p style="margin-bottom: 15px;">No dejes tu puntaje al azar. Recibe acompañamiento profesional con las clases y tutorías de <strong>Mundo Matemático</strong>.</p>
         
         <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
-          <a class="boton" href="https://wa.me/573000000000?text=Hola,%20hice%20el%20simulador%20en%20el%20módulo%20de%20${encodeURIComponent(tema.titulo)}%20y%20quiero%20información%20sobre%20las%20clases%20personalizadas" target="_blank" style="background: #25d366; color: white; text-decoration: none; padding: 10px 20px; border-radius: 4px; font-weight: bold;">
+          <a class="boton" href="https://wa.me/573115574410?text=Hola,%20hice%20el%20simulador%20en%20el%20módulo%20de%20${encodeURIComponent(tema.titulo)}%20y%20quiero%20información%20sobre%20las%20clases%20personalizadas" target="_blank" style="background: #25d366; color: white; text-decoration: none; padding: 10px 20px; border-radius: 4px; font-weight: bold;">
             💬 Agendar Tutoría de Refuerzo
           </a>
           <a class="boton" href="index.html" style="text-decoration: none; padding: 10px 20px;">
