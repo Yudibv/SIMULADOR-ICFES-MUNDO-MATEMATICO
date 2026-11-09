@@ -8,47 +8,45 @@
       "icono": "01",
       "carpeta": "Aritmetica",
       "preguntas": [
-        "23bb.png",
-        "35b.png",
-        "456cbd.png",
+        "11c.png",
         "13b.png",
         "13d.png",
         "14c.png",
         "15c.png",
         "17b.png",
         "20a.png",
+        "23bb.jpg",
         "27a.png",
         "34c.png",
         "38c.png",
-        "7a.png",
-        "11c.png",
-        "p17b.png",
-        "5b.png"
+        "3b.png",
+        "456cbd.jpg",
+        "5b.png",
+        "7a.png"
       ],
       "respuestas": {
-        "23bb.png": {
-          "2": "B",
-          "3": "B"
-        },
-        "35b.png": "B",
-        "456cbd.png": {
-          "4": "C",
-          "5": "B",
-          "6": "D"
-        },
+        "11c.png": "C",
         "13b.png": "B",
         "13d.png": "D",
         "14c.png": "C",
         "15c.png": "C",
         "17b.png": "B",
         "20a.png": "A",
+        "23bb.jpg": {
+          "2": "B",
+          "3": "B"
+        },
         "27a.png": "A",
         "34c.png": "C",
         "38c.png": "C",
-        "7a.png": "A",
-        "11c.png": "C",
-        "p17b.png": "B",
-        "5b.png": "B"
+        "3b.png": "B",
+        "456cbd.jpg": {
+          "4": "C",
+          "5": "B",
+          "6": "D"
+        },
+        "5b.png": "B",
+        "7a.png": "A"
       },
       "explicaciones": {}
     },
@@ -60,45 +58,32 @@
       "icono": "02",
       "carpeta": "Porcentajes y proporcionalidad",
       "preguntas": [
-        "7b8b.png",
-        "19d20b.png",
-        "2c.png",
-        "3d.png",
-        "7b8d.png",
-        "8b9b.png",
         "12d13b.png",
+        "19d20b.png",
         "24b.png",
+        "2c.png",
         "34b35c.png",
         "35b.png",
         "35c.png",
         "36b.png",
+        "3d.png",
         "40b.png",
-        "47d.png"
+        "47d.png",
+        "7b8b.png",
+        "7b8d.png",
+        "8b9b.png"
       ],
       "respuestas": {
-        "7b8b.png": {
-          "8": "B",
-          "9": "B"
+        "12d13b.png": {
+          "12": "D",
+          "13": "B"
         },
         "19d20b.png": {
           "19": "D",
           "20": "B"
         },
-        "2c.png": "C",
-        "3d.png": "D",
-        "7b8d.png": {
-          "7": "B",
-          "8": "D"
-        },
-        "8b9b.png": {
-          "8": "B",
-          "9": "B"
-        },
-        "12d13b.png": {
-          "12": "D",
-          "13": "B"
-        },
         "24b.png": "B",
+        "2c.png": "C",
         "34b35c.png": {
           "34": "B",
           "35": "C"
@@ -106,8 +91,21 @@
         "35b.png": "B",
         "35c.png": "C",
         "36b.png": "B",
+        "3d.png": "D",
         "40b.png": "B",
-        "47d.png": "D"
+        "47d.png": "D",
+        "7b8b.png": {
+          "8": "B",
+          "9": "B"
+        },
+        "7b8d.png": {
+          "7": "B",
+          "8": "D"
+        },
+        "8b9b.png": {
+          "8": "B",
+          "9": "B"
+        }
       },
       "explicaciones": {}
     },
@@ -119,40 +117,40 @@
       "icono": "03",
       "carpeta": "Algebra",
       "preguntas": [
-        "1d.png",
+        "10b.png",
+        "12c.png",
+        "14a.png",
         "15d.png",
         "16b.png",
-        "17d.png",
         "17b.png",
+        "17d.png",
         "18d.png",
         "19b.png",
         "19c.png",
+        "1d.png",
         "20b.png",
         "21a.png",
         "31b.png",
         "40b.png",
-        "66d.png",
-        "10b.png",
-        "12c.png",
-        "14a.png"
+        "66d.png"
       ],
       "respuestas": {
-        "1d.png": "D",
+        "10b.png": "B",
+        "12c.png": "C",
+        "14a.png": "A",
         "15d.png": "D",
         "16b.png": "B",
-        "17d.png": "D",
         "17b.png": "B",
+        "17d.png": "D",
         "18d.png": "D",
         "19b.png": "B",
         "19c.png": "C",
+        "1d.png": "D",
         "20b.png": "B",
         "21a.png": "A",
         "31b.png": "B",
         "40b.png": "B",
-        "66d.png": "D",
-        "10b.png": "B",
-        "12c.png": "C",
-        "14a.png": "A"
+        "66d.png": "D"
       },
       "explicaciones": {}
     },
@@ -164,46 +162,46 @@
       "icono": "04",
       "carpeta": "Funciones",
       "preguntas": [
-        "6b.png",
-        "7a.png",
-        "9a.png",
-        "19c.png",
-        "20a.png",
-        "43b.png",
-        "49d.png",
-        "2a.png",
-        "2b.png",
-        "9c.png",
-        "12c.png",
-        "09a.png",
         "013c.png",
+        "09a.png",
+        "12c.png",
+        "13c.png",
         "14d.png",
         "15c.png",
         "16b.png",
-        "13c.png",
         "18b.png",
-        "19a.png"
+        "19a.png",
+        "19c.png",
+        "20a.png",
+        "2a.png",
+        "2b.jpg",
+        "43b.png",
+        "49d.png",
+        "6b.png",
+        "7a.png",
+        "9a.png",
+        "9c.png"
       ],
       "respuestas": {
-        "6b.png": "B",
-        "7a.png": "A",
-        "9a.png": "A",
-        "19c.png": "C",
-        "20a.png": "A",
-        "43b.png": "B",
-        "49d.png": "D",
-        "2a.png": "A",
-        "2b.png": "A",
-        "9c.png": "C",
-        "12c.png": "C",
-        "09a.png": "A",
         "013c.png": "C",
+        "09a.png": "A",
+        "12c.png": "C",
+        "13c.png": "C",
         "14d.png": "D",
         "15c.png": "C",
         "16b.png": "B",
-        "13c.png": "C",
         "18b.png": "B",
-        "19a.png": "A"
+        "19a.png": "A",
+        "19c.png": "C",
+        "20a.png": "A",
+        "2a.png": "A",
+        "2b.jpg": "A",
+        "43b.png": "B",
+        "49d.png": "D",
+        "6b.png": "B",
+        "7a.png": "A",
+        "9a.png": "A",
+        "9c.png": "C"
       },
       "explicaciones": {}
     },
@@ -215,50 +213,50 @@
       "icono": "05",
       "carpeta": "Geometria",
       "preguntas": [
-        "69c.png",
-        "2a.png",
-        "5a.png",
-        "7c.png",
+        "12b.png",
         "14b.png",
+        "14c.png",
         "16a.png",
+        "18b.png",
+        "20c.jpg",
         "22c.png",
         "23b.png",
         "24d.png",
         "29c.png",
+        "2a.png",
+        "2b.png",
         "32b.png",
         "37b.png",
         "41b.png",
         "42d.png",
         "50a.png",
-        "2b.png",
+        "5a.png",
         "5c.png",
-        "12b.png",
-        "18b.png",
-        "20c.png",
-        "14c.png"
+        "69c.png",
+        "7c.png"
       ],
       "respuestas": {
-        "69c.png": "C",
-        "2a.png": "B",
-        "5a.png": "A",
-        "7c.png": "C",
+        "12b.png": "B",
         "14b.png": "B",
+        "14c.png": "C",
         "16a.png": "A",
+        "18b.png": "B",
+        "20c.jpg": "C",
         "22c.png": "C",
         "23b.png": "B",
         "24d.png": "D",
         "29c.png": "C",
+        "2a.png": "B",
+        "2b.png": "A",
         "32b.png": "B",
         "37b.png": "B",
         "41b.png": "B",
         "42d.png": "D",
         "50a.png": "A",
-        "2b.png": "A",
+        "5a.png": "A",
         "5c.png": "C",
-        "12b.png": "B",
-        "18b.png": "B",
-        "20c.png": "C",
-        "14c.png": "C"
+        "69c.png": "C",
+        "7c.png": "C"
       },
       "explicaciones": {}
     },
@@ -270,56 +268,56 @@
       "icono": "06",
       "carpeta": "Trigonometría",
       "preguntas": [
-        "9a10a11b.png",
+        "10b.png",
+        "11c.png",
         "12c13c.png",
-        "1d.png",
-        "1c2b.png",
-        "3a.png",
         "15c.png",
         "18c.png",
+        "195d.png",
+        "1c2b.png",
+        "1d.png",
         "22c.png",
         "23b.png",
+        "2b.png",
         "29c.png",
         "31b.png",
+        "3a.png",
         "44b.png",
         "53c.png",
         "56d.png",
-        "195d.png",
         "6c.png",
-        "10b.png",
-        "11c.png",
-        "2b.png"
+        "9a10a11b.png"
       ],
       "respuestas": {
-        "9a10a11b.png": {
-          "9": "A",
-          "10": "A",
-          "11": "B"
-        },
+        "10b.png": "B",
+        "11c.png": "C",
         "12c13c.png": {
           "12": "C",
           "13": "C"
         },
-        "1d.png": "D",
+        "15c.png": "C",
+        "18c.png": "C",
+        "195d.png": "D",
         "1c2b.png": {
           "1": "C",
           "2": "B"
         },
-        "3a.png": "A",
-        "15c.png": "C",
-        "18c.png": "C",
+        "1d.png": "D",
         "22c.png": "C",
         "23b.png": "B",
+        "2b.png": "B",
         "29c.png": "C",
         "31b.png": "B",
+        "3a.png": "A",
         "44b.png": "B",
         "53c.png": "C",
         "56d.png": "D",
-        "195d.png": "D",
         "6c.png": "C",
-        "10b.png": "B",
-        "11c.png": "C",
-        "2b.png": "B"
+        "9a10a11b.png": {
+          "9": "A",
+          "10": "A",
+          "11": "B"
+        }
       },
       "explicaciones": {}
     },
@@ -331,50 +329,50 @@
       "icono": "07",
       "carpeta": "Estadistica y probabilidad",
       "preguntas": [
+        "11d.png",
         "12b.png",
+        "15d.png",
         "16d.png",
+        "18a.png",
+        "1c.png",
+        "1d.jpg",
+        "20d.png",
+        "25a.png",
         "26c.png",
         "28a.png",
         "30b.png",
         "33d.png",
         "36c.png",
         "39d.png",
+        "45d.png",
         "46d.png",
         "48d.png",
-        "18a.png",
-        "11d.png",
-        "1c.png",
-        "8d.png",
         "4a.png",
-        "20d.png",
-        "1d.png",
         "8b.png",
-        "15d.png",
-        "25a.png",
-        "45d.png"
+        "8d.png"
       ],
       "respuestas": {
+        "11d.png": "D",
         "12b.png": "B",
+        "15d.png": "D",
         "16d.png": "D",
+        "18a.png": "A",
+        "1c.png": "C",
+        "1d.jpg": "D",
+        "20d.png": "D",
+        "25a.png": "A",
         "26c.png": "C",
         "28a.png": "A",
         "30b.png": "B",
         "33d.png": "D",
         "36c.png": "C",
         "39d.png": "D",
+        "45d.png": "D",
         "46d.png": "D",
         "48d.png": "D",
-        "18a.png": "A",
-        "11d.png": "D",
-        "1c.png": "C",
-        "8d.png": "D",
         "4a.png": "A",
-        "20d.png": "D",
-        "1d.png": "D",
         "8b.png": "B",
-        "15d.png": "D",
-        "25a.png": "A",
-        "45d.png": "D"
+        "8d.png": "D"
       },
       "explicaciones": {}
     },
@@ -386,49 +384,25 @@
       "icono": "08",
       "carpeta": "Sondeo de preguntas",
       "preguntas": [
-        "7b8c9d10a.png",
-        "9c10c11b12a13c.png",
-        "1b.png",
-        "1c2d.png",
-        "2c3c4c5b6a.png",
+        "01b.png",
         "11a12a.png",
         "13b14c.png",
         "14b.png",
         "15b16c17b.png",
         "17b18b.png",
+        "19c.png",
+        "1b.png",
+        "1c2d.png",
         "21b.png",
+        "2c3c4c5b6a.png",
         "37b.png",
         "38a.png",
-        "01b.png",
         "4b.png",
-        "19c.png"
+        "7b8c9d10a.png",
+        "9c10c11b12a13c.png"
       ],
       "respuestas": {
-        "7b8c9d10a.png": {
-          "7": "B",
-          "8": "C",
-          "9": "D",
-          "10": "A"
-        },
-        "9c10c11b12a13c.png": {
-          "9": "C",
-          "10": "C",
-          "11": "B",
-          "12": "A",
-          "13": "C"
-        },
-        "1b.png": "B",
-        "1c2d.png": {
-          "1": "C",
-          "2": "D"
-        },
-        "2c3c4c5b6a.png": {
-          "2": "C",
-          "3": "C",
-          "4": "D",
-          "5": "B",
-          "6": "A"
-        },
+        "01b.png": "B",
         "11a12a.png": {
           "11": "A",
           "12": "A"
@@ -447,12 +421,36 @@
           "17": "B",
           "18": "B"
         },
+        "19c.png": "C",
+        "1b.png": "B",
+        "1c2d.png": {
+          "1": "C",
+          "2": "D"
+        },
         "21b.png": "B",
+        "2c3c4c5b6a.png": {
+          "2": "C",
+          "3": "C",
+          "4": "D",
+          "5": "B",
+          "6": "A"
+        },
         "37b.png": "B",
         "38a.png": "A",
-        "01b.png": "B",
         "4b.png": "B",
-        "19c.png": "C"
+        "7b8c9d10a.png": {
+          "7": "B",
+          "8": "C",
+          "9": "D",
+          "10": "A"
+        },
+        "9c10c11b12a13c.png": {
+          "9": "C",
+          "10": "C",
+          "11": "B",
+          "12": "A",
+          "13": "C"
+        }
       },
       "explicaciones": {}
     }
