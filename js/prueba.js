@@ -279,7 +279,7 @@ function mostrarResultadosFinales(st, tema) {
           <p style="margin-bottom: 20px; color: #444;">Realiza el pago seguro y desbloquea el análisis completo de inmediato a través de nuestro canal de atención.</p>
           
           <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
-            <a class="boton" href="https://wa.me/573000000000?text=Hola,%20acabo%20de%20terminar%20el%20Simulacro%20Global%20en%20Mundo%20Matemático%20y%20quiero%20pagar%20para%20obtener%20mi%20Informe%20Analítico%20Predictivo." target="_blank" style="background: #25d366; color: white; text-decoration: none; padding: 12px 25px; border-radius: 6px; font-weight: bold; font-size: 1rem;">
+            <a class="boton" href="https://wa.me/573115574410?text=Hola,%20acabo%20de%20terminar%20el%20Simulacro%20Global%20en%20Mundo%20Matemático%20y%20quiero%20pagar%20para%20obtener%20mi%20Informe%20Analítico%20Predictivo." target="_blank" style="background: #25d366; color: white; text-decoration: none; padding: 12px 25px; border-radius: 6px; font-weight: bold; font-size: 1rem;">
               💳 Pagar Informe Analítico (WhatsApp)
             </a>
             <a class="boton" href="index.html" style="text-decoration: none; padding: 12px 25px; border-radius: 6px;">
