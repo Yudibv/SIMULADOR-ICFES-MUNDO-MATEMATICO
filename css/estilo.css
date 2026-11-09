@@ -1,273 +1,100 @@
-:root {
-  --azul: #1d4ed8;       /* Azul principal fuerte y moderno */
-  --rojo: #dc2626;       /* Rojo corporativo Mundo Matemático para acentos */
-  --texto: #111111;
-  --fondo: #ffffff;
-  --suave: #f8fafc;
-  --borde: #e2e8f0;
-}
-
-* { box-sizing: border-box; }
-
-html, body {
-  margin: 0;
-  padding: 0;
-  background: var(--fondo);
-  color: var(--texto);
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  line-height: 1.5;
-  min-height: 100%;
-}
-
-a { color: var(--azul); }
-
-.topbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 1rem 1.5rem;
-  border-bottom: 3px solid var(--azul);
-  position: sticky;
-  top: 0;
-  background: #fff;
-  z-index: 5;
-}
-
-.marca {
-  text-decoration: none;
-  display: flex;
-  align-items: baseline;
-  gap: 0.5rem;
-}
-
-.marca-icfes { color: var(--azul); font-weight: 800; letter-spacing: 0.08em; }
-.marca-area { color: var(--rojo); font-weight: 700; }
-
-.modo-todas, .temporizador {
-  margin: 0;
-  color: var(--azul);
-  font-weight: 700;
-  font-size: 0.95rem;
-}
-
-.temporizador.aviso { color: var(--rojo); }
-
-.contenedor {
-  max-width: 980px;
-  margin: 0 auto;
-  padding: 2rem 1.25rem 4rem;
-}
-
-.pie {
-  text-align: center;
-  color: #444;
-  font-size: 0.85rem;
-  padding: 1.5rem;
-  border-top: 1px solid var(--borde);
-}
-
-.hero h1, .panel h1 {
-  color: var(--azul);
-  margin: 0.2rem 0 0.6rem;
-  font-size: 2rem;
-}
-
-.etiqueta {
-  color: var(--rojo);
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  margin: 0;
-  font-size: 0.8rem;
-}
-
-.lead { color: var(--texto); max-width: 42rem; }
-
-.rejilla {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 1rem;
-  margin-top: 1.5rem;
-}
-
+/* Tarjetas con efecto moderno, elevación y bordes refinados */
 .tarjeta {
-  border: 1px solid var(--borde);
-  border-top: 4px solid var(--azul);
-  padding: 1.1rem 1.2rem 1.3rem;
   background: var(--fondo);
-  min-height: 260px;
+  border: 1px solid var(--borde);
+  border-top: 5px solid var(--azul);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
   display: flex;
   flex-direction: column;
 }
 
-.tarjeta h2 { color: var(--azul); margin: 0.4rem 0 0.2rem; font-size: 1.25rem; }
-.subtitulo { color: var(--rojo); font-weight: 600; margin: 0 0 0.6rem; }
+.tarjeta:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+}
 
-.badge {
+/* Botones con estilo moderno, degradados sutiles y esquinas redondeadas */
+.boton {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 2.4rem;
-  height: 2.4rem;
-  border-radius: 999px;
-  background: var(--azul);
-  color: #fff;
-  font-weight: 800;
-  font-size: 0.85rem;
-}
-
-.meta { color: #333; font-size: 0.9rem; margin-top: auto; }
-
-.boton {
-  display: inline-block;
   background: var(--azul);
   color: #fff;
   text-decoration: none;
   border: 0;
-  padding: 0.7rem 1.1rem;
+  padding: 0.75rem 1.25rem;
   font-weight: 700;
   cursor: pointer;
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-family: inherit;
-  border-radius: 4px;
+  border-radius: 8px;
+  transition: background 0.2s, filter 0.2s;
 }
 
-.boton:hover { filter: brightness(1.08); }
-.boton-verde { background: var(--rojo); color: #fff; }
-.tarjeta .boton { margin-top: 0.5rem; align-self: flex-start; }
-
-.bloque-todas {
-  margin-top: 2rem;
-  padding: 1.4rem 1.5rem;
-  border: 2px dashed var(--rojo);
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  align-items: center;
-  justify-content: space-between;
-  background: var(--suave);
+.boton:hover {
+  filter: brightness(1.1);
 }
 
-.bloque-todas h2 { color: var(--azul); margin: 0 0 0.35rem; }
-.bloque-todas p { margin: 0; max-width: 36rem; }
-
+/* Panel de preguntas y resultados con aspecto de tarjeta flotante */
 .panel {
-  border: 1px solid var(--borde);
-  padding: 1.5rem;
   background: var(--fondo);
-  max-width: 850px;     /* Ancho perfecto y estético para leer la prueba */
-  margin: 25px auto;    /* Centra el panel en la pantalla */
-  box-sizing: border-box;
-  border-radius: 6px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-}
-
-/* Control estricto de las imágenes de las preguntas para que nunca rebasen el panel */
-.pregunta-img {
-  max-width: 100%;       
-  max-height: 65vh;      /* Evita que imágenes muy altas excedan la pantalla verticalmente */
-  height: auto;          
-  display: block;
-  margin: 0 auto 1.2rem auto; /* Centra la imagen y le da espacio hacia las opciones */
-  object-fit: contain;
-  border-radius: 4px;
-}
-
-.migas { font-size: 0.9rem; margin-bottom: 1rem; color: #555; }
-.h-seccion { color: var(--azul); font-size: 1.1rem; }
-.lista-instrucciones { padding-left: 1.2rem; }
-.lista-instrucciones li { margin-bottom: 0.55rem; }
-
-.acciones {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  align-items: center;
-  margin-top: 1.4rem;
-}
-
-.enlace { font-weight: 600; }
-
-.progreso {
-  height: 8px;
-  background: var(--suave);
   border: 1px solid var(--borde);
-  margin-bottom: 0.4rem;
-  border-radius: 4px;
-  overflow: hidden;
+  border-radius: 12px;
+  padding: 2rem;
+  max-width: 850px;
+  margin: 30px auto;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
 }
 
-.progreso-barra { height: 100%; background: var(--rojo); transition: width 0.3s ease; }
-.progreso-texto { margin: 0 0 1rem; color: var(--azul); font-weight: 600; font-size: 0.95rem; }
-
-.opciones {
-  border: 0;
-  padding: 0;
-  margin: 1rem 0 0;
-  display: grid;
-  gap: 0.65rem;
+/* Insignias o números de los temas más estilizados */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.8rem;
+  height: 2.8rem;
+  border-radius: 10px;
+  background: #eff6ff;
+  color: var(--azul);
+  font-weight: 800;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
 }
 
+/* Opciones de respuesta tipo botón grande interactivo */
 .opcion {
   display: grid;
   grid-template-columns: auto auto 1fr;
-  gap: 0.7rem;
-  align-items: start;
-  border: 1px solid var(--borde);
-  padding: 0.75rem 0.9rem;
+  gap: 0.8rem;
+  align-items: center;
+  border: 1.5px solid var(--borde);
+  padding: 0.9rem 1rem;
   cursor: pointer;
-  border-radius: 4px;
-  transition: background 0.2s, border-color 0.2s;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  background: #fafafa;
 }
 
 .opcion:hover, .opcion:has(input:checked) {
   border-color: var(--azul);
+  background: #eff6ff;
+}
+
+/* Barra de progreso con bordes redondeados */
+.progreso {
+  height: 10px;
   background: var(--suave);
+  border-radius: 5px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
 }
 
-.letra { color: var(--rojo); font-weight: 800; min-width: 1.2rem; }
-
-.alerta {
-  background: #fff4e5;
-  border: 1px solid #e0b15a;
-  padding: 0.6rem 0.8rem;
-  border-radius: 4px;
+.progreso-barra {
+  height: 100%;
+  background: var(--rojo);
+  border-radius: 5px;
+  transition: width 0.4s ease;
 }
-
-.puntaje { font-size: 1.15rem; }
-.puntaje .num { color: var(--rojo); font-size: 2.4rem; font-weight: 800; }
-.puntaje-mini { color: var(--azul); font-weight: 700; }
-
-.revision { margin-top: 1rem; }
-.revision.ok { border-left: 5px solid #16a34a; }
-.revision.mal { border-left: 5px solid var(--rojo); }
-.explicacion { color: #222; }
-.revision img { max-width: 100%; height: auto; border: 1px solid var(--borde); margin: 0.5rem 0; }
-
-.campo-tiempo {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.7rem;
-  align-items: center;
-  margin: 1rem 0;
-}
-
-.campo-tiempo input {
-  width: 5rem;
-  padding: 0.45rem 0.5rem;
-  font-size: 1rem;
-  border: 1px solid var(--borde);
-  border-radius: 4px;
-}
-
-.contacto {
-  margin-top: 1.5rem;
-  border-top: 4px solid var(--rojo);
-}
-
-.contacto h2 { color: var(--azul); margin: 0.3rem 0 0.6rem; }
-.contacto a { font-weight: 700; }
-
-.oculto { display: none !important; }
-.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); }
