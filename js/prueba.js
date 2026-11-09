@@ -42,7 +42,6 @@ function temaPorId(id) {
 function prepararTemaActual() {
   const tema = temaPorId(state.cola[state.indiceTema]);
   const todasLasPreguntas = tema.preguntas || [];
-  // Selecciona al azar o todas según prefieras
   state.seleccion = todasLasPreguntas.slice(0, PREGUNTAS_POR_PRUEBA);
   state.item = 0;
   state.respuestas = {};
@@ -54,13 +53,20 @@ export function renderPregunta(st) {
   const total = st.seleccion.length;
 
   if (!archivo) {
-    document.getElementById("root").innerHTML = `<h2>¡Prueba finalizada!</h2><a class="boton" href="index.html">Volver al Menú</a>`;
+    document.getElementById("root").innerHTML = `
+      <section class="panel" style="text-align: center;">
+        <h2>¡Prueba finalizada!</h2>
+        <p>Has completado las preguntas de este módulo con éxito.</p>
+        <br>
+        <a class="boton" href="index.html">Volver al Menú Principal</a>
+      </section>
+    `;
     return;
   }
 
   const rutaImagenFinal = urlPng(tema, archivo);
 
-  // Verificamos si la respuesta es un objeto (preguntas múltiples) o texto plano
+  // Detecta si la imagen contiene varias preguntas internas (ej. {"4": "C", "5": "B"})
   const respuestasClave = (tema.respuestas || {})[archivo];
   const esMulti = respuestasClave && typeof respuestasClave === "object";
   const subPreguntas = esMulti ? Object.keys(respuestasClave) : [null];
@@ -125,14 +131,8 @@ export function renderPregunta(st) {
       st.item += 1;
       renderPregunta(st);
     } else {
-      root.innerHTML = `
-        <section class="panel" style="text-align: center;">
-          <h2>¡Has completado este módulo!</h2>
-          <p>Tus respuestas han sido registradas correctamente.</p>
-          <br>
-          <a class="boton" href="index.html">Volver al Menú Principal</a>
-        </section>
-      `;
+      st.item += 1;
+      renderPregunta(st); // Llama al finalizador
     }
   };
 }
