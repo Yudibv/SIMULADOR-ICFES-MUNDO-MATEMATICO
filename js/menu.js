@@ -5,7 +5,6 @@ const aviso = document.getElementById("aviso");
 const bloqueTodas = document.getElementById("bloque-todas");
 
 function tarjeta(tema, indice) {
-  const n = tema.preguntas?.length || 0;
   const icono = tema.icono || String(indice + 1).padStart(2, "0");
   const articulo = document.createElement("article");
   articulo.className = "tarjeta";
@@ -14,10 +13,12 @@ function tarjeta(tema, indice) {
     <h2>${tema.titulo}</h2>
     <p class="subtitulo">${tema.subtitulo || ""}</p>
     <p>${tema.descripcion || ""}</p>
+    <p class="meta" style="color: #555; font-size: 0.85rem; margin-top: auto; margin-bottom: 0.8rem;">Prueba interactiva: 10 preguntas elegidas al azar</p>
     <a class="boton" href="prueba.html?tema=${encodeURIComponent(tema.id)}">Empezar</a>
   `;
   return articulo;
 }
+
 async function inicializarMenu() {
   try {
     const temas = await cargarTemas();
