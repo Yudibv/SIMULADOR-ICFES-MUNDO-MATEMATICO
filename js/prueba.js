@@ -10,15 +10,26 @@ let state = {
   todas: false
 };
 
+function obtenerContenedor() {
+  let root = document.getElementById("root") || document.getElementById("panel") || document.getElementById("app") || document.querySelector("main");
+  if (!root) {
+    root = document.createElement("main");
+    root.id = "root";
+    document.body.appendChild(root);
+  }
+  return root;
+}
+
 async function init() {
   const params = new URLSearchParams(window.location.search);
   const temaId = params.get("tema");
   const esTodas = params.get("todas") === "1";
 
-  state.temas = await cargarTemas();
+  state.temas = aliasTemas(await cargarTemas());
+  const root = obtenerContenedor();
   
   if (!state.temas.length) {
-    document.getElementById("root").innerHTML = `<p class="alerta">No se pudieron cargar los temas. Revisa el archivo indice.json.</p>`;
+    root.innerHTML = `<p class="alerta" style="padding: 20px; color: red;">No se pudieron cargar los temas. Revisa el archivo indice.json.</p>`;
     return;
   }
 
@@ -35,8 +46,15 @@ async function init() {
   renderPregunta(state);
 }
 
+function aliasTemas(temas) {
+  return temas.map(t => ({
+    ...t,
+    id: t.id || t.carpeta
+  }));
+}
+
 function temaPorId(id) {
-  return state.temas.find(t => t.id === id) || state.temas[0];
+  return state.temas.find(t => t.id === id || t.carpeta === id) || state.temas[0];
 }
 
 function prepararTemaActual() {
@@ -51,10 +69,11 @@ export function renderPregunta(st) {
   const tema = temaPorId(st.cola[st.indiceTema]);
   const archivo = st.seleccion[st.item];
   const total = st.seleccion.length;
+  const root = obtenerContenedor();
 
   if (!archivo) {
-    document.getElementById("root").innerHTML = `
-      <section class="panel" style="text-align: center;">
+    root.innerHTML = `
+      <section class="panel" style="text-align: center; padding: 30px;">
         <h2>¡Prueba finalizada!</h2>
         <p>Has completado las preguntas de este módulo con éxito.</p>
         <br>
@@ -71,26 +90,25 @@ export function renderPregunta(st) {
   const esMulti = respuestasClave && typeof respuestasClave === "object";
   const subPreguntas = esMulti ? Object.keys(respuestasClave) : [null];
 
-  const root = document.getElementById("root");
-  if (!root) return;
-
   root.innerHTML = `
-    <p class="migas"><a href="index.html">Menú</a> / ${tema.titulo} / Ejercicio ${st.item + 1}</p>
+    <p class="migas"><a href="index.html">Menú</a> / ${tema.titulo || tema.id} / Ejercicio ${st.item + 1}</p>
     <div class="progreso"><div class="progreso-barra" style="width:${((st.item + 1) / total) * 100}%"></div></div>
     <p class="progreso-texto">Ejercicio ${st.item + 1} de ${total}</p>
     <section class="panel">
       <img class="pregunta-img" alt="Pregunta ${st.item + 1}" src="${rutaImagenFinal}">
-      <p id="error" class="alerta oculto" style="margin-bottom: 15px;">Por favor responde todas las preguntas de la imagen.</p>
+      <p id="error" class="alerta oculto" style="margin-bottom: 15px; color: red;">Por favor responde todas las preguntas de la imagen.</p>
       
       <form id="form-opciones">
         ${subPreguntas.map((num) => `
           ${num ? `<h3 class="subtitulo-pregunta" style="color: var(--azul); margin-top: 15px;">Pregunta ${num}</h3>` : ""}
-          <fieldset class="opciones" style="margin-bottom: 20px;">
+          <fieldset class="opciones" style="margin-bottom: 20px; border: none;">
             <legend class="sr">Elige una respuesta</legend>
             ${["A", "B", "C", "D"]
               .map(
-                (l) => `<label class="opcion"><input type="radio" name="opcion_${num || 'unica'}" value="${l}">
-                <span class="letra">${l}</span><span>Opción ${l}</span></label>`
+                (l) => `<label class="opcion" style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; cursor: pointer;">
+                  <input type="radio" name="opcion_${num || 'unica'}" value="${l}">
+                  <span class="letra" style="font-weight: bold;">${l}</span><span>Opción ${l}</span>
+                </label>`
               )
               .join("")}
           </fieldset>
@@ -131,8 +149,14 @@ export function renderPregunta(st) {
       st.item += 1;
       renderPregunta(st);
     } else {
-      st.item += 1;
-      renderPregunta(st); // Llama al finalizador
+      root.innerHTML = `
+        <section class="panel" style="text-align: center; padding: 30px;">
+          <h2>¡Has completado este módulo!</h2>
+          <p>Tus respuestas han sido registradas correctamente.</p>
+          <br>
+          <a class="boton" href="index.html">Volver al Menú Principal</a>
+        </section>
+      `;
     }
   };
 }
