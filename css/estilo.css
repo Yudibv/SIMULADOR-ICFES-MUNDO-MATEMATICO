@@ -154,6 +154,17 @@ a { color: var(--azul); }
   border: 1px solid var(--borde);
   padding: 1.4rem 1.5rem 1.6rem;
   background: var(--fondo);
+  max-width: 800px;     /* Limita el ancho máximo para que no se vea gigantesco */
+  margin: 20px auto;    /* Centra el panel en la pantalla */
+  box-sizing: border-box;
+}
+
+/* Y asegúrate de agregar esto justo debajo para controlar la imagen */
+.pregunta-img {
+  max-width: 100%;      /* Evita que la imagen rebase el ancho del panel */
+  height: auto;         /* Mantiene las proporciones originales para que no se deforme */
+  display: block;
+  margin: 0 auto 20px auto; /* Centra la imagen y le da espacio abajo */
 }
 
 .migas { font-size: 0.9rem; margin-bottom: 1rem; }
@@ -223,11 +234,11 @@ a { color: var(--azul); }
 .revision img { max-width: 100%; height: auto; border: 1px solid var(--borde); margin: 0.5rem 0; }
 
 .pregunta-img {
-  width: 100%;
-  height: auto;
-  border: 1px solid var(--borde);
+  max-width: 100%;    /* Hace que la imagen nunca rebase el ancho de su contenedor */
+  height: auto;       /* Mantiene la proporción original para que no se deforme */
   display: block;
-  background: #fff;
+  margin: 0 auto;     /* Centra la imagen de forma elegante */
+  object-fit: contain;
 }
 
 .campo-tiempo {
