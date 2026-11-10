@@ -49,7 +49,7 @@
         "7a.png": "A"
       },
       "explicaciones": {}
-    }
+    },
     {
       "id": "Porcentajesyproporcionalidad",
       "titulo": "Porcentajes y Proporcionalidad",
@@ -108,7 +108,7 @@
         }
       },
       "explicaciones": {}
-    }
+    },
     {
       "id": "Algebra",
       "titulo": "Álgebra y Cálculo",
@@ -153,8 +153,7 @@
         "66d.png": "D"
       },
       "explicaciones": {}
-    }
-    
+    },
     {
       "id": "Funciones",
       "titulo": "Funciones",
@@ -205,8 +204,8 @@
         "9c.png": "C"
       },
       "explicaciones": {}
-    }
-   {
+    },
+    {
       "id": "Geometria",
       "titulo": "Geometría",
       "subtitulo": "Formas, áreas, volúmenes y propiedades espaciales",
@@ -260,7 +259,7 @@
         "7c.png": "C"
       },
       "explicaciones": {}
-    }
+    },
     {
       "id": "Trigonometria",
       "titulo": "6. Trigonometría",
@@ -321,7 +320,7 @@
         }
       },
       "explicaciones": {}
-    }
+    },
     {
       "id": "Estadisticayprobabilidad",
       "titulo": "Estadística y Probabilidad",
@@ -376,7 +375,8 @@
         "8d.png": "D"
       },
       "explicaciones": {}
-   {
+    },
+    {
       "id": "Sondeo",
       "titulo": "Sondeo de Preguntas",
       "subtitulo": "Ítems adicionales y verificación general",
@@ -454,3 +454,5 @@
       },
       "explicaciones": {}
     }
+  ]
+}
