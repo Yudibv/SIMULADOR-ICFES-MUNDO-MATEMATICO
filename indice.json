@@ -69,7 +69,7 @@
         "3d.png",
         "40b.png",
         "47d.png",
-        "7b8b.png",
+        "7b8b.jpg",
         "7b8d.jpg",
         "8b9b.png"
       ],
@@ -78,7 +78,7 @@
           "12": "D",
           "13": "B"
         },
-        "19d20b.png": {
+        "19d20b.jpg": {
           "19": "D",
           "20": "B"
         },
@@ -94,11 +94,11 @@
         "3d.png": "D",
         "40b.png": "B",
         "47d.png": "D",
-        "7b8b.png": {
-          "8": "B",
-          "9": "B"
+        "7b8b.jpg": {
+          "7": "B",
+          "8": "B"
         },
-        "7b8d.png": {
+        "7b8d.jpg": {
           "7": "B",
           "8": "D"
         },
@@ -108,7 +108,7 @@
         }
       },
       "explicaciones": {}
-    },
+    }
     {
       "id": "Algebra",
       "titulo": "Álgebra y Cálculo",
