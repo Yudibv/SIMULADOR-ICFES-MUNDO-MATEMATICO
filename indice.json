@@ -154,6 +154,7 @@
       },
       "explicaciones": {}
     }
+    
     {
       "id": "Funciones",
       "titulo": "Funciones",
@@ -204,7 +205,8 @@
         "9c.png": "C"
       },
       "explicaciones": {}
-    },
+    }
+    
     {
       "id": "Geometria",
       "titulo": "Geometría",
