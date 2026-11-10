@@ -206,8 +206,7 @@
       },
       "explicaciones": {}
     }
-    
-    {
+   {
       "id": "Geometria",
       "titulo": "Geometría",
       "subtitulo": "Formas, áreas, volúmenes y propiedades espaciales",
@@ -261,7 +260,8 @@
         "7c.png": "C"
       },
       "explicaciones": {}
-    },
+    }
+     
     {
       "id": "Trigonometria",
       "titulo": "6. Trigonometría",
