@@ -376,8 +376,7 @@
         "8d.png": "D"
       },
       "explicaciones": {}
-    },
-    {
+   {
       "id": "Sondeo",
       "titulo": "Sondeo de Preguntas",
       "subtitulo": "Ítems adicionales y verificación general",
@@ -385,67 +384,67 @@
       "icono": "08",
       "carpeta": "Sondeo",
       "preguntas": [
-        "01b",
-        "11a12a",
-        "13b14c",
-        "14b",
-        "15b16c17b",
-        "17b18b",
-        "19c",
-        "1b",
-        "1c2d",
-        "21b",
-        "2c3c4c5b6a",
-        "37b",
-        "38a",
-        "4b",
-        "7b8c9d10a",
-        "9c10c11b12a13c"
+        "01b.png",
+        "11a12a.jpg",
+        "13b14c.jpg",
+        "14b.png",
+        "15b16c17b.jpg",
+        "17b18b.jpg",
+        "19c.png",
+        "1b.png",
+        "1c2d.png",
+        "21b.png",
+        "2c3c4c5b6a.jpg",
+        "37b.png",
+        "38a.png",
+        "4b.png",
+        "7b8c9d10a.jpg",
+        "9c10c11b12a13c.jpg"
       ],
       "respuestas": {
-        "01b": "B",
-        "11a12a": {
+        "01b.png": "B",
+        "11a12a.jpg": {
           "11": "A",
           "12": "A"
         },
-        "13b14c": {
+        "13b14c.jpg": {
           "13": "B",
           "14": "C"
         },
-        "14b": "B",
-        "15b16c17b": {
+        "14b.png": "B",
+        "15b16c17b.jpg": {
           "15": "B",
           "16": "C",
           "17": "B"
         },
-        "17b18b": {
+        "17b18b.jpg": {
           "17": "B",
           "18": "B"
         },
-        "19c": "C",
-        "1b": "B",
-        "1c2d": {
+        "19c.png": "C",
+        "1b.png": "B",
+        "1c2d.png": {
           "1": "C",
           "2": "D"
         },
-        "21b": "B",
-        "2c3c4c5b6a": {
+        "21b.png": "B",
+        "2c3c4c5b6a.jpg": {
           "2": "C",
           "3": "C",
           "4": "D",
           "5": "B",
           "6": "A"
         },
-        "37b": "B",
-        "38a": "A",
-        "4b": "B",
-        "7b8c9d10a": {
+        "37b.png": "B",
+        "38a.png": "A",
+        "4b.png": "B",
+        "7b8c9d10a.jpg": {
           "7": "B",
           "8": "C",
           "9": "D",
           "10": "A"
         },
-        "9c10c11b12a13c": {
+        "9c10c11b12a13c.jpg": {
           "9": "C",
           "10": "C",
           "11": "B",
