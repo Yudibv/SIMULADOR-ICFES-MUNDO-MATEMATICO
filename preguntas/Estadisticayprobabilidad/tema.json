@@ -1,0 +1,25 @@
+{
+  "titulo": "Estadística y probabilidad",
+  "subtitulo": "Datos, azar e interpretación",
+  "descripcion": "Ítems del cuadernillo Icfes Saber 11 (marzo 2026). Uso académico.",
+  "icono": "05",
+  "respuestas": {
+    "p01.png": "B",
+    "p03.png": "B",
+    "p05.png": "B",
+    "p08.png": "C",
+    "p12.png": "B",
+    "p16.png": "D",
+    "p20.png": "A",
+    "p26.png": "C",
+    "p28.png": "A",
+    "p30.png": "B",
+    "p33.png": "D",
+    "p36.png": "C",
+    "p38.png": "C",
+    "p46.png": "C",
+    "p48.png": "B"
+  },
+  "explicaciones": {},
+  "fuente": "Icfes, (2026). Prueba Matemáticas, Cuadernillo de preguntas. Saber 11. Uso académico."
+}
