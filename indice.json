@@ -56,7 +56,7 @@
       "subtitulo": "Razones, proporciones y problemas de porcentaje",
       "descripcion": "Ítems del cuadernillo Icfes Saber 11. Uso académico.",
       "icono": "02",
-      "carpeta": "Porcentajes y proporcionalidad",
+      "carpeta": "Porcentajesyproporcionalidad",
       "preguntas": [
         "12d13b.png",
         "19d20b.png",
@@ -327,7 +327,7 @@
       "subtitulo": "Análisis de datos, probabilidades y estadística descriptiva",
       "descripcion": "Ítems del cuadernillo Icfes Saber 11. Uso académico.",
       "icono": "07",
-      "carpeta": "Estadistica y probabilidad",
+      "carpeta": "Estadisticayprobabilidad",
       "preguntas": [
         "11d.png",
         "12b.png",
@@ -379,10 +379,10 @@
     {
       "id": "Sondeo",
       "titulo": "Sondeo de Preguntas",
-      "subtitulo": "En esta sesión encontraras preguntas en diferentes ramas de la matemática para que midas tus conocimientos. Ítems adicionales y verificación general",
+      "subtitulo": "Ítems adicionales y verificación general",
       "descripcion": "Ítems del cuadernillo Icfes Saber 11. Uso académico.",
       "icono": "08",
-      "carpeta": "Sondeo de preguntas",
+      "carpeta": "Sondeo",
       "preguntas": [
         "01b.png",
         "11a12a.png",
