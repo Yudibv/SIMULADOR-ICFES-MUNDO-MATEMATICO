@@ -1,0 +1,19 @@
+{
+  "titulo": "Aritmética",
+  "subtitulo": "Números, operaciones y situaciones cuantitativas",
+  "descripcion": "Ítems del cuadernillo Icfes Saber 11 (marzo 2026). Uso académico.",
+  "icono": "01",
+  "respuestas": {
+    "p04.png": "C",
+    "p09.png": "C",
+    "p10.png": "C",
+    "p11.png": "B",
+    "p13.png": "D",
+    "p25.png": "A",
+    "p27.png": "A",
+    "p39.png": "C",
+    "p45.png": "D"
+  },
+  "explicaciones": {},
+  "fuente": "Icfes, (2026). Prueba Matemáticas, Cuadernillo de preguntas. Saber 11. Uso académico."
+}
