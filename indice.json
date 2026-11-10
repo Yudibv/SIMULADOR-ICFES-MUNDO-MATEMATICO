@@ -23,6 +23,7 @@
         "456cbd.jpg",
         "5b.png",
         "7a.png"
+        "017b.png"
       ],
       "respuestas": {
         "11c.png": "C",
@@ -46,7 +47,8 @@
           "6": "D"
         },
         "5b.png": "B",
-        "7a.png": "A"
+        "7a.png": "A",
+        "017b.png": "B"
       },
       "explicaciones": {}
     },
