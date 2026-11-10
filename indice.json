@@ -261,7 +261,6 @@
       },
       "explicaciones": {}
     }
-     
     {
       "id": "Trigonometria",
       "titulo": "6. Trigonometría",
@@ -272,7 +271,7 @@
       "preguntas": [
         "10b.png",
         "11c.png",
-        "12c13c.jpg",
+        "12c13c.png",
         "15c.png",
         "18c.png",
         "195d.png",
@@ -288,7 +287,7 @@
         "53c.png",
         "56d.png",
         "6c.png",
-        "9a10a11b.jpg"
+        "9a10a11b.png"
       ],
       "respuestas": {
         "10b.png": "B",
@@ -322,7 +321,7 @@
         }
       },
       "explicaciones": {}
-    },
+    }
     {
       "id": "Estadisticayprobabilidad",
       "titulo": "Estadística y Probabilidad",
