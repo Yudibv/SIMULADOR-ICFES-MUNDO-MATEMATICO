@@ -1,7 +1,7 @@
 /**
  * ==============================================================================
  * MÓDULO DE PRUEBAS Y SIMULADOR - MUNDO MATEMÁTICO
- * Maneja la lógica de visualización de preguntas, selección aleatoria por carpetas,
+ * Maneja la lógica de visualización de preguntas, selección secuencial por carpetas (modo auditoría),
  * evaluación de respuestas y la monetización del informe predictivo global.
  * ==============================================================================
  */
@@ -84,37 +84,29 @@ function temaPorId(id) {
 }
 
 /**
- * Prepara las preguntas que se van a mostrar:
- * - Si es "Simulacro Global" (todas): Extrae preguntas aleatorias de CADA una de las carpetas y las mezcla.
- * - Si es "Carpeta Individual": Selecciona un subconjunto aleatorio limitado por PREGUNTAS_POR_PRUEBA.
+ * Prepara las preguntas que se van a mostrar en orden estricto (Modo Auditoría):
+ * - Carga todas las preguntas tal como están escritas en el indice.json para poder revisarlas una por una.
  */
 function prepararTemaActual() {
   if (state.todas) {
     let todasLasSeleccionadas = [];
     
-    // Recorre cada carpeta para extraer preguntas de forma equitativa y aleatoria
+    // Recorre cada carpeta extrayendo todas las preguntas en orden
     state.temas.forEach(tema => {
       const preguntasTema = tema.preguntas || [];
-      const preguntasMezcladas = [...preguntasTema].sort(() => Math.random() - 0.5);
-      
-      // Saca hasta 3 preguntas al azar de cada carpeta para armar el simulacro robusto
-      const subConjunto = preguntasMezcladas.slice(0, 3); 
-      
-      subConjunto.forEach(p => {
+      preguntasTema.forEach(p => {
         todasLasSeleccionadas.push({ carpetaId: tema.id, archivo: p });
       });
     });
 
-    // Mezcla todo el conjunto global de preguntas
-    state.seleccionGlobal = todasLasSeleccionadas.sort(() => Math.random() - 0.5);
+    state.seleccionGlobal = todasLasSeleccionadas;
     state.seleccion = state.seleccionGlobal.map(item => item.archivo);
     state.item = 0;
     state.respuestas = {};
   } else {
-    // Modo práctica focalizada por carpeta individual
+    // MODO AUDITORÍA: Carga TODAS las preguntas de la carpeta seleccionada en orden exacto
     const tema = temaPorId(state.cola[state.indiceTema]);
-    const todasLasPreguntas = tema.preguntas || [];
-    state.seleccion = [...todasLasPreguntas].sort(() => Math.random() - 0.5).slice(0, PREGUNTAS_POR_PRUEBA);
+    state.seleccion = tema.preguntas || [];
     state.item = 0;
     state.respuestas = {};
   }
@@ -122,10 +114,10 @@ function prepararTemaActual() {
 
 /**
  * Renderiza la interfaz de la pregunta actual, manejando imágenes, opciones de respuesta 
- * y la barra de progreso.
+ * y la barra de progreso con botones de Navegación Secuencial (Anterior / Siguiente).
  */
 export function renderPregunta(st) {
-  // Identifica el tema actual (en modo global, lo busca dinámicamente según la pregunta)
+  // Identifica el tema actual
   let tema = temaPorId(st.cola[st.indiceTema]);
   if (st.todas && st.seleccionGlobal && st.seleccionGlobal[st.item]) {
     tema = temaPorId(st.seleccionGlobal[st.item].carpetaId);
@@ -151,11 +143,11 @@ export function renderPregunta(st) {
   root.innerHTML = `
     <p class="migas"><a href="index.html">Menú</a> / ${tema.titulo || tema.id} / Ejercicio ${st.item + 1}</p>
     <div class="progreso"><div class="progreso-barra" style="width:${((st.item + 1) / total) * 100}%"></div></div>
-    <p class="progreso-texto">Ejercicio ${st.item + 1} de ${total}</p>
+    <p class="progreso-texto">Ejercicio ${st.item + 1} de ${total} (Archivo: ${archivo})</p>
     <section class="panel">
       <div style="text-align: center; margin-bottom: 20px;">
         <img class="pregunta-img" alt="Pregunta ${st.item + 1}" src="${rutaImagenFinal}" onerror="this.style.display='none'; document.getElementById('img-error').style.display='block';">
-        <p id="img-error" style="display:none; color: red; font-size: 0.9rem;">[No se pudo cargar la imagen: ${archivo} en la carpeta ${tema.carpeta}]</p>
+        <p id="img-error" style="display:none; color: red; font-size: 0.9rem; font-weight: bold;">[⚠️ No se pudo cargar la imagen: ${archivo} en la carpeta "${tema.carpeta}". Revisa el nombre o extensión en GitHub o en indice.json]</p>
       </div>
       <p id="error" class="alerta oculto" style="margin-bottom: 15px; color: red;">Por favor responde la pregunta para continuar.</p>
       
@@ -175,14 +167,26 @@ export function renderPregunta(st) {
           </fieldset>
         `).join("")}
 
-        <div class="acciones">
-          <button class="boton" type="submit">${st.item + 1 < total ? 'Siguiente' : 'Ver Resultados'}</button>
+        <div class="acciones" style="display: flex; gap: 10px; justify-content: center; align-items: center;">
+          ${st.item > 0 ? '<button class="boton" type="button" id="btn-anterior" style="background: #6b7280; padding: 10px 20px;">Anterior</button>' : ''}
+          <button class="boton" type="submit" style="padding: 10px 20px;">${st.item + 1 < total ? 'Siguiente' : 'Ver Resultados'}</button>
         </div>
       </form>
     </section>
   `;
 
-  // Manejador del envío del formulario (validación y avance)
+  // Funcionalidad para retroceder y auditar la pregunta anterior
+  const btnAnterior = document.getElementById("btn-anterior");
+  if (btnAnterior) {
+    btnAnterior.onclick = () => {
+      if (st.item > 0) {
+        st.item -= 1;
+        renderPregunta(st);
+      }
+    };
+  }
+
+  // Manejador del envío del formulario (validación y avance secuencial)
   document.getElementById("form-opciones").onsubmit = (ev) => {
     ev.preventDefault();
     const formData = new FormData(ev.target);
@@ -207,7 +211,7 @@ export function renderPregunta(st) {
       st.respuestas[st.item] = marcada;
     }
 
-    // Avanza a la siguiente pregunta o finaliza la prueba
+    // Avanza a la siguiente pregunta en orden estricto
     if (st.item + 1 < total) {
       st.item += 1;
       renderPregunta(st);
@@ -218,15 +222,12 @@ export function renderPregunta(st) {
 }
 
 /**
- * Calcula los resultados finales y genera la vista correspondiente:
- * - Si es Simulacro Global: Muestra puntaje básico y bloquea el Informe Analítico Predictivo de pago (WhatsApp).
- * - Si es Carpeta Individual: Muestra diagnóstico detallado e invita a tutorías de refuerzo.
+ * Calcula los resultados finales y genera la vista correspondiente.
  */
 function mostrarResultadosFinales(st, tema) {
   let aciertos = 0;
   let totalPreguntas = st.seleccion.length;
 
-  // Calificación de respuestas correctas vs marcadas por el usuario
   st.seleccion.forEach((archivo, index) => {
     let temaActual = tema;
     if (st.todas && st.seleccionGlobal && st.seleccionGlobal[index]) {
@@ -256,78 +257,31 @@ function mostrarResultadosFinales(st, tema) {
   const esSimulacroGlobal = st.todas;
 
   if (esSimulacroGlobal) {
-    // VISTA COMERCIAL: Simulacro Global con Informe Predictivo de Pago
     root.innerHTML = `
       <section class="panel" style="text-align: center; padding: 30px;">
-        <h2 style="color: var(--azul);">Resultados del Simulacro Global ICFES</h2>
-        <p class="lead" style="margin: 0 auto 20px auto;">Has completado la prueba integral de todas las áreas.</p>
-        
+        <h2 style="color: var(--azul);">Resultados de la Auditoría Global</h2>
+        <p class="lead" style="margin: 0 auto 20px auto;">Has recorrido todas las carpetas del simulador.</p>
         <div class="puntaje" style="margin: 20px 0;">
           <span class="num">${aciertos} / ${totalPreguntas}</span>
-          <p style="margin: 5px 0; font-weight: 600; color: #555;">Aciertos totales logrados (${porcentaje}%)</p>
+          <p style="margin: 5px 0; font-weight: 600; color: #555;">Aciertos totales (${porcentaje}%)</p>
         </div>
-
-        <div style="background: #eff6ff; border: 1px solid var(--azul); padding: 20px; margin: 20px 0; border-radius: 8px; text-align: left;">
-          <h3 style="color: var(--azul); margin-top: 0;">🔒 Informe Analítico Predictivo Bloqueado</h3>
-          <p style="margin: 0; line-height: 1.6; color: #333;">
-            Para ver tu desglose detallado por componentes, la detección exacta de tus preguntas trampa falladas y tu ruta de estudio personalizada orientada al ICFES Saber 11, debes adquirir el reporte especializado.
-          </p>
-        </div>
-
-        <div style="border: 2px dashed var(--rojo); padding: 25px; margin-top: 25px; border-radius: 8px; background: #fffcfc;">
-          <h3 style="color: var(--azul); margin-top: 0;">Obtén tu Informe Predictivo Pro</h3>
-          <p style="margin-bottom: 20px; color: #444;">Realiza el pago seguro y desbloquea el análisis completo de inmediato a través de nuestro canal de atención.</p>
-          
-          <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
-            <a class="boton" href="https://wa.me/573115574410?text=Hola,%20acabo%20de%20terminar%20el%20Simulacro%20Global%20en%20Mundo%20Matemático%20y%20quiero%20pagar%20para%20obtener%20mi%20Informe%20Analítico%20Predictivo." target="_blank" style="background: #25d366; color: white; text-decoration: none; padding: 12px 25px; border-radius: 6px; font-weight: bold; font-size: 1rem;">
-              💳 Pagar Informe Analítico (WhatsApp)
-            </a>
-            <a class="boton" href="index.html" style="text-decoration: none; padding: 12px 25px; border-radius: 6px;">
-              Volver al Menú Principal
-            </a>
-          </div>
-        </div>
+        <a class="boton" href="index.html" style="text-decoration: none; padding: 12px 25px; border-radius: 6px;">
+          Volver al Menú Principal
+        </a>
       </section>
     `;
   } else {
-    // VISTA DE CARPETA INDIVIDUAL: Práctica gratuita con gancho a tutorías
-    let mensajeDesempeno = "";
-    if (porcentaje >= 80) {
-      mensajeDesempeno = `¡Excelente nivel en <strong>${tema.titulo}</strong>! Tienes bases muy sólidas. Te invitamos a mantener este ritmo con simulacros completos para asegurar tu puntaje máximo en el ICFES.`;
-    } else if (porcentaje >= 50) {
-      mensajeDesempeno = `Tienes bases regulares en <strong>${tema.titulo}</strong>, pero hay vacíos conceptuales en preguntas clave que el ICFES suele evaluar con trampa.`;
-    } else {
-      mensajeDesempeno = `Identificamos oportunidades de mejora críticas en <strong>${tema.titulo}</strong>. Este puntaje en el componente real te restará puntos decisivos para tu ingreso a la universidad.`;
-    }
-
     root.innerHTML = `
       <section class="panel" style="text-align: center; padding: 30px;">
-        <h2 style="color: var(--azul);">Diagnóstico: ${tema.titulo}</h2>
-        <p class="lead" style="margin: 0 auto 20px auto;">Reporte de resultados del simulador focalizado.</p>
-        
+        <h2 style="color: var(--azul);">Fin de revisión: ${tema.titulo}</h2>
+        <p class="lead" style="margin: 0 auto 20px auto;">Has auditado todas las imágenes de esta carpeta.</p>
         <div class="puntaje" style="margin: 20px 0;">
           <span class="num">${aciertos} / ${totalPreguntas}</span>
-          <p style="margin: 5px 0; font-weight: 600; color: #555;">Aciertos logrados (${porcentaje}%)</p>
+          <p style="margin: 5px 0; font-weight: 600; color: #555;">Aciertos (${porcentaje}%)</p>
         </div>
-
-        <div style="background: var(--suave); border: 1px solid var(--borde); padding: 20px; margin: 20px 0; border-radius: 6px; text-align: left;">
-          <h3 style="color: var(--rojo); margin-top: 0;">Análisis personalizado:</h3>
-          <p style="margin: 0; line-height: 1.6;">${mensajeDesempeno}</p>
-        </div>
-
-        <div style="border: 2px dashed var(--rojo); padding: 20px; margin-top: 25px; border-radius: 6px; background: #fffcfc;">
-          <h3 style="color: var(--azul); margin-top: 0;">¿Quieres asegurar tu cupo en la universidad?</h3>
-          <p style="margin-bottom: 15px;">No dejes tu puntaje al azar. Recibe acompañamiento profesional con las clases y tutorías de <strong>Mundo Matemático</strong>.</p>
-          
-          <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
-            <a class="boton" href="https://wa.me/573115574410?text=Hola,%20hice%20el%20simulador%20en%20el%20módulo%20de%20${encodeURIComponent(tema.titulo)}%20y%20quiero%20información%20sobre%20las%20clases%20personalizadas" target="_blank" style="background: #25d366; color: white; text-decoration: none; padding: 10px 20px; border-radius: 4px; font-weight: bold;">
-              💬 Agendar Tutoría de Refuerzo
-            </a>
-            <a class="boton" href="index.html" style="text-decoration: none; padding: 10px 20px;">
-              Volver al Menú Principal
-            </a>
-          </div>
-        </div>
+        <a class="boton" href="index.html" style="text-decoration: none; padding: 10px 20px;">
+          Volver al Menú Principal
+        </a>
       </section>
     `;
   }
