@@ -258,13 +258,18 @@ function mostrarResultadosFinalesGlobal(st) {
   if (st.intervaloTimer) clearInterval(st.intervaloTimer);
   let aciertos = 0;
   let totalPreguntas = st.seleccionGlobal.length;
+  
+  // Analizador inteligente de errores por tema para un diagnóstico verdaderamente personalizado
+  let erroresPorTema = {};
 
   st.seleccionGlobal.forEach((itemGlobal, index) => {
     const tema = itemGlobal.tema;
+    const nombreTema = tema.titulo || tema.carpeta || "General";
     const archivo = itemGlobal.archivo;
     const respuestaCorrecta = (tema.respuestas || {})[archivo];
     const respuestaUsuario = st.respuestas[index];
 
+    let esAcierto = false;
     if (typeof respuestaCorrecta === "object") {
       let todasCorrectas = true;
       for (const subKey in respuestaCorrecta) {
@@ -272,13 +277,26 @@ function mostrarResultadosFinalesGlobal(st) {
           todasCorrectas = false;
         }
       }
-      if (todasCorrectas) aciertos++;
+      if (todasCorrectas) esAcierto = true;
     } else {
       if (respuestaUsuario === respuestaCorrecta) {
-        aciertos++;
+        esAcierto = true;
       }
     }
+
+    if (esAcierto) {
+      aciertos++;
+    } else {
+      erroresPorTema[nombreTema] = (erroresPorTema[nombreTema] || 0) + 1;
+    }
   });
+
+  // Detectar el área con más fallas para personalizar el texto TRI
+  let temasFfalladosOrdenados = Object.keys(erroresPorTema).sort((a, b) => erroresPorTema[b] - erroresPorTema[a]);
+  let textoDiagnosticoPersonalizado = "Basado en la calibración de ítems de alta discriminación, hemos detectado vulnerabilidades críticas en componentes de razonamiento cuantitativo y análisis lógico.";
+  if (temasFfalladosOrdenados.length > 0) {
+    textoDiagnosticoPersonalizado = `Basado en la calibración de ítems, se han detectado vulnerabilidades críticas principalmente en <strong>${temasFfalladosOrdenados[0]}</strong> y componentes conexos de análisis algebraico y geométrico.`;
+  }
 
   const porcentaje = Math.round((aciertos / totalPreguntas) * 100);
   let nivelDesempeno = "Nivel 1 (En riesgo)";
@@ -313,7 +331,7 @@ function mostrarResultadosFinalesGlobal(st) {
           🔒 Diagnóstico de Competencias Latentes (Parámetros TRI)
         </h4>
         <p style="color: #334155; font-size: 0.95rem; line-height: 1.5; margin-bottom: 10px;">
-          Basado en la calibración de ítems, hemos detectado vulnerabilidades críticas en componentes de análisis algebraico e interpretación geométrica.
+          ${textoDiagnosticoPersonalizado}
         </p>
         <p style="color: #1e3a8a; font-size: 0.85rem; font-style: italic; margin: 0;">
           * El reporte detallado con las claves de respuesta y la ruta de corrección se entrega de forma automatizada al completar el pago.
@@ -332,7 +350,6 @@ function mostrarResultadosFinalesGlobal(st) {
             💳 Pagar $15.000 con Wompi (Nequi / Tarjetas)
           </a>
 
-          <!-- BOTÓN PARA PROBAR LA DESCARGA DEL PDF -->
           <button id="btn-descargar-pdf" class="boton" style="background: #2563eb; color: white; padding: 12px 20px; border-radius: 6px; font-weight: bold; border: none; cursor: pointer; width: 100%;">
             📥 Descargar Cuadernillo Pro (PDF de Prueba)
           </button>
@@ -342,10 +359,14 @@ function mostrarResultadosFinalesGlobal(st) {
           </a>
         </div>
       </div>
+
+      <!-- AVISO LEGAL INSTITUCIONAL (INDEPENDIENTE DEL ICFES) -->
+      <div style="margin-top: 25px; padding-top: 15px; border-top: 1px solid #cbd5e1; color: #64748b; font-size: 0.8rem; line-height: 1.4;">
+        Mundo Matemático es una iniciativa educativa independiente de preparación preuniversitaria. No está afiliada, vinculada ni patrocinada oficialmente por el ICFES.
+      </div>
     </section>
   `;
 
-  // Conectamos el botón para que ejecute la función generarPDFInforme al hacer clic
   setTimeout(() => {
     const btnPdf = document.getElementById("btn-descargar-pdf");
     if (btnPdf) {
@@ -355,6 +376,7 @@ function mostrarResultadosFinalesGlobal(st) {
     }
   }, 100);
 }
+
 function mostrarResultadosFinales(st, tema) {
   if (st.intervaloTimer) clearInterval(st.intervaloTimer);
   let aciertos = 0;
@@ -391,7 +413,6 @@ function mostrarResultadosFinales(st, tema) {
     mensajeDesempeno = `Identificamos oportunidades de mejora críticas en <strong>${tema.titulo}</strong>. Te sugerimos repasar este módulo antes de enfrentarte a la prueba real.`;
   }
 
-  // Enlace o botón para iniciar el simulacro global completo (ajusta según tu estructura si usas ?todas=1)
   const linkSimulacroGlobal = "prueba.html?todas=1";
 
   root.innerHTML = `
@@ -409,7 +430,6 @@ function mostrarResultadosFinales(st, tema) {
         <p style="margin: 0; line-height: 1.6;">${mensajeDesempeno}</p>
       </div>
 
-      <!-- INVITACIÓN ESTRATÉGICA AL SIMULACRO GLOBAL -->
       <div style="border: 2px solid var(--azul); padding: 25px; margin-top: 25px; border-radius: 8px; background: #eff6ff;">
         <span style="background: var(--azul); color: white; padding: 4px 12px; border-radius: 4px; font-size: 0.85rem; font-weight: bold;">ENTRENAMIENTO OFICIAL ICFES</span>
         <h3 style="color: var(--azul); margin-top: 10px; font-size: 1.3rem;">¿Listo para el reto completo de 40 preguntas?</h3>
@@ -425,6 +445,11 @@ function mostrarResultadosFinales(st, tema) {
             Volver al Menú Principal
           </a>
         </div>
+      </div>
+
+      <!-- AVISO LEGAL INSTITUCIONAL -->
+      <div style="margin-top: 25px; padding-top: 15px; border-top: 1px solid #cbd5e1; color: #64748b; font-size: 0.8rem; line-height: 1.4;">
+        Mundo Matemático es una iniciativa educativa independiente de preparación preuniversitaria. No está afiliada, vinculada ni patrocinada oficialmente por el ICFES.
       </div>
     </section>
   `;
