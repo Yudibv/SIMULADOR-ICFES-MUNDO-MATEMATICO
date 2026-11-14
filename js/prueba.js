@@ -8,7 +8,7 @@ let state = {
   item: 0,
   respuestas: {},
   todas: false,
-  tiempoRestante: 0, // en segundos
+  tiempoRestante: 0,
   intervaloTimer: null
 };
 
@@ -42,7 +42,7 @@ async function init() {
     state.temas.forEach(t => {
       if (t.preguntas && t.preguntas.length > 0) {
         const preguntasMezcladas = [...t.preguntas].sort(() => Math.random() - 0.5);
-        const elegidas = preguntasMezcladas.slice(0, 5); // 5 preguntas por cada una de las 8 carpetas = 40 preguntas
+        const elegidas = preguntasMezcladas.slice(0, 5); // 5 por cada una de las 8 carpetas = 40 preguntas
         elegidas.forEach(archivo => {
           preguntasGlobales.push({ archivo: archivo, tema: t });
         });
@@ -51,12 +51,10 @@ async function init() {
 
     state.seleccionGlobal = preguntasGlobales.sort(() => Math.random() - 0.5);
     state.seleccion = state.seleccionGlobal.map(x => x.archivo);
-    // 90 minutos para la prueba global de 40 preguntas (en segundos)
-    state.tiempoRestante = 90 * 60; 
+    state.tiempoRestante = 90 * 60; // 90 minutos para la global
   } else if (temaId) {
     state.cola = [temaId];
     prepararTemaActual();
-    // 20 minutos para la prueba focalizada individual (en segundos)
     state.tiempoRestante = 20 * 60;
   } else {
     state.cola = [state.temas[0].id];
@@ -97,8 +95,6 @@ function actualizarRelojVisual() {
     const minutos = Math.floor(state.tiempoRestante / 60);
     const segundos = state.tiempoRestante % 60;
     elReloj.textContent = `${minutos.toString().padStart(2, '0')}:${segundos.toString().padStart(2, '0')}`;
-    
-    // Alerta visual si quedan menos de 5 minutos
     if (state.tiempoRestante < 300) {
       elReloj.style.color = "#dc2626";
       elReloj.style.fontWeight = "bold";
@@ -161,7 +157,6 @@ export function renderPregunta(st) {
   const subPreguntas = esMulti ? Object.keys(respuestasClave) : [null];
   const respuestaPrevia = st.respuestas[st.item] || {};
 
-  // Formato inicial del reloj
   const minInicial = Math.floor(st.tiempoRestante / 60).toString().padStart(2, '0');
   const segInicial = (st.tiempoRestante % 60).toString().padStart(2, '0');
 
@@ -169,7 +164,7 @@ export function renderPregunta(st) {
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; background: #fff; padding: 10px 15px; border-radius: 8px; border: 1px solid #cbd5e1;">
       <p class="migas" style="margin: 0;"><a href="index.html">Menú</a> / ${st.todas ? 'Simulacro Global Saber 11' : (tema.titulo || tema.id)}</p>
       <div style="font-size: 1.05rem; font-weight: bold; color: var(--azul); background: var(--azul-claro); padding: 5px 12px; border-radius: 6px;">
-        ⏱️ Tiempo restante: <span id="reloj-tiempo">${minInicial}:${segInicial}</span>
+        ⏱️ Tiempo: <span id="reloj-tiempo">${minInicial}:${segInicial}</span>
       </div>
     </div>
 
@@ -300,7 +295,7 @@ function mostrarResultadosFinalesGlobal(st) {
         ESTÁNDAR ICFES (TRI - 3PL)
       </div>
       <h2 style="color: var(--azul); font-size: 1.8rem; margin-top: 0;">Informe Analítico Predictivo Global</h2>
-      <p style="color: #64748b; margin-bottom: 25px;">Evaluación integral de razonamiento cuantitativo y habilidades métricas (${totalPreguntas} preguntas analizadas).</p>
+      <p style="color: #64748b; margin-bottom: 25px;">Evaluación integral de razonamiento cuantitativo (${totalPreguntas} preguntas analizadas).</p>
       
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 12px; padding: 25px; margin-bottom: 25px;">
         <div>
@@ -318,23 +313,23 @@ function mostrarResultadosFinalesGlobal(st) {
           🔒 Diagnóstico de Competencias Latentes (Parámetros TRI)
         </h4>
         <p style="color: #334155; font-size: 0.95rem; line-height: 1.5; margin-bottom: 10px;">
-          Basado en la calibración de ítems de alta discriminación, hemos detectado vulnerabilidades críticas en componentes de análisis algebraico e interpretación geométrica.
+          Basado en la calibración de ítems, hemos detectado vulnerabilidades críticas en componentes de análisis algebraico e interpretación geométrica.
         </p>
         <p style="color: #1e3a8a; font-size: 0.85rem; font-style: italic; margin: 0;">
-          * El reporte detallado con las curvas características de los ítems y la ruta de corrección de preguntas trampa se encuentra protegido comercialmente.
+          * El reporte detallado con las claves de respuesta y la ruta de corrección se entrega de forma automatizada al completar el pago.
         </p>
       </div>
 
       <div style="border: 2px solid #16a34a; padding: 25px; margin-top: 25px; border-radius: 8px; background: #f0fdf4;">
         <span style="background: #16a34a; color: white; padding: 4px 12px; border-radius: 4px; font-size: 0.85rem; font-weight: bold;">PAGO SEGURO EN LÍNEA (24/7)</span>
-        <h3 style="color: var(--azul); margin-top: 10px; font-size: 1.3rem;">Obtén tu Informe Analítico y Cuadernillo Pro</h3>
+        <h3 style="color: var(--azul); margin-top: 10px; font-size: 1.3rem;">Obtén tu Cuadernillo Pro por solo $15.000 COP</h3>
         <p style="margin-bottom: 20px; color: #334155; font-size: 0.95rem;">
-          Paga de forma inmediata con Nequi, PSE o tarjeta a cualquier hora y desbloquea el acceso total al cuadernillo de retroalimentación detallada.
+          Paga de forma inmediata por Wompi (Nequi, PSE o Tarjeta) por valor de <strong>$15.000 COP</strong> y desbloquea tu informe analítico detallado de inmediato.
         </p>
         
         <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
           <a class="boton" href="${linkWompi}" target="_blank" style="background: #16a34a; color: white; text-decoration: none; padding: 12px 24px; border-radius: 6px; font-weight: bold; font-size: 1.05rem;">
-            💳 Pagar con Wompi (Nequi / Tarjetas)
+            💳 Pagar $15.000 con Wompi (Nequi / Tarjetas)
           </a>
           <a class="boton" href="index.html" style="background: #1e3a8a; color: white; text-decoration: none; padding: 12px 20px; border-radius: 6px; font-weight: bold;">
             Volver al Menú Principal
@@ -374,11 +369,11 @@ function mostrarResultadosFinales(st, tema) {
 
   let mensajeDesempeno = "";
   if (porcentaje >= 80) {
-    mensajeDesempeno = `¡Excelente nivel en <strong>${tema.titulo}</strong>! Tienes bases muy sólidas. Te invitamos a mantener este ritmo con simulacros completos para asegurar tu puntaje máximo en el ICFES.`;
+    mensajeDesempeno = `¡Excelente nivel en <strong>${tema.titulo}</strong>! Tienes bases muy sólidas. Te invitamos a mantener este ritmo con simulacros completos para asegurar tu puntaje máximo.`;
   } else if (porcentaje >= 50) {
     mensajeDesempeno = `Tienes bases regulares en <strong>${tema.titulo}</strong>, pero hay vacíos conceptuales en preguntas clave que el ICFES suele evaluar con trampa.`;
   } else {
-    mensajeDesempeno = `Identificamos oportunidades de mejora críticas en <strong>${tema.titulo}</strong>. Este puntaje en el componente real te restará puntos decisivos para tu ingreso a la universidad.`;
+    mensajeDesempeno = `Identificamos oportunidades de mejora críticas en <strong>${tema.titulo}</strong>. Este puntaje en el componente real te restará puntos decisivos.`;
   }
 
   const linkWompi = "https://checkout.wompi.co/l/VPOS_9PaOd7";
@@ -400,14 +395,14 @@ function mostrarResultadosFinales(st, tema) {
 
       <div style="border: 2px solid #16a34a; padding: 25px; margin-top: 25px; border-radius: 8px; background: #f0fdf4;">
         <span style="background: #16a34a; color: white; padding: 4px 12px; border-radius: 4px; font-size: 0.85rem; font-weight: bold;">PAGO SEGURO EN LÍNEA (24/7)</span>
-        <h3 style="color: var(--azul); margin-top: 10px; font-size: 1.3rem;">Obtén tu Informe Analítico y Cuadernillo Pro</h3>
+        <h3 style="color: var(--azul); margin-top: 10px; font-size: 1.3rem;">Obtén tu Cuadernillo Pro por solo $15.000 COP</h3>
         <p style="margin-bottom: 20px; color: #334155; font-size: 0.95rem;">
-          Paga de forma inmediata con Nequi, PSE o tarjeta a cualquier hora y desbloquea el acceso total al cuadernillo de retroalimentación detallada.
+          Paga de forma inmediata por Wompi (Nequi, PSE o Tarjeta) por valor de <strong>$15.000 COP</strong> y desbloquea tu informe analítico detallado.
         </p>
         
         <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
           <a class="boton" href="${linkWompi}" target="_blank" style="background: #16a34a; color: white; text-decoration: none; padding: 12px 24px; border-radius: 6px; font-weight: bold; font-size: 1.05rem;">
-            💳 Pagar con Wompi (Nequi / Tarjetas)
+            💳 Pagar $15.000 con Wompi (Nequi / Tarjetas)
           </a>
           <a class="boton" href="index.html" style="background: #1e3a8a; text-decoration: none; padding: 12px 20px; border-radius: 6px; font-weight: bold;">
             Volver al Menú Principal
