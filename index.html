@@ -4,16 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Simulador ICFES Saber 11 - Mundo Matemático</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="estilo.css">
 </head>
 <body>
 
-  <!-- Cabecera Institucional -->
+  <!-- Cabecera Institucional con el logo -->
   <header class="header-principal">
     <div class="logo-contenedor">
-      <!-- Cambiado a logo.jpg que es el nombre real de tu archivo en GitHub -->
-      <img src="logo.jpg" alt="Mundo Matemático" onerror="this.onerror=null; this.style.display='none'; document.getElementById('logo-texto-alternativo').style.display='inline';">
-      <span id="logo-texto-alternativo" style="display:none; font-weight: 900; color: var(--azul); font-size: 1.2rem;">📐 MM</span>
+      <img src="logo.jpg" alt="Mundo Matemático">
       <h1 class="titulo-sitio">MUNDO MATEMÁTICO <span class="sub-saber">Saber 11</span></h1>
     </div>
     <nav>
@@ -21,9 +19,9 @@
     </nav>
   </header>
 
-  <!-- Contenedor Principal que renderiza el Menú y las Tarjetas -->
+  <!-- Contenedor donde JavaScript dibuja los cuadritos de las competencias -->
   <main id="vista" class="contenedor-principal">
-    <!-- El script de la aplicación cargará aquí las tarjetas de las competencias automáticamente -->
+    <!-- Aquí aparecerán automáticamente las tarjetas -->
   </main>
 
   <!-- Pie de página -->
@@ -31,6 +29,7 @@
     <p>Mundo Matemático • Educación y pre-universitario de alto rendimiento</p>
   </footer>
 
+  <!-- Script que genera las tarjetas del menú -->
   <script type="module" src="js/app.js"></script>
 </body>
 </html>
