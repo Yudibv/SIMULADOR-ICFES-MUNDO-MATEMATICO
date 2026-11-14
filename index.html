@@ -7,17 +7,35 @@
   
   <!-- Enlace a la hoja de estilos externa unificada -->
   <link rel="stylesheet" href="css/estilo.css">
+  
+  <style>
+    /* Estilo para el aviso legal institucional */
+    .aviso-legal {
+      text-align: center;
+      font-size: 0.85rem;
+      color: #64748b;
+      margin-top: 30px;
+      padding: 15px;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 8px;
+      border: 1px solid #cbd5e1;
+    }
+    .aviso-legal a {
+      color: var(--azul);
+      text-decoration: underline;
+    }
+  </style>
 </head>
 <body>
 
-  <!-- Cabecera Institucional -->
+  <!-- Cabecera Institucional con logo visible y claro -->
   <header class="header-principal">
     <div class="logo-contenedor">
-      <img src="logo.jpg" alt="Mundo Matemático">
+      <img src="logo.jpg" alt="Mundo Matemático" style="height: 55px; width: auto; max-width: 180px; object-fit: contain;">
       <h1 class="titulo-sitio">MUNDO MATEMÁTICO <span class="sub-saber">Saber 11</span></h1>
     </div>
     <nav>
-      <a href="index.html" class="link-nav">Simulador Oficial</a>
+      <a href="index.html" class="link-nav">Inicio</a>
     </nav>
   </header>
 
@@ -26,11 +44,11 @@
     <section class="presentacion-bienvenida">
       <div class="seccion-subtitulo">Saber 11 · Práctica</div>
       <h1>Simulador de Matemáticas</h1>
-      <p>Mundo Matemático ha creado este simulador como una herramienta de apoyo académico para fortalecer el razonamiento cuantitativo y asegurar tu ingreso a la educación superior.</p>
+      <p><strong>Mundo Matemático</strong> siempre piensa en mejorar la calidad de la educación; por eso, ha creado este simulador como una herramienta de apoyo académico independiente para fortalecer el razonamiento cuantitativo.</p>
       
       <div class="caja-aviso-azul">
         <h3>🎯 ¡Prepárate al máximo nivel para el ICFES Saber 11!</h3>
-        <p>Puedes practicar libremente con nuestras carpetas temáticas individuales y recibir su respectiva retroalimentación gratuita. Si deseas medirte con una Prueba Completa (Simulacro Global), podrás adquirir un <strong>informe analítico predictivo avanzado</strong> con costo preferencial para conocer tus fortalezas reales.</p>
+        <p>Puedes practicar libremente con nuestras carpetas temáticas individuales y recibir su respectiva retroalimentación. Si deseas medirte con una Prueba Completa (Simulacro Global), podrás adquirir un <strong>informe analítico predictivo avanzado</strong> con costo preferencial para conocer tus fortalezas reales.</p>
         <p style="color: var(--azul); font-weight: 600; margin-top: 6px;">💡 Recomendación: Usa las carpetas para pulir tus vacíos y el simulacro global para tu evaluación definitiva.</p>
       </div>
     </section>
@@ -40,6 +58,12 @@
     <!-- Rejilla donde el script menu.js dibuja los cajoncitos -->
     <div id="rejilla"></div>
     <div id="aviso" class="alerta oculto" style="color: red; padding: 20px; font-weight: bold;"></div>
+
+    <!-- Aviso legal obligatorio bien visible -->
+    <div class="aviso-legal">
+      <p style="margin: 0 0 5px 0;">Esta es una página <strong>no oficial</strong> del Icfes. Todo el material de las preguntas pertenece al Icfes.</p>
+      <p style="margin: 0;">Para más información oficial, visita <a href="https://www.icfes.gov.co/evaluaciones-icfes-saber-11/" target="_blank">https://www.icfes.gov.co/evaluaciones-icfes-saber-11/</a></p>
+    </div>
   </main>
 
   <!-- Pie de página -->
