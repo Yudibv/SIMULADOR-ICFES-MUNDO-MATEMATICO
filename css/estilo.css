@@ -1,37 +1,109 @@
 /* ==============================================================================
-   ESTILOS DE FONDO - MARCA DE AGUA Y SÍMBOLOS MATEMÁTICOS MUNDO MATEMÁTICO
+   ESTILOS GENERALES Y DISEÑO DE TARJETAS - MUNDO MATEMÁTICO
    ============================================================================== */
 
-body {
-  position: relative;
-  background-color: #f8fafc;
-  /* Fondo decorativo con símbolos matemáticos tenues y la marca de agua repetida */
-  background-image: 
-    radial-gradient(circle at 20% 30%, rgba(30, 58, 138, 0.03) 0%, transparent 40%),
-    radial-gradient(circle at 80% 70%, rgba(37, 99, 235, 0.03) 0%, transparent 40%);
-  min-height: 100vh;
+:root {
+  --azul: #1e3a8a;
+  --azul-claro: #eff6ff;
+  --rojo: #dc2626;
+  --borde: #cbd5e1;
 }
 
-/* Contenedor decorativo de marca de agua tipográfica en el fondo */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background-color: #f1f5f9;
+  position: relative;
+  min-height: 100vh;
+  color: #1e293b;
+}
+
+/* MARCA DE AGUA VIVA Y ELEGANTE DE FONDO */
 body::before {
   content: "MUNDO MATEMÁTICO   ∫ ∑ π √∞   MUNDO MATEMÁTICO   ∫ ∑ π √∞";
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%) rotate(-25deg);
-  font-size: 5rem;
+  font-size: 4.5rem;
   font-weight: 900;
-  color: rgba(30, 58, 138, 0.025); /* Sutil y elegante, totalmente legible pero sin estorbar */
+  color: rgba(30, 58, 138, 0.08); /* Subimos la opacidad para que se note perfectamente */
   white-space: nowrap;
   z-index: -1;
   pointer-events: none;
   user-select: none;
-  letter-spacing: 5px;
+  letter-spacing: 4px;
 }
 
-/* Estilo para asegurar que el logotipo cargue y luzca perfecto */
-.logo-img, header img, .navbar-brand img {
-  max-height: 45px;
+/* Encabezado institucional con logo */
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 30px;
+  background: white;
+  border-bottom: 1px solid var(--borde);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.logo-contenedor {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-contenedor img {
+  height: 42px;
   width: auto;
   object-fit: contain;
+}
+
+/* Tarjetas y paneles elegantes */
+.panel, section {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  padding: 25px;
+  margin: 20px auto;
+  max-width: 900px;
+}
+
+/* Botones profesionales */
+.boton {
+  background: var(--azul);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  transition: background 0.2s;
+}
+
+.boton:hover {
+  background: #1e40af;
+}
+
+/* Barra de progreso */
+.progreso {
+  background: #e2e8f0;
+  border-radius: 999px;
+  height: 8px;
+  width: 100%;
+  overflow: hidden;
+  margin: 10px 0;
+}
+
+.progreso-barra {
+  background: var(--azul);
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+.oculto {
+  display: none !important;
 }
