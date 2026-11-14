@@ -35,16 +35,25 @@ async function init() {
 
   if (esTodas) {
     state.todas = true;
-    // Si es prueba completa, unimos todas las preguntas de todos los temas
-    let todasLasDelSistema = [];
+    let preguntasGlobales = [];
+    
+    // Toma exactamente 5 preguntas aleatorias de cada carpeta (tema)
     state.temas.forEach(t => {
-      if (t.preguntas) {
-        todasLasDelSistema = todasLasDelSistema.concat(t.preguntas.map(p => ({ archivo: p, tema: t })));
+      if (t.preguntas && t.preguntas.length > 0) {
+        // Mezclamos las preguntas del tema de forma aleatoria
+        const preguntasMezcladas = [...t.preguntas].sort(() => Math.random() - 0.5);
+        // Seleccionamos máximo 5 (o las que tenga si son menos de 5)
+        const elegidas = preguntasMezcladas.slice(0, 5);
+        
+        elegidas.forEach(archivo => {
+          preguntasGlobales.push({ archivo: archivo, tema: t });
+        });
       }
     });
-    // Mezclamos o seleccionamos todas (aquí toma todas las disponibles para el simulacro global)
-    state.seleccionGlobal = todasLasDelSistema;
-    state.seleccion = todasLasDelSistema.map(x => x.archivo);
+
+    // Mezclamos el orden final de las preguntas globales para que queden intercaladas
+    state.seleccionGlobal = preguntasGlobales.sort(() => Math.random() - 0.5);
+    state.seleccion = state.seleccionGlobal.map(x => x.archivo);
   } else if (temaId) {
     state.cola = [temaId];
     prepararTemaActual();
@@ -72,7 +81,6 @@ function temaPorId(id) {
 function prepararTemaActual() {
   const tema = temaPorId(state.cola[state.indiceTema]);
   const todasLasPreguntas = tema.preguntas || [];
-  // Para temas individuales respeta PREGUNTAS_POR_PRUEBA
   state.seleccion = todasLasPreguntas.slice(0, PREGUNTAS_POR_PRUEBA);
   state.item = 0;
   state.respuestas = {};
@@ -112,7 +120,6 @@ export function renderPregunta(st) {
   const esMulti = respuestasClave && typeof respuestasClave === "object";
   const subPreguntas = esMulti ? Object.keys(respuestasClave) : [null];
 
-  // Recuperar respuesta previa si el usuario ya la había marcado
   const respuestaPrevia = st.respuestas[st.item] || {};
 
   root.innerHTML = `
@@ -158,7 +165,6 @@ export function renderPregunta(st) {
     </section>
   `;
 
-  // Manejar botón Anterior
   document.getElementById("btn-anterior").onclick = () => {
     if (st.item > 0) {
       st.item -= 1;
@@ -243,7 +249,7 @@ function mostrarResultadosFinalesGlobal(st) {
         ESTÁNDAR ICFES (TRI - 3PL)
       </div>
       <h2 style="color: var(--azul); font-size: 1.8rem; margin-top: 0;">Informe Analítico Predictivo Global</h2>
-      <p style="color: #64748b; margin-bottom: 25px;">Evaluación integral de razonamiento cuantitativo y habilidades métricas.</p>
+      <p style="color: #64748b; margin-bottom: 25px;">Evaluación integral de razonamiento cuantitativo y habilidades métricas (${totalPreguntas} preguntas analizadas).</p>
       
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 12px; padding: 25px; margin-bottom: 25px;">
         <div>
