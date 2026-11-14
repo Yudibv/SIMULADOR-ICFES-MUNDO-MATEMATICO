@@ -414,3 +414,94 @@ function mostrarResultadosFinales(st, tema) {
 }
 
 init();
+
+// ==========================================
+// FUNCIÓN PARA GENERAR EL CUADERNILLO PRO EN PDF
+// ==========================================
+function generarPDFInforme(aciertos, totalPreguntas, porcentaje, nivelDesempeno) {
+  if (!window.jspdf) {
+    alert("La librería del PDF se está cargando. Inténtalo de nuevo en un segundo.");
+    return;
+  }
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  // Encabezado institucional
+  doc.setFillColor(30, 58, 138);
+  doc.rect(0, 0, 210, 25, "F");
+  
+  doc.setTextColor(255, 255, 255);
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(15);
+  doc.text("MUNDO MATEMÁTICO", 14, 16);
+  
+  doc.setFontSize(9);
+  doc.text("Informe Analítico Predictivo - Estándar ICFES Saber 11", 138, 16, { align: "right" });
+
+  // Metadatos
+  doc.setTextColor(33, 37, 41);
+  doc.setFontSize(13);
+  doc.text("Certificado de Diagnóstico y Cuadernillo de Retroalimentación", 14, 38);
+
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(9);
+  doc.text(`Fecha de emisión: ${new Date().toLocaleDateString()}`, 14, 45);
+  doc.text(`Herramienta académica independiente de Mundo Matemático.`, 14, 51);
+
+  // Resumen
+  doc.setDrawColor(203, 213, 225);
+  doc.setFillColor(248, 250, 252);
+  doc.roundedRect(14, 58, 182, 32, 3, 3, "FD");
+
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(11);
+  doc.text("RESUMEN DE DESEMPEÑO GLOBAL", 20, 67);
+  
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(10);
+  doc.text(`• Aciertos Totales: ${aciertos} de ${totalPreguntas} (${porcentaje}%)`, 20, 76);
+  doc.text(`• Nivel Estimado Saber 11: ${nivelDesempeno}`, 20, 84);
+
+  // Diagnóstico
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(11);
+  doc.text("Diagnóstico de Competencias (Parámetros TRI)", 14, 103);
+
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(9.5);
+  const textoDiagnostico = doc.splitTextToSize(
+    "Basado en la calibración de ítems de alta discriminación del simulacro global, se identifican fortalezas en razonamiento aritmético, así como vulnerabilidades críticas en componentes de análisis algebraico e interpretación geométrica que impactan directamente el puntaje en la prueba oficial del ICFES.",
+    182
+  );
+  doc.text(textoDiagnostico, 14, 110);
+
+  // Ruta de Mejora
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(11);
+  doc.text("Ruta de Corrección y Preguntas Trampa", 14, 137);
+
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(9.5);
+  const textoRuta = doc.splitTextToSize(
+    "1. Revisión detallada de propiedades de exponentes y radicación en expresiones algebraicas.\n2. Fortalecimiento en la lectura de gráficos cartesianos y pendientes de rectas.\n3. Aplicación de la estrategia de eliminación de distractores lógicos en preguntas de opción múltiple.",
+    182
+  );
+  doc.text(textoRuta, 14, 144);
+
+  // Pie de página
+  doc.setFillColor(240, 253, 244);
+  doc.setDraw(34, 197, 94);
+  doc.roundedRect(14, 178, 182, 28, 3, 3, "FD");
+
+  doc.setTextColor(22, 101, 52);
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(10);
+  doc.text("¡Asegura tu cupo universitario con Mundo Matemático!", 20, 187);
+  
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(8.5);
+  doc.text("Este documento valida tu acceso al cuadernillo Pro. Ante cualquier duda, agenda tu refuerzo.", 20, 195);
+
+  doc.save("Cuadernillo_Pro_Mundo_Matematico.pdf");
+}
