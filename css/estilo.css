@@ -24,7 +24,7 @@ body {
 
 /* MARCA DE AGUA VIVA Y ELEGANTE DE FONDO */
 body::before {
-  content: "MUNDO MATEMÁTICO   ∫ ∑ π √∞   MUNDO MATEMÁTICO   ∫ ∑ π √∞";
+  content: "MUNDO MATEMÁTICO   ∫ ∑ π √∞  \\  MUNDO MATEMÁTICO   ∫ ∑ π √∞";
   position: fixed;
   top: 50%;
   left: 50%;
