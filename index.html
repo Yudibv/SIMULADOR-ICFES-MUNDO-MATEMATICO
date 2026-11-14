@@ -26,7 +26,7 @@
       flex-direction: column;
     }
 
-    /* Marca de agua distribuida y dispersa por todo el fondo de forma uniforme */
+    /* Marca de agua distribuida por todo el fondo */
     body::before {
       content: "MUNDO MATEMÁTICO     Δ     π     e     ϕ     θ     \A     ∫     ∑     ∞     √     MUNDO MATEMÁTICO     \A     Δ     e     π     θ     ϕ     \A     ∫     ∑     ∞     √     MUNDO MATEMÁTICO     Δ     π";
       position: fixed;
@@ -102,45 +102,73 @@
       margin: 30px auto;
     }
 
-    /* Caja de presentación / bienvenida explicativa */
+    /* Textos institucionales y caja de bienvenida exactos */
+    .seccion-subtitulo {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #dc2626;
+      text-transform: uppercase;
+      margin-bottom: 5px;
+      letter-spacing: 0.5px;
+    }
+
     .presentacion-bienvenida {
       background: white;
       border: 1px solid #e2e8f0;
-      border-left: 5px solid var(--azul);
-      border-radius: 8px;
-      padding: 20px 25px;
-      margin-bottom: 25px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+      border-radius: 12px;
+      padding: 25px;
+      margin-bottom: 30px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04);
     }
 
-    .presentacion-bienvenida h2 {
+    .presentacion-bienvenida h1 {
       color: var(--azul);
       margin-top: 0;
-      font-size: 1.4rem;
+      font-size: 1.8rem;
+      margin-bottom: 15px;
     }
 
     .presentacion-bienvenida p {
       color: #475569;
-      margin-bottom: 0;
-      line-height: 1.5;
+      line-height: 1.6;
+      margin-bottom: 20px;
     }
 
-    /* Caja institucional sobre el compromiso con los estudiantes */
-    .compromiso-estudiantes {
+    /* Caja azul interna con los avisos y recomendaciones */
+    .caja-aviso-azul {
       background: var(--azul-claro);
       border: 1px solid #bfdbfe;
       border-radius: 8px;
-      padding: 18px 22px;
-      margin-bottom: 30px;
-      text-align: center;
+      padding: 20px;
+      margin-top: 15px;
     }
 
-    .compromiso-estudiantes p {
+    .caja-aviso-azul h3 {
       color: var(--azul);
-      font-weight: 600;
+      margin-top: 0;
+      font-size: 1.05rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .caja-aviso-azul p {
+      color: #334155;
       font-size: 0.95rem;
-      margin: 0;
+      margin: 0 0 10px 0;
       line-height: 1.5;
+    }
+
+    .caja-aviso-azul p:last-child {
+      margin-bottom: 0;
+    }
+
+    .titulo-modulos {
+      color: var(--azul);
+      font-size: 1.3rem;
+      margin-bottom: 20px;
+      font-weight: 800;
     }
 
     #rejilla {
@@ -222,6 +250,7 @@
       font-size: 0.85rem;
       border-top: 1px solid var(--borde);
       background: rgba(255, 255, 255, 0.7);
+      margin-top: 40px;
     }
 
     .oculto {
@@ -242,20 +271,24 @@
     </nav>
   </header>
 
-  <!-- Contenedor principal -->
+  <!-- Contenedor principal con los textos que tenías -->
   <main class="contenedor-principal">
-    <!-- Texto explicativo de bienvenida -->
     <section class="presentacion-bienvenida">
-      <h2>Simulador Oficial de Razonamiento Cuantitativo</h2>
-      <p>Selecciona una competencia específica para iniciar tu práctica focalizada con preguntas seleccionadas al azar del cuadernillo ICFES Saber 11, o evalúa tu nivel global con parámetros analíticos avanzados.</p>
+      <div class="seccion-subtitulo">Saber 11 · Práctica</div>
+      <h1>Simulador de Matemáticas</h1>
+      <p>Mundo Matemático ha creado este simulador como una herramienta de apoyo académico para fortalecer el razonamiento cuantitativo y asegurar tu ingreso a la educación superior.</p>
+      
+      <!-- Caja azul interior de recomendación -->
+      <div class="caja-aviso-azul">
+        <h3>🎯 ¡Prepárate al máximo nivel para el ICFES Saber 11!</h3>
+        <p>Puedes practicar libremente con nuestras carpetas temáticas individuales y recibir su respectiva retroalimentación gratuita. Si deseas medirte con una Prueba Completa (Simulacro Global), podrás adquirir un <strong>informe analítico predictivo avanzado</strong> con costo preferencial para conocer tus fortalezas reales.</p>
+        <p style="color: var(--azul); font-weight: 600; margin-top: 8px;">💡 Recomendación: Usa las carpetas para pulir tus vacíos y el simulacro global para tu evaluación definitiva.</p>
+      </div>
     </section>
 
-    <!-- Frase institucional sobre el compromiso con los estudiantes -->
-    <section class="compromiso-estudiantes">
-      <p>En <strong>Mundo Matemático</strong> nos preocupamos profundamente por el éxito y la comprensión real de nuestros estudiantes. Cada ejercicio está diseñado para potenciar tu razonamiento y garantizar tu ingreso a la universidad.</p>
-    </section>
+    <h2 class="titulo-modulos">Módulos de Práctica Focalizada</h2>
 
-    <!-- Rejilla donde el menú dibuja los cuadritos -->
+    <!-- Rejilla donde el script dibuja los cajoncitos de las materias -->
     <div id="rejilla"></div>
     <div id="aviso" class="alerta oculto" style="color: red; padding: 20px; font-weight: bold;"></div>
   </main>
