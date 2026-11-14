@@ -27,25 +27,26 @@ body {
    ============================================================================== */
 
 body::before {
-  content: "MUNDO MATEMÁTICO     \A     Δ     π     e     ϕ     θ     \A     ∫     ∑     ∞     √     \A     MUNDO MATEMÁTICO     \A     Δ     e     π     θ     ϕ     \A     ∫     ∑     ∞     √     \A     MUNDO MATEMÁTICO";
+  content: "MUNDO MATEMÁTICO     Δ     π     e     ϕ     θ     ∫     ∑     ∞     √     MUNDO MATEMÁTICO     Δ     e     π     θ     ϕ     ∫     ∑     ∞     √     MUNDO MATEMÁTICO";
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  font-size: 3rem;
+  /* Quitamos el flex centrado para que se disperse por todo el fondo */
+  padding: 5vh 5vw;
+  box-sizing: border-box;
+  font-size: 2.2rem;
   font-weight: 800;
-  color: rgba(30, 58, 138, 0.045);
-  white-space: pre-wrap;
+  color: rgba(30, 58, 138, 0.045); /* Sutil y elegante */
   z-index: -1;
   pointer-events: none;
   user-select: none;
-  line-height: 2.5rem;
+  line-height: 4rem;
+  letter-spacing: 3px;
   transform: rotate(-15deg);
+  word-break: break-all;
+  overflow: hidden;
 }
 
 /* ==============================================================================
