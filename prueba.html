@@ -1,177 +1,212 @@
-<style>
-  :root {
-    --azul: #1e3a8a;
-    --azul-claro: #eff6ff;
-    --rojo: #dc2626;
-    --borde: #cbd5e1;
-    --fondo: #f8fafc;
-  }
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulador ICFES Saber 11 - Mundo Matemático</title>
+  
+  <style>
+    :root {
+      --azul: #1e3a8a;
+      --azul-claro: #eff6ff;
+      --rojo: #dc2626;
+      --borde: #cbd5e1;
+      --fondo: #f8fafc;
+    }
 
-  body {
-    margin: 0;
-    padding: 0;
-    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-    background-color: var(--fondo);
-    position: relative;
-    min-height: 100vh;
-    color: #1e293b;
-    display: flex;
-    flex-direction: column;
-    overflow-x: hidden;
-  }
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--fondo);
+      position: relative;
+      min-height: 100vh;
+      color: #1e293b;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
 
-  /* Marca de agua distribuida y centrada en toda la pantalla */
-  body::before {
-    content: "MUNDO MATEMÁTICO     Δ     π     e     ϕ     θ     \A     ∫     ∑     ∞     √     MUNDO MATEMÁTICO     \A     Δ     e     π     θ     ϕ     \A     ∫     ∑     ∞     √     MUNDO MATEMÁTICO     Δ     π";
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    font-size: 2.5rem;
-    font-weight: 800;
-    color: rgba(30, 58, 138, 0.045);
-    white-space: pre-wrap;
-    z-index: -1;
-    pointer-events: none;
-    user-select: none;
-    line-height: 4.5rem;
-    letter-spacing: 4px;
-    transform: rotate(-15deg);
-  }
+    /* Marca de agua distribuida y centrada en toda la pantalla */
+    body::before {
+      content: "MUNDO MATEMÁTICO     Δ     π     e     ϕ     θ     \A     ∫     ∑     ∞     √     MUNDO MATEMÁTICO     \A     Δ     e     π     θ     ϕ     \A     ∫     ∑     ∞     √     MUNDO MATEMÁTICO     Δ     π";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: rgba(30, 58, 138, 0.045);
+      white-space: pre-wrap;
+      z-index: -1;
+      pointer-events: none;
+      user-select: none;
+      line-height: 4.5rem;
+      letter-spacing: 4px;
+      transform: rotate(-15deg);
+    }
 
-  /* Cabecera idéntica al menú */
-  .header-principal {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 15px 30px;
-    background: white;
-    border-bottom: 1px solid var(--borde);
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-  }
+    /* Cabecera idéntica al menú */
+    .header-principal {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 15px 30px;
+      background: white;
+      border-bottom: 1px solid var(--borde);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
 
-  .logo-contenedor {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
+    .logo-contenedor {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
 
-  .logo-contenedor img {
-    height: 42px !important;
-    width: auto !important;
-    max-width: 140px !important;
-    object-fit: contain !important;
-    display: block !important;
-  }
+    .logo-contenedor img {
+      height: 42px !important;
+      width: auto !important;
+      max-width: 140px !important;
+      object-fit: contain !important;
+      display: block !important;
+    }
 
-  .titulo-sitio {
-    font-size: 1.25rem;
-    color: var(--azul);
-    margin: 0;
-    font-weight: 800;
-    letter-spacing: -0.5px;
-  }
+    .titulo-sitio {
+      font-size: 1.25rem;
+      color: var(--azul);
+      margin: 0;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
 
-  .sub-saber {
-    font-size: 0.8rem;
-    font-weight: 500;
-    color: #64748b;
-  }
+    .sub-saber {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: #64748b;
+    }
 
-  .link-nav {
-    text-decoration: none;
-    color: var(--azul);
-    font-weight: 600;
-    font-size: 0.95rem;
-  }
+    .link-nav {
+      text-decoration: none;
+      color: var(--azul);
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
 
-  /* Contenedor general unificado */
-  .contenedor-principal, .panel-pregunta, .card {
-    max-width: 950px;
-    width: 90%;
-    margin: 30px auto;
-    box-sizing: border-box;
-    background: white;
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
-    padding: 25px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04);
-  }
+    /* Contenedor general unificado */
+    .contenedor-principal, .panel-pregunta, .card {
+      max-width: 950px;
+      width: 90%;
+      margin: 30px auto;
+      box-sizing: border-box;
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 25px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04);
+    }
 
-  /* Alineación de imágenes de las preguntas */
-  img, .pregunta-img {
-    max-width: 100%;
-    height: auto;
-    display: block;
-    margin: 15px auto;
-    border-radius: 8px;
-  }
+    /* Alineación de imágenes de las preguntas */
+    img, .pregunta-img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 15px auto;
+      border-radius: 8px;
+    }
 
-  /* Cajones de opciones de respuesta */
-  .opciones {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    margin: 20px 0;
-  }
+    /* Cajones de opciones de respuesta */
+    .opciones {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin: 20px 0;
+    }
 
-  .opcion {
-    background: #ffffff;
-    border: 1px solid #cbd5e1;
-    border-radius: 8px;
-    padding: 14px 18px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
+    .opcion {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
 
-  .opcion:hover {
-    background: var(--azul-claro);
-    border-color: var(--azul);
-  }
+    .opcion:hover {
+      background: var(--azul-claro);
+      border-color: var(--azul);
+    }
 
-  .opcion input[type="radio"] {
-    accent-color: var(--azul);
-    transform: scale(1.2);
-  }
+    .opcion input[type="radio"] {
+      accent-color: var(--azul);
+      transform: scale(1.2);
+    }
 
-  /* Botones profesionales */
-  .boton, button, .btn {
-    background: var(--azul);
-    color: white;
-    border: none;
-    padding: 10px 22px;
-    border-radius: 6px;
-    font-weight: bold;
-    cursor: pointer;
-    text-decoration: none;
-    display: inline-block;
-    text-align: center;
-    transition: background 0.2s;
-  }
+    /* Botones profesionales */
+    .boton, button, .btn {
+      background: var(--azul);
+      color: white;
+      border: none;
+      padding: 10px 22px;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
+      transition: background 0.2s;
+    }
 
-  .boton:hover, button:hover {
-    background: #1e40af;
-  }
+    .boton:hover, button:hover {
+      background: #1e40af;
+    }
 
-  .footer-principal {
-    text-align: center;
-    padding: 20px;
-    color: #64748b;
-    font-size: 0.85rem;
-    border-top: 1px solid var(--borde);
-    background: rgba(255, 255, 255, 0.7);
-    margin-top: auto;
-  }
+    .footer-principal {
+      text-align: center;
+      padding: 20px;
+      color: #64748b;
+      font-size: 0.85rem;
+      border-top: 1px solid var(--borde);
+      background: rgba(255, 255, 255, 0.7);
+      margin-top: auto;
+    }
 
-  .oculto {
-    display: none !important;
-  }
-</style>
+    .oculto {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Cabecera idéntica al menú -->
+  <header class="header-principal">
+    <div class="logo-contenedor">
+      <img src="logo.jpg" alt="Mundo Matemático">
+      <h1 class="titulo-sitio">MUNDO MATEMÁTICO <span class="sub-saber">Saber 11</span></h1>
+    </div>
+    <nav>
+      <a href="index.html" class="link-nav">Volver al Menú</a>
+    </nav>
+  </header>
+
+  <!-- Contenedor principal donde prueba.js insertará las preguntas dinámicamente -->
+  <main class="contenedor-principal">
+    <div id="vista"></div>
+  </main>
+
+  <!-- Pie de página -->
+  <footer class="footer-principal">
+    <p>Mundo Matemático • Educación y pre-universitario de alto rendimiento</p>
+  </footer>
+
+  <!-- Script principal del simulador -->
+  <script type="module" src="js/prueba.js"></script>
+</body>
+</html>
