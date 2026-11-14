@@ -51,12 +51,11 @@
       transform: rotate(-15deg);
     }
 
-    /* Cabecera idéntica al menú */
     .header-principal {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 15px 30px;
+      padding: 15px 35px;
       background: white;
       border-bottom: 1px solid var(--borde);
       box-shadow: 0 1px 3px rgba(0,0,0,0.05);
@@ -65,19 +64,20 @@
     .logo-contenedor {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 15px;
     }
 
+    /* LOGOTIPO AGRANDADO PARA MAYOR PRESENCIA VISUAL */
     .logo-contenedor img {
-      height: 42px !important;
+      height: 65px !important;
       width: auto !important;
-      max-width: 140px !important;
+      max-width: 210px !important;
       object-fit: contain !important;
       display: block !important;
     }
 
     .titulo-sitio {
-      font-size: 1.25rem;
+      font-size: 1.4rem;
       color: var(--azul);
       margin: 0;
       font-weight: 800;
@@ -85,7 +85,7 @@
     }
 
     .sub-saber {
-      font-size: 0.8rem;
+      font-size: 0.85rem;
       font-weight: 500;
       color: #64748b;
     }
@@ -94,48 +94,48 @@
       text-decoration: none;
       color: var(--azul);
       font-weight: 600;
-      font-size: 0.95rem;
+      font-size: 1rem;
     }
 
-    /* Contenedor general unificado */
+    /* CONTENEDOR AMPLIADO: Se pasa de 950px a 1180px para que la imagen respire y no se vea pequeña */
     .contenedor-principal, .panel-pregunta, .card {
-      max-width: 950px;
-      width: 90%;
+      max-width: 1180px;
+      width: 94%;
       margin: 30px auto;
       box-sizing: border-box;
       background: white;
       border: 1px solid #e2e8f0;
       border-radius: 12px;
-      padding: 25px;
+      padding: 35px;
       box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04);
     }
 
-    /* Alineación de imágenes de las preguntas */
+    /* IMÁGENES DE LAS PREGUNTAS MÁS GRANDES Y CÓMODAS */
     img, .pregunta-img {
       max-width: 100%;
       height: auto;
       display: block;
-      margin: 15px auto;
+      margin: 20px auto;
       border-radius: 8px;
     }
 
-    /* Cajones de opciones de respuesta */
     .opciones {
       display: flex;
       flex-direction: column;
       gap: 12px;
-      margin: 20px 0;
+      margin: 25px 0;
     }
 
     .opcion {
       background: #ffffff;
       border: 1px solid #cbd5e1;
       border-radius: 8px;
-      padding: 14px 18px;
+      padding: 16px 20px;
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 14px;
       cursor: pointer;
+      font-size: 1.05rem;
       transition: all 0.2s ease;
     }
 
@@ -146,21 +146,21 @@
 
     .opcion input[type="radio"] {
       accent-color: var(--azul);
-      transform: scale(1.2);
+      transform: scale(1.3);
     }
 
-    /* Botones profesionales */
     .boton, button, .btn {
       background: var(--azul);
       color: white;
       border: none;
-      padding: 10px 22px;
+      padding: 12px 26px;
       border-radius: 6px;
       font-weight: bold;
       cursor: pointer;
       text-decoration: none;
       display: inline-block;
       text-align: center;
+      font-size: 1rem;
       transition: background 0.2s;
     }
 
@@ -178,6 +178,13 @@
       margin-top: auto;
     }
 
+    .aviso-legal-prueba {
+      text-align: center;
+      font-size: 0.85rem;
+      color: #64748b;
+      margin-top: 25px;
+    }
+
     .oculto {
       display: none !important;
     }
@@ -185,7 +192,7 @@
 </head>
 <body>
 
-  <!-- Cabecera idéntica al menú -->
+  <!-- Cabecera con logo grande y claro -->
   <header class="header-principal">
     <div class="logo-contenedor">
       <img src="logo.jpg" alt="Mundo Matemático">
@@ -196,9 +203,12 @@
     </nav>
   </header>
 
-  <!-- Contenedor principal donde prueba.js insertará las preguntas dinámicamente -->
+  <!-- Contenedor principal donde prueba.js inserta las preguntas -->
   <main class="contenedor-principal">
     <div id="vista"></div>
+    <div class="aviso-legal-prueba">
+      <p style="margin: 0;">Herramienta académica independiente de Mundo Matemático (Página no oficial del Icfes).</p>
+    </div>
   </main>
 
   <!-- Pie de página -->
