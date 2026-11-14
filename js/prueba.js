@@ -35,14 +35,26 @@ async function init() {
 
   if (esTodas) {
     state.todas = true;
-    state.cola = state.temas.map(t => t.id);
+    // Si es prueba completa, unimos todas las preguntas de todos los temas
+    let todasLasDelSistema = [];
+    state.temas.forEach(t => {
+      if (t.preguntas) {
+        todasLasDelSistema = todasLasDelSistema.concat(t.preguntas.map(p => ({ archivo: p, tema: t })));
+      }
+    });
+    // Mezclamos o seleccionamos todas (aquí toma todas las disponibles para el simulacro global)
+    state.seleccionGlobal = todasLasDelSistema;
+    state.seleccion = todasLasDelSistema.map(x => x.archivo);
   } else if (temaId) {
     state.cola = [temaId];
+    prepararTemaActual();
   } else {
     state.cola = [state.temas[0].id];
+    prepararTemaActual();
   }
 
-  prepararTemaActual();
+  state.item = 0;
+  state.respuestas = {};
   renderPregunta(state);
 }
 
@@ -60,19 +72,37 @@ function temaPorId(id) {
 function prepararTemaActual() {
   const tema = temaPorId(state.cola[state.indiceTema]);
   const todasLasPreguntas = tema.preguntas || [];
+  // Para temas individuales respeta PREGUNTAS_POR_PRUEBA
   state.seleccion = todasLasPreguntas.slice(0, PREGUNTAS_POR_PRUEBA);
   state.item = 0;
   state.respuestas = {};
 }
 
 export function renderPregunta(st) {
-  const tema = temaPorId(st.cola[st.indiceTema]);
-  const archivo = st.seleccion[st.item];
-  const total = st.seleccion.length;
+  let tema, archivo;
+  
+  if (st.todas) {
+    const actualGlobal = st.seleccionGlobal[st.item];
+    if (!actualGlobal) {
+      mostrarResultadosFinalesGlobal(st);
+      return;
+    }
+    tema = actualGlobal.tema;
+    archivo = actualGlobal.archivo;
+  } else {
+    tema = temaPorId(st.cola[st.indiceTema]);
+    archivo = st.seleccion[st.item];
+  }
+
+  const total = st.todas ? st.seleccionGlobal.length : st.seleccion.length;
   const root = obtenerContenedor();
 
   if (!archivo) {
-    mostrarResultadosFinales(st, tema);
+    if (st.todas) {
+      mostrarResultadosFinalesGlobal(st);
+    } else {
+      mostrarResultadosFinales(st, tema);
+    }
     return;
   }
 
@@ -82,8 +112,11 @@ export function renderPregunta(st) {
   const esMulti = respuestasClave && typeof respuestasClave === "object";
   const subPreguntas = esMulti ? Object.keys(respuestasClave) : [null];
 
+  // Recuperar respuesta previa si el usuario ya la había marcado
+  const respuestaPrevia = st.respuestas[st.item] || {};
+
   root.innerHTML = `
-    <p class="migas"><a href="index.html">Menú</a> / ${tema.titulo || tema.id} / Ejercicio ${st.item + 1}</p>
+    <p class="migas"><a href="index.html">Menú</a> / ${st.todas ? 'Simulacro Global Saber 11' : (tema.titulo || tema.id)} / Ejercicio ${st.item + 1} de ${total}</p>
     <div class="progreso"><div class="progreso-barra" style="width:${((st.item + 1) / total) * 100}%"></div></div>
     <p class="progreso-texto">Ejercicio ${st.item + 1} de ${total}</p>
     <section class="panel">
@@ -94,27 +127,44 @@ export function renderPregunta(st) {
       <p id="error" class="alerta oculto" style="margin-bottom: 15px; color: red;">Por favor responde la pregunta para continuar.</p>
       
       <form id="form-opciones">
-        ${subPreguntas.map((num) => `
-          ${num ? `<h3 class="subtitulo-pregunta" style="color: var(--azul); margin-top: 15px; margin-bottom: 8px;">Pregunta ${num}</h3>` : ""}
-          <fieldset class="opciones" style="margin-bottom: 20px; border: none; padding: 0;">
-            <legend class="sr">Elige una respuesta</legend>
-            ${["A", "B", "C", "D"]
-              .map(
-                (l) => `<label class="opcion" style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; cursor: pointer;">
-                  <input type="radio" name="opcion_${num || 'unica'}" value="${l}" required>
-                  <span class="letra" style="font-weight: bold;">${l}</span><span>Opción ${l}</span>
-                </label>`
-              )
-              .join("")}
-          </fieldset>
-        `).join("")}
+        ${subPreguntas.map((num) => {
+          const valorAnterior = esMulti ? respuestaPrevia[num] : respuestaPrevia;
+          return `
+            ${num ? `<h3 class="subtitulo-pregunta" style="color: var(--azul); margin-top: 15px; margin-bottom: 8px;">Pregunta ${num}</h3>` : ""}
+            <fieldset class="opciones" style="margin-bottom: 20px; border: none; padding: 0;">
+              <legend class="sr">Elige una respuesta</legend>
+              ${["A", "B", "C", "D"]
+                .map((l) => {
+                  const marcado = valorAnterior === l ? 'checked' : '';
+                  return `<label class="opcion" style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; cursor: pointer;">
+                    <input type="radio" name="opcion_${num || 'unica'}" value="${l}" ${marcado} required>
+                    <span class="letra" style="font-weight: bold;">${l}</span><span>Opción ${l}</span>
+                  </label>`;
+                })
+                .join("")}
+            </fieldset>
+          `;
+        }).join("")}
 
-        <div class="acciones">
-          <button class="boton" type="submit">${st.item + 1 < total ? 'Siguiente' : 'Ver Diagnóstico y Resultados'}</button>
+        <div class="acciones" style="display: flex; justify-content: space-between; gap: 10px; margin-top: 20px;">
+          <button class="boton" type="button" id="btn-anterior" ${st.item === 0 ? 'style="opacity: 0.5; cursor: not-allowed;"' : 'style="background: #64748b;"'}>
+            ← Anterior
+          </button>
+          <button class="boton" type="submit" style="flex: 1;">
+            ${st.item + 1 < total ? 'Siguiente →' : 'Ver Diagnóstico y Resultados 🏁'}
+          </button>
         </div>
       </form>
     </section>
   `;
+
+  // Manejar botón Anterior
+  document.getElementById("btn-anterior").onclick = () => {
+    if (st.item > 0) {
+      st.item -= 1;
+      renderPregunta(st);
+    }
+  };
 
   document.getElementById("form-opciones").onsubmit = (ev) => {
     ev.preventDefault();
@@ -144,9 +194,98 @@ export function renderPregunta(st) {
       st.item += 1;
       renderPregunta(st);
     } else {
-      mostrarResultadosFinales(st, tema);
+      if (st.todas) {
+        mostrarResultadosFinalesGlobal(st);
+      } else {
+        mostrarResultadosFinales(st, tema);
+      }
     }
   };
+}
+
+function mostrarResultadosFinalesGlobal(st) {
+  let aciertos = 0;
+  let totalPreguntas = st.seleccionGlobal.length;
+
+  st.seleccionGlobal.forEach((itemGlobal, index) => {
+    const tema = itemGlobal.tema;
+    const archivo = itemGlobal.archivo;
+    const respuestaCorrecta = (tema.respuestas || {})[archivo];
+    const respuestaUsuario = st.respuestas[index];
+
+    if (typeof respuestaCorrecta === "object") {
+      let todasCorrectas = true;
+      for (const subKey in respuestaCorrecta) {
+        if (respuestaUsuario?.[subKey] !== respuestaCorrecta[subKey]) {
+          todasCorrectas = false;
+        }
+      }
+      if (todasCorrectas) aciertos++;
+    } else {
+      if (respuestaUsuario === respuestaCorrecta) {
+        aciertos++;
+      }
+    }
+  });
+
+  const porcentaje = Math.round((aciertos / totalPreguntas) * 100);
+  let nivelDesempeno = "Nivel 1 (En riesgo)";
+  if (porcentaje >= 75) nivelDesempeno = "Nivel 4 (Avanzado)";
+  else if (porcentaje >= 50) nivelDesempeno = "Nivel 3 (Satisfactorio)";
+  else if (porcentaje >= 35) nivelDesempeno = "Nivel 2 (Mínimo)";
+
+  const root = obtenerContenedor();
+  const linkWompi = "https://checkout.wompi.co/l/VPOS_9PaOd7";
+
+  root.innerHTML = `
+    <section class="panel" style="text-align: center; padding: 30px;">
+      <div style="background: #1e3a8a; color: white; padding: 6px 16px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; display: inline-block; margin-bottom: 15px;">
+        ESTÁNDAR ICFES (TRI - 3PL)
+      </div>
+      <h2 style="color: var(--azul); font-size: 1.8rem; margin-top: 0;">Informe Analítico Predictivo Global</h2>
+      <p style="color: #64748b; margin-bottom: 25px;">Evaluación integral de razonamiento cuantitativo y habilidades métricas.</p>
+      
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 12px; padding: 25px; margin-bottom: 25px;">
+        <div>
+          <div style="font-size: 2.2rem; font-weight: bold; color: var(--azul);">${aciertos} / ${totalPreguntas}</div>
+          <div style="color: #64748b; font-size: 0.9rem; font-weight: 600;">Aciertos Totales (${porcentaje}%)</div>
+        </div>
+        <div>
+          <div style="font-size: 1.6rem; font-weight: bold; color: var(--rojo); margin-top: 5px;">${nivelDesempeno}</div>
+          <div style="color: #64748b; font-size: 0.9rem; font-weight: 600;">Desempeño Estimado Saber 11</div>
+        </div>
+      </div>
+
+      <div style="background: var(--azul-claro); border: 1px solid #bfdbfe; border-radius: 10px; padding: 20px; text-align: left; margin-bottom: 25px;">
+        <h4 style="color: var(--azul); margin-top: 0; display: flex; align-items: center; gap: 8px;">
+          🔒 Diagnóstico de Competencias Latentes (Parámetros TRI)
+        </h4>
+        <p style="color: #334155; font-size: 0.95rem; line-height: 1.5; margin-bottom: 10px;">
+          Basado en la calibración de ítems de alta discriminación, hemos detectado vulnerabilidades críticas en componentes de análisis algebraico e interpretación geométrica.
+        </p>
+        <p style="color: #1e3a8a; font-size: 0.85rem; font-style: italic; margin: 0;">
+          * El reporte detallado con las curvas características de los ítems y la ruta de corrección de preguntas trampa se encuentra protegido comercialmente.
+        </p>
+      </div>
+
+      <div style="border: 2px solid #16a34a; padding: 25px; margin-top: 25px; border-radius: 8px; background: #f0fdf4;">
+        <span style="background: #16a34a; color: white; padding: 4px 12px; border-radius: 4px; font-size: 0.85rem; font-weight: bold;">PAGO SEGURO EN LÍNEA (24/7)</span>
+        <h3 style="color: var(--azul); margin-top: 10px; font-size: 1.3rem;">Obtén tu Informe Analítico y Cuadernillo Pro</h3>
+        <p style="margin-bottom: 20px; color: #334155; font-size: 0.95rem;">
+          Paga de forma inmediata con Nequi, PSE o tarjeta a cualquier hora y desbloquea el acceso total al cuadernillo de retroalimentación detallada.
+        </p>
+        
+        <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+          <a class="boton" href="${linkWompi}" target="_blank" style="background: #16a34a; color: white; text-decoration: none; padding: 12px 24px; border-radius: 6px; font-weight: bold; font-size: 1.05rem;">
+            💳 Pagar con Wompi (Nequi / Tarjetas)
+          </a>
+          <a class="boton" href="index.html" style="background: #1e3a8a; color: white; text-decoration: none; padding: 12px 20px; border-radius: 6px; font-weight: bold;">
+            Volver al Menú Principal
+          </a>
+        </div>
+      </div>
+    </section>
+  `;
 }
 
 function mostrarResultadosFinales(st, tema) {
@@ -184,7 +323,6 @@ function mostrarResultadosFinales(st, tema) {
     mensajeDesempeno = `Identificamos oportunidades de mejora críticas en <strong>${tema.titulo}</strong>. Este puntaje en el componente real te restará puntos decisivos para tu ingreso a la universidad.`;
   }
 
-  // Enlace directo a tu pasarela Wompi que creaste
   const linkWompi = "https://checkout.wompi.co/l/VPOS_9PaOd7";
 
   root.innerHTML = `
@@ -202,7 +340,6 @@ function mostrarResultadosFinales(st, tema) {
         <p style="margin: 0; line-height: 1.6;">${mensajeDesempeno}</p>
       </div>
 
-      <!-- SECCIÓN DE PAGO DIGITAL AUTOMATIZADO CON TU LINK DE WOMPI -->
       <div style="border: 2px solid #16a34a; padding: 25px; margin-top: 25px; border-radius: 8px; background: #f0fdf4;">
         <span style="background: #16a34a; color: white; padding: 4px 12px; border-radius: 4px; font-size: 0.85rem; font-weight: bold;">PAGO SEGURO EN LÍNEA (24/7)</span>
         <h3 style="color: var(--azul); margin-top: 10px; font-size: 1.3rem;">Obtén tu Informe Analítico y Cuadernillo Pro</h3>
