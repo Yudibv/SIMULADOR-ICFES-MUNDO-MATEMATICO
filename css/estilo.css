@@ -22,29 +22,27 @@ body {
   overflow-x: hidden;
 }
 
-/* Marca de agua distribuida y perfectamente centrada en toda la pantalla */
-body::before {
-  content: "MUNDO MATEMÁTICO     Δ     π     e     ϕ     θ     \A     ∫     ∑     ∞     √     MUNDO MATEMÁTICO     \A     Δ     e     π     θ     ϕ     \A     ∫     ∑     ∞     √     MUNDO MATEMÁTICO     Δ     π";
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  font-size: 2.5rem;
-  font-weight: 800;
-  color: rgba(30, 58, 138, 0.045);
-  white-space: pre-wrap;
-  z-index: -1;
-  pointer-events: none;
-  user-select: none;
-  line-height: 4.5rem;
-  letter-spacing: 4px;
-  transform: rotate(-15deg);
-}
+/* Marca de agua en modo tapiz distribuida por todo el fondo */
+  body::before {
+    content: "MUNDO MATEMÁTICO     Δ     π     e     ϕ     θ     \A     ∫     ∑     ∞     √     MUNDO MATEMÁTICO     \A     Δ     e     π     θ     ϕ     \A     ∫     ∑     ∞     √     MUNDO MATEMÁTICO     Δ     π     \A     Δ     π     e     ϕ     θ     MUNDO MATEMÁTICO     ∫     ∑     ∞     √";
+    position: fixed;
+    top: -50%;
+    left: -50%;
+    width: 200vw;
+    height: 200vh;
+    display: block;
+    text-align: center;
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: rgba(30, 58, 138, 0.045);
+    white-space: pre-wrap;
+    z-index: -1;
+    pointer-events: none;
+    user-select: none;
+    line-height: 5rem;
+    letter-spacing: 6px;
+    transform: rotate(-15deg);
+  }
 
 /* Cabecera institucional */
 .header-principal {
