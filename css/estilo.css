@@ -39,7 +39,7 @@ body::before {
   text-align: center;
   font-size: 3rem;
   font-weight: 800;
-  color: rgba(30, 58, 138, 0.045); /* Sutil, disperso y muy elegante */
+  color: rgba(30, 58, 138, 0.045);
   white-space: pre-wrap;
   z-index: -1;
   pointer-events: none;
@@ -49,7 +49,7 @@ body::before {
 }
 
 /* ==============================================================================
-   CABECERA INSTITUCIONAL Y LOGOTIPO
+   CABECERA INSTITUCIONAL Y LOGOTIPO (TAMAÑO CONTROLADO)
    ============================================================================== */
 
 .header-principal {
@@ -69,9 +69,10 @@ body::before {
 }
 
 .logo-contenedor img {
-  height: 42px;
-  width: auto;
-  object-fit: contain;
+  height: 42px !important;
+  width: auto !important;
+  max-width: 140px !important;
+  object-fit: contain !important;
 }
 
 .titulo-sitio {
