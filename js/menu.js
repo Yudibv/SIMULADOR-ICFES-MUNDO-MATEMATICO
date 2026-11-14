@@ -1,3 +1,9 @@
+/**
+ * ==============================================================================
+ * MÓDULO DE MENÚ PRINCIPAL - MUNDO MATEMÁTICO (menu.js)
+ * ==============================================================================
+ */
+
 import { cargarTemas, PREGUNTAS_POR_PRUEBA } from "./temas.js";
 
 const rejilla = document.getElementById("rejilla");
@@ -13,7 +19,7 @@ function tarjeta(tema, indice) {
     <h2>${tema.titulo}</h2>
     <p class="subtitulo">${tema.subtitulo || ""}</p>
     <p>${tema.descripcion || ""}</p>
-    <p class="meta" style="color: #555; font-size: 0.85rem; margin-top: auto; margin-bottom: 0.8rem;">Prueba interactiva: 10 preguntas elegidas al azar</p>
+    <p class="meta" style="color: #555; font-size: 0.85rem; margin-top: auto; margin-bottom: 0.8rem;">Prueba interactiva: ${PREGUNTAS_POR_PRUEBA} preguntas elegidas al azar</p>
     <a class="boton" href="prueba.html?tema=${encodeURIComponent(tema.id)}">Empezar</a>
   `;
   return articulo;
