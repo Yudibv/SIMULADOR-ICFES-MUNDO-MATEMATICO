@@ -1,8 +1,8 @@
 /**
  * ==============================================================================
  * MÓDULO DE PRUEBAS Y SIMULADOR - MUNDO MATEMÁTICO
- * Maneja la lógica de visualización, selección aleatoria de 10 preguntas por tema,
- * navegación secuencial (Anterior / Siguiente) y evaluación de respuestas.
+ * Selecciona exactamente 10 preguntas al azar por tema, con navegación
+ * limpia (Pregunta X de 10) y evaluación diagnóstica.
  * ==============================================================================
  */
 
@@ -13,16 +13,13 @@ let state = {
   temas: [],          // Lista completa de temas cargados desde indice.json
   cola: [],           // Cola de temas activos
   indiceTema: 0,      // Índice del tema actual
-  seleccion: [],      // Archivos de preguntas seleccionados para la prueba (máximo 10)
-  seleccionGlobal: [],// Metadata detallada para el modo de prueba global
-  item: 0,            // Pregunta actual en la que va el estudiante (de 1 a 10)
-  respuestas: {},     // Respuestas dadas por el usuario
-  todas: false        // Bandera para saber si es el Simulacro Global
+  seleccion: [],      // Archivos seleccionados para la prueba (exactamente 10)
+  seleccionGlobal: [],// Metadata detallada para simulacro global
+  item: 0,            // Pregunta actual (de 0 a 9)
+  respuestas: {},     // Respuestas dadas por el estudiante
+  todas: false        // Bandera de simulacro global
 };
 
-/**
- * Obtiene o crea dinámicamente el contenedor principal en el DOM donde se renderiza la prueba.
- */
 function obtenerContenedor() {
   let root = document.getElementById("vista") || document.getElementById("root") || document.getElementById("panel") || document.querySelector("main");
   if (!root) {
@@ -33,10 +30,6 @@ function obtenerContenedor() {
   return root;
 }
 
-/**
- * Función de inicialización asíncrona: Lee los parámetros de la URL, 
- * carga los temas y define si se ejecuta una carpeta individual o el simulacro global.
- */
 async function init() {
   const params = new URLSearchParams(window.location.search);
   const temaId = params.get("tema");
@@ -52,7 +45,6 @@ async function init() {
     return;
   }
 
-  // Configurar modo de prueba según los parámetros de la URL
   if (esTodas) {
     state.todas = true;
     state.cola = state.temas.map(t => t.id);
@@ -66,9 +58,6 @@ async function init() {
   renderPregunta(state);
 }
 
-/**
- * Asegura que cada tema tenga un ID válido basado en su identificador o carpeta.
- */
 function aliasTemas(temas) {
   return temas.map(t => ({
     ...t,
@@ -76,15 +65,13 @@ function aliasTemas(temas) {
   }));
 }
 
-/**
- * Busca y retorna un objeto tema específico utilizando su ID o carpeta.
- */
 function temaPorId(id) {
   return state.temas.find(t => t.id === id || t.carpeta === id) || state.temas[0];
 }
 
 /**
- * Prepara las preguntas seleccionando EXACTAMENTE 10 al azar de la carpeta (o las que tenga).
+ * Prepara las preguntas seleccionando EXACTAMENTE 10 al azar de la carpeta.
+ * Si la carpeta tiene menos de 10, toma las que tenga.
  */
 function prepararTemaActual() {
   if (state.todas) {
@@ -103,11 +90,10 @@ function prepararTemaActual() {
     state.item = 0;
     state.respuestas = {};
   } else {
-    // MODO PRÁCTICA: Selecciona 10 preguntas al azar de la carpeta
     const tema = temaPorId(state.cola[state.indiceTema]);
     const todasLasPreguntas = tema.preguntas || [];
     
-    // Mezcla aleatoriamente y corta a máximo 10 preguntas
+    // Mezcla aleatoriamente y limita estrictamente a 10 preguntas máximo
     const preguntasMezcladas = [...todasLasPreguntas].sort(() => Math.random() - 0.5);
     state.seleccion = preguntasMezcladas.slice(0, 10);
     
@@ -116,10 +102,6 @@ function prepararTemaActual() {
   }
 }
 
-/**
- * Renderiza la interfaz de la pregunta actual con los botones Anterior y Siguiente,
- * mostrando el progreso exacto "Pregunta X de 10".
- */
 export function renderPregunta(st) {
   let tema = temaPorId(st.cola[st.indiceTema]);
   if (st.todas && st.seleccionGlobal && st.seleccionGlobal[st.item]) {
@@ -127,23 +109,18 @@ export function renderPregunta(st) {
   }
 
   const archivo = st.seleccion[st.item];
-  const total = st.seleccion.length;
+  const total = st.seleccion.length; // Será 10 (o menos si la carpeta tiene poquitas)
   const root = obtenerContenedor();
 
-  // Si ya no hay más preguntas, pasa a la pantalla de resultados
   if (!archivo) {
     mostrarResultadosFinales(st, tema);
     return;
   }
 
   const rutaImagenFinal = urlPng(tema, archivo);
-  
-  // Soporte para preguntas con múltiples incisos (subpreguntas) o única respuesta
   const respuestasClave = (tema.respuestas || {})[archivo];
   const esMulti = respuestasClave && typeof respuestasClave === "object";
   const subPreguntas = esMulti ? Object.keys(respuestasClave) : [null];
-
-  // Recuperar respuesta guardada previamente si el usuario usa el botón "Anterior"
   const respuestaPrevia = st.respuestas[st.item];
 
   root.innerHTML = `
@@ -153,7 +130,7 @@ export function renderPregunta(st) {
     <section class="panel">
       <div style="text-align: center; margin-bottom: 20px;">
         <img class="pregunta-img" alt="Pregunta ${st.item + 1}" src="${rutaImagenFinal}" onerror="this.style.display='none'; document.getElementById('img-error').style.display='block';">
-        <p id="img-error" style="display:none; color: red; font-size: 0.9rem; font-weight: bold;">[⚠️ No se pudo cargar la imagen: ${archivo} en la carpeta "${tema.carpeta}"]</p>
+        <p id="img-error" style="display:none; color: red; font-size: 0.9rem; font-weight: bold;">[⚠️ No se pudo cargar la imagen de la pregunta]</p>
       </div>
       <p id="error" class="alerta oculto" style="margin-bottom: 15px; color: red;">Por favor responde la pregunta para continuar.</p>
       
@@ -185,12 +162,11 @@ export function renderPregunta(st) {
     </section>
   `;
 
-  // Funcionalidad para el botón Anterior (permite volver a la pregunta previa sin perder lo marcado)
+  // Botón Anterior
   const btnAnterior = document.getElementById("btn-anterior");
   if (btnAnterior) {
     btnAnterior.onclick = () => {
       if (st.item > 0) {
-        // Guardar respuesta actual antes de retroceder
         const formEl = document.getElementById("form-opciones");
         const formData = new FormData(formEl);
         if (esMulti) {
@@ -211,7 +187,7 @@ export function renderPregunta(st) {
     };
   }
 
-  // Manejador del envío del formulario (validación y avance)
+  // Envío del formulario (Siguiente / Ver Resultados)
   document.getElementById("form-opciones").onsubmit = (ev) => {
     ev.preventDefault();
     const formData = new FormData(ev.target);
@@ -236,7 +212,6 @@ export function renderPregunta(st) {
       st.respuestas[st.item] = marcada;
     }
 
-    // Avanza a la siguiente pregunta o finaliza
     if (st.item + 1 < total) {
       st.item += 1;
       renderPregunta(st);
@@ -246,9 +221,6 @@ export function renderPregunta(st) {
   };
 }
 
-/**
- * Calcula los resultados finales y genera la vista diagnóstica con análisis personalizado.
- */
 function mostrarResultadosFinales(st, tema) {
   let aciertos = 0;
   let totalPreguntas = st.seleccion.length;
@@ -321,5 +293,4 @@ function mostrarResultadosFinales(st, tema) {
   `;
 }
 
-// Ejecutar la aplicación al cargar
 init();
