@@ -24,32 +24,38 @@
       color: #1e293b;
       display: flex;
       flex-direction: column;
+      overflow-x: hidden;
     }
 
-    /* Marca de agua distribuida por todo el fondo */
+    /* ==============================================================================
+       MARCA DE AGUA DISTRIBUIDA Y CENTRADA EN TODA LA PANTALLA
+       ============================================================================== */
     body::before {
       content: "MUNDO MATEMÁTICO     Δ     π     e     ϕ     θ     \A     ∫     ∑     ∞     √     MUNDO MATEMÁTICO     \A     Δ     e     π     θ     ϕ     \A     ∫     ∑     ∞     √     MUNDO MATEMÁTICO     Δ     π";
       position: fixed;
-      top: -20vh;
-      left: -20vw;
-      width: 140vw;
-      height: 140vh;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
       text-align: center;
-      font-size: 2.8rem;
+      font-size: 2.5rem;
       font-weight: 800;
       color: rgba(30, 58, 138, 0.045);
       white-space: pre-wrap;
       z-index: -1;
       pointer-events: none;
       user-select: none;
-      line-height: 5rem;
+      line-height: 4.5rem;
       letter-spacing: 4px;
       transform: rotate(-15deg);
     }
 
+    /* ==============================================================================
+       CABECERA Y LOGOTIPO
+       ============================================================================== */
     .header-principal {
       display: flex;
       align-items: center;
@@ -95,16 +101,20 @@
       font-size: 0.95rem;
     }
 
+    /* ==============================================================================
+       CONTENEDOR Y ALINEACIÓN GENERAL
+       ============================================================================== */
     .contenedor-principal {
       flex: 1;
-      max-width: 1000px;
-      width: 92%;
+      max-width: 950px;
+      width: 90%;
       margin: 30px auto;
+      box-sizing: border-box;
     }
 
-    /* Textos institucionales y caja de bienvenida exactos */
+    /* Textos institucionales y caja de bienvenida */
     .seccion-subtitulo {
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       font-weight: 700;
       color: #dc2626;
       text-transform: uppercase;
@@ -124,8 +134,8 @@
     .presentacion-bienvenida h1 {
       color: var(--azul);
       margin-top: 0;
-      font-size: 1.8rem;
-      margin-bottom: 15px;
+      font-size: 1.7rem;
+      margin-bottom: 12px;
     }
 
     .presentacion-bienvenida p {
@@ -134,30 +144,29 @@
       margin-bottom: 20px;
     }
 
-    /* Caja azul interna con los avisos y recomendaciones */
     .caja-aviso-azul {
       background: var(--azul-claro);
       border: 1px solid #bfdbfe;
       border-radius: 8px;
-      padding: 20px;
+      padding: 18px 20px;
       margin-top: 15px;
     }
 
     .caja-aviso-azul h3 {
       color: var(--azul);
       margin-top: 0;
-      font-size: 1.05rem;
+      font-size: 1rem;
       display: flex;
       align-items: center;
       gap: 8px;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
 
     .caja-aviso-azul p {
       color: #334155;
-      font-size: 0.95rem;
-      margin: 0 0 10px 0;
-      line-height: 1.5;
+      font-size: 0.93rem;
+      margin: 0 0 8px 0;
+      line-height: 1.4;
     }
 
     .caja-aviso-azul p:last-child {
@@ -166,11 +175,14 @@
 
     .titulo-modulos {
       color: var(--azul);
-      font-size: 1.3rem;
+      font-size: 1.25rem;
       margin-bottom: 20px;
       font-weight: 800;
     }
 
+    /* ==============================================================================
+       REJILLA Y TARJETAS UNIFICADAS
+       ============================================================================== */
     #rejilla {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -183,10 +195,11 @@
       border: 1px solid #e2e8f0;
       border-radius: 12px;
       box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04);
-      padding: 25px;
+      padding: 22px;
       display: flex;
       flex-direction: column;
       transition: transform 0.2s ease, box-shadow 0.2s ease;
+      box-sizing: border-box;
     }
 
     .tarjeta:hover {
@@ -205,7 +218,7 @@
     }
 
     .tarjeta h2 {
-      font-size: 1.2rem;
+      font-size: 1.15rem;
       color: var(--azul);
       margin: 0 0 8px 0;
     }
@@ -213,13 +226,13 @@
     .tarjeta .subtitulo {
       color: var(--rojo);
       font-weight: 600;
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       margin: 0 0 10px 0;
     }
 
     .tarjeta p {
       color: #475569;
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       margin: 0 0 15px 0;
       line-height: 1.4;
     }
@@ -271,24 +284,23 @@
     </nav>
   </header>
 
-  <!-- Contenedor principal con los textos que tenías -->
+  <!-- Contenedor principal -->
   <main class="contenedor-principal">
     <section class="presentacion-bienvenida">
       <div class="seccion-subtitulo">Saber 11 · Práctica</div>
       <h1>Simulador de Matemáticas</h1>
       <p>Mundo Matemático ha creado este simulador como una herramienta de apoyo académico para fortalecer el razonamiento cuantitativo y asegurar tu ingreso a la educación superior.</p>
       
-      <!-- Caja azul interior de recomendación -->
       <div class="caja-aviso-azul">
         <h3>🎯 ¡Prepárate al máximo nivel para el ICFES Saber 11!</h3>
         <p>Puedes practicar libremente con nuestras carpetas temáticas individuales y recibir su respectiva retroalimentación gratuita. Si deseas medirte con una Prueba Completa (Simulacro Global), podrás adquirir un <strong>informe analítico predictivo avanzado</strong> con costo preferencial para conocer tus fortalezas reales.</p>
-        <p style="color: var(--azul); font-weight: 600; margin-top: 8px;">💡 Recomendación: Usa las carpetas para pulir tus vacíos y el simulacro global para tu evaluación definitiva.</p>
+        <p style="color: var(--azul); font-weight: 600; margin-top: 6px;">💡 Recomendación: Usa las carpetas para pulir tus vacíos y el simulacro global para tu evaluación definitiva.</p>
       </div>
     </section>
 
     <h2 class="titulo-modulos">Módulos de Práctica Focalizada</h2>
 
-    <!-- Rejilla donde el script dibuja los cajoncitos de las materias -->
+    <!-- Rejilla donde el script dibuja los cajoncitos -->
     <div id="rejilla"></div>
     <div id="aviso" class="alerta oculto" style="color: red; padding: 20px; font-weight: bold;"></div>
   </main>
