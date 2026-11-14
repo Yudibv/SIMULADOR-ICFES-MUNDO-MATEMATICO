@@ -233,7 +233,7 @@
         "2b.jpg": "A",
         "6b.png": "B",
         "7a.png": "A",
-        "8c.png": "C",        
+        "8c.png": "C",
         "9a.png": "A",
         "9c.png": "C",
         "10b.png": "B",
@@ -314,7 +314,7 @@
       "subtitulo": "Razones trigonométricas y triángulos",
       "descripcion": "Ítems del cuadernillo Icfes Saber 11. Uso académico.",
       "icono": "06",
-      "carpeta": "Trigonometría",
+      "carpeta": "Trigonometria",
       "preguntas": [
         "1c2b.png",
         "6c.png",
