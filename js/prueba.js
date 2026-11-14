@@ -355,7 +355,6 @@ function mostrarResultadosFinalesGlobal(st) {
     }
   }, 100);
 }
-
 function mostrarResultadosFinales(st, tema) {
   if (st.intervaloTimer) clearInterval(st.intervaloTimer);
   let aciertos = 0;
@@ -385,19 +384,20 @@ function mostrarResultadosFinales(st, tema) {
 
   let mensajeDesempeno = "";
   if (porcentaje >= 80) {
-    mensajeDesempeno = `¡Excelente nivel en <strong>${tema.titulo}</strong>! Tienes bases muy sólidas. Te invitamos a mantener este ritmo con simulacros completos para asegurar tu puntaje máximo.`;
+    mensajeDesempeno = `¡Excelente nivel en <strong>${tema.titulo}</strong>! Tienes bases muy sólidas en este componente. Te invitamos a medirte en el simulacro global completo para asegurar tu puntaje máximo.`;
   } else if (porcentaje >= 50) {
     mensajeDesempeno = `Tienes bases regulares en <strong>${tema.titulo}</strong>, pero hay vacíos conceptuales en preguntas clave que el ICFES suele evaluar con trampa.`;
   } else {
-    mensajeDesempeno = `Identificamos oportunidades de mejora críticas en <strong>${tema.titulo}</strong>. Este puntaje en el componente real te restará puntos decisivos.`;
+    mensajeDesempeno = `Identificamos oportunidades de mejora críticas en <strong>${tema.titulo}</strong>. Te sugerimos repasar este módulo antes de enfrentarte a la prueba real.`;
   }
 
-  const linkWompi = "https://checkout.wompi.co/l/VPOS_9PaOd7";
+  // Enlace o botón para iniciar el simulacro global completo (ajusta según tu estructura si usas ?todas=1)
+  const linkSimulacroGlobal = "prueba.html?todas=1";
 
   root.innerHTML = `
     <section class="panel" style="text-align: center; padding: 30px;">
-      <h2 style="color: var(--azul);">Diagnóstico: ${tema.titulo}</h2>
-      <p class="lead" style="margin: 0 auto 20px auto;">Reporte de resultados del simulador focalizado.</p>
+      <h2 style="color: var(--azul);">Práctica Focalizada: ${tema.titulo}</h2>
+      <p class="lead" style="margin: 0 auto 20px auto;">Reporte de resultados del módulo de entrenamiento.</p>
       
       <div class="puntaje" style="margin: 20px 0;">
         <span class="num">${aciertos} / ${totalPreguntas}</span>
@@ -409,18 +409,19 @@ function mostrarResultadosFinales(st, tema) {
         <p style="margin: 0; line-height: 1.6;">${mensajeDesempeno}</p>
       </div>
 
-      <div style="border: 2px solid #16a34a; padding: 25px; margin-top: 25px; border-radius: 8px; background: #f0fdf4;">
-        <span style="background: #16a34a; color: white; padding: 4px 12px; border-radius: 4px; font-size: 0.85rem; font-weight: bold;">PAGO SEGURO EN LÍNEA (24/7)</span>
-        <h3 style="color: var(--azul); margin-top: 10px; font-size: 1.3rem;">Obtén tu Cuadernillo Pro por solo $15.000 COP</h3>
+      <!-- INVITACIÓN ESTRATÉGICA AL SIMULACRO GLOBAL -->
+      <div style="border: 2px solid var(--azul); padding: 25px; margin-top: 25px; border-radius: 8px; background: #eff6ff;">
+        <span style="background: var(--azul); color: white; padding: 4px 12px; border-radius: 4px; font-size: 0.85rem; font-weight: bold;">ENTRENAMIENTO OFICIAL ICFES</span>
+        <h3 style="color: var(--azul); margin-top: 10px; font-size: 1.3rem;">¿Listo para el reto completo de 40 preguntas?</h3>
         <p style="margin-bottom: 20px; color: #334155; font-size: 0.95rem;">
-          Paga de forma inmediata por Wompi (Nequi, PSE o Tarjeta) por valor de <strong>$15.000 COP</strong> y desbloquea tu informe analítico detallado.
+          Pon a prueba tu tiempo, resistencia y todos los componentes de razonamiento cuantitativo con nuestro <strong>Simulacro Global Saber 11</strong> con temporizador de 90 minutos.
         </p>
         
-        <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
-          <a class="boton" href="${linkWompi}" target="_blank" style="background: #16a34a; color: white; text-decoration: none; padding: 12px 24px; border-radius: 6px; font-weight: bold; font-size: 1.05rem;">
-            💳 Pagar $15.000 con Wompi (Nequi / Tarjetas)
+        <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; flex-direction: column; align-items: center;">
+          <a class="boton" href="${linkSimulacroGlobal}" style="background: var(--azul); color: white; text-decoration: none; padding: 12px 24px; border-radius: 6px; font-weight: bold; font-size: 1.05rem; width: 100%; box-sizing: border-box; text-align: center;">
+            🚀 Presentar Simulacro Global Completo
           </a>
-          <a class="boton" href="index.html" style="background: #1e3a8a; text-decoration: none; padding: 12px 20px; border-radius: 6px; font-weight: bold;">
+          <a class="boton" href="index.html" style="background: #64748b; color: white; text-decoration: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; width: 100%; box-sizing: border-box; text-align: center;">
             Volver al Menú Principal
           </a>
         </div>
