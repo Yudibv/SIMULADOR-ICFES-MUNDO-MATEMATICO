@@ -2,10 +2,13 @@ export const PREGUNTAS_POR_PRUEBA = 10;
 export const MINUTOS_DEFAULT = 15;
 
 export function urlPng(tema, archivo) {
-  // Asegura que tome la carpeta del tema y limpie espacios
-  const carpetaTema = tema.carpeta || tema.id;
+  // Obtiene la carpeta base limpiando prefijos duplicados si los hubiera
+  let carpetaTema = tema.carpeta || tema.id;
+  if (carpetaTema.startsWith("preguntas/")) {
+    carpetaTema = carpetaTema.replace("preguntas/", "");
+  }
   const nombreArchivo = String(archivo).trim();
-  // Retorna la ruta exacta y limpia
+  // Retorna la ruta limpia y exacta apuntando a la carpeta correcta
   return `preguntas/${carpetaTema}/${encodeURIComponent(nombreArchivo)}`;
 }
 
