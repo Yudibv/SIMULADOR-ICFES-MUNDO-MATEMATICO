@@ -4,11 +4,193 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Simulador ICFES Saber 11 - Mundo Matemático</title>
-  <<link rel="stylesheet" href="css/estilo.css">">
+  
+  <!-- Estilos embebidos directamente para garantizar que NUNCA den error 404 -->
+  <style>
+    :root {
+      --azul: #1e3a8a;
+      --azul-claro: #eff6ff;
+      --rojo: #dc2626;
+      --borde: #cbd5e1;
+      --fondo: #f8fafc;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--fondo);
+      position: relative;
+      min-height: 100vh;
+      color: #1e293b;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Marca de agua distribuida por todo el fondo */
+    body::before {
+      content: "MUNDO MATEMÁTICO     Δ     π     e     ϕ     θ     ∫     ∑     ∞     √     MUNDO MATEMÁTICO     Δ     e     π     θ     ϕ     ∫     ∑     ∞     √     MUNDO MATEMÁTICO";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      padding: 5vh 5vw;
+      box-sizing: border-box;
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: rgba(30, 58, 138, 0.045);
+      z-index: -1;
+      pointer-events: none;
+      user-select: none;
+      line-height: 4rem;
+      letter-spacing: 3px;
+      transform: rotate(-15deg);
+      word-break: break-all;
+      overflow: hidden;
+    }
+
+    .header-principal {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 15px 30px;
+      background: white;
+      border-bottom: 1px solid var(--borde);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    .logo-contenedor {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-contenedor img {
+      height: 42px !important;
+      width: auto !important;
+      max-width: 140px !important;
+      object-fit: contain !important;
+      display: block !important;
+    }
+
+    .titulo-sitio {
+      font-size: 1.25rem;
+      color: var(--azul);
+      margin: 0;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    .sub-saber {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: #64748b;
+    }
+
+    .link-nav {
+      text-decoration: none;
+      color: var(--azul);
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .contenedor-principal {
+      flex: 1;
+      max-width: 1000px;
+      width: 92%;
+      margin: 30px auto;
+    }
+
+    #rejilla {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      width: 100%;
+    }
+
+    .tarjeta {
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04);
+      padding: 25px;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .tarjeta:hover {
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+    }
+
+    .badge {
+      background: var(--azul-claro);
+      color: var(--azul);
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-weight: bold;
+      font-size: 0.85rem;
+      width: fit-content;
+      margin-bottom: 12px;
+    }
+
+    .tarjeta h2 {
+      font-size: 1.2rem;
+      color: var(--azul);
+      margin: 0 0 8px 0;
+    }
+
+    .tarjeta .subtitulo {
+      color: var(--rojo);
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin: 0 0 10px 0;
+    }
+
+    .tarjeta p {
+      color: #475569;
+      font-size: 0.9rem;
+      margin: 0 0 15px 0;
+      line-height: 1.4;
+    }
+
+    .boton {
+      background: var(--azul);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
+      transition: background 0.2s;
+      margin-top: auto;
+    }
+
+    .boton:hover {
+      background: #1e40af;
+    }
+
+    .footer-principal {
+      text-align: center;
+      padding: 20px;
+      color: #64748b;
+      font-size: 0.85rem;
+      border-top: 1px solid var(--borde);
+      background: rgba(255, 255, 255, 0.7);
+    }
+
+    .oculto {
+      display: none !important;
+    }
+  </style>
 </head>
 <body>
 
-  <!-- Cabecera Institucional con el logo -->
+  <!-- Cabecera Institucional -->
   <header class="header-principal">
     <div class="logo-contenedor">
       <img src="logo.jpg" alt="Mundo Matemático">
@@ -19,9 +201,10 @@
     </nav>
   </header>
 
-  <!-- Contenedor donde JavaScript dibuja los cuadritos de las competencias -->
+  <!-- Contenedor principal donde el menú dibuja las tarjetas -->
   <main id="vista" class="contenedor-principal">
-    <!-- Aquí aparecerán automáticamente las tarjetas -->
+    <div id="rejilla"></div>
+    <div id="aviso" class="alerta oculto" style="color: red; padding: 20px; font-weight: bold;"></div>
   </main>
 
   <!-- Pie de página -->
@@ -29,7 +212,7 @@
     <p>Mundo Matemático • Educación y pre-universitario de alto rendimiento</p>
   </footer>
 
-  <!-- Script que genera las tarjetas del menú -->
+  <!-- Script del menú (apuntando a la carpeta js) -->
   <script type="module" src="js/menu.js"></script>
 </body>
 </html>
