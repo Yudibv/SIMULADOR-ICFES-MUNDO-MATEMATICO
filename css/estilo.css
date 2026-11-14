@@ -1,5 +1,5 @@
 /* ==============================================================================
-   ESTILOS GENERALES Y MARCA DE AGUA - MUNDO MATEMÁTICO
+   ESTILOS GENERALES Y MARCA DE AGUA EN MODO TAPIZ - MUNDO MATEMÁTICO
    ============================================================================== */
 :root {
   --azul: #1e3a8a;
@@ -22,27 +22,27 @@ body {
   overflow-x: hidden;
 }
 
-/* Marca de agua en modo tapiz distribuida por todo el fondo */
-  body::before {
-    content: "MUNDO MATEMÁTICO     Δ     π     e     ϕ     θ     \A     ∫     ∑     ∞     √     MUNDO MATEMÁTICO     \A     Δ     e     π     θ     ϕ     \A     ∫     ∑     ∞     √     MUNDO MATEMÁTICO     Δ     π     \A     Δ     π     e     ϕ     θ     MUNDO MATEMÁTICO     ∫     ∑     ∞     √";
-    position: fixed;
-    top: -50%;
-    left: -50%;
-    width: 200vw;
-    height: 200vh;
-    display: block;
-    text-align: center;
-    font-size: 2.2rem;
-    font-weight: 800;
-    color: rgba(30, 58, 138, 0.045);
-    white-space: pre-wrap;
-    z-index: -1;
-    pointer-events: none;
-    user-select: none;
-    line-height: 5rem;
-    letter-spacing: 6px;
-    transform: rotate(-15deg);
-  }
+/* Marca de agua distribuida en modo tapiz por toda la pantalla */
+body::before {
+  content: "MUNDO MATEMÁTICO     Δ     π     e     ϕ     θ     \A     ∫     ∑     ∞     √     MUNDO MATEMÁTICO     \A     Δ     e     π     θ     ϕ     \A     ∫     ∑     ∞     √     MUNDO MATEMÁTICO     Δ     π     \A     Δ     π     e     ϕ     θ     MUNDO MATEMÁTICO     ∫     ∑     ∞     √";
+  position: fixed;
+  top: -50%;
+  left: -50%;
+  width: 200vw;
+  height: 200vh;
+  display: block;
+  text-align: center;
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: rgba(30, 58, 138, 0.045);
+  white-space: pre-wrap;
+  z-index: -1;
+  pointer-events: none;
+  user-select: none;
+  line-height: 5rem;
+  letter-spacing: 6px;
+  transform: rotate(-15deg);
+}
 
 /* Cabecera institucional */
 .header-principal {
@@ -90,7 +90,7 @@ body {
   font-size: 0.95rem;
 }
 
-/* Contenedor unificado para index y prueba */
+/* Contenedor unificado */
 .contenedor-principal, .panel-pregunta, .card {
   max-width: 950px;
   width: 90%;
@@ -98,7 +98,7 @@ body {
   box-sizing: border-box;
 }
 
-/* Textos de bienvenida */
+/* Textos institucionales */
 .seccion-subtitulo {
   font-size: 0.85rem;
   font-weight: 700;
@@ -162,7 +162,7 @@ body {
   font-weight: 800;
 }
 
-/* Rejilla y tarjetas del menú */
+/* Rejilla y tarjetas del menú principal */
 #rejilla {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -216,7 +216,7 @@ body {
   line-height: 1.4;
 }
 
-/* Alineación de imágenes en preguntas */
+/* Imágenes de preguntas alineadas */
 img, .pregunta-img {
   max-width: 100%;
   height: auto;
@@ -255,7 +255,7 @@ img, .pregunta-img {
   transform: scale(1.2);
 }
 
-/* Botones */
+/* Botones de navegación */
 .boton, button, .btn {
   background: var(--azul);
   color: white;
