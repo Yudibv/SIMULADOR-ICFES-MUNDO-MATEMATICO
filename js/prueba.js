@@ -161,12 +161,29 @@ export function renderPregunta(st) {
   const segInicial = (st.tiempoRestante % 60).toString().padStart(2, '0');
 
   root.innerHTML = `
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; background: #fff; padding: 10px 15px; border-radius: 8px; border: 1px solid #cbd5e1;">
-      <p class="migas" style="margin: 0;"><a href="index.html">Menú</a> / ${st.todas ? 'Simulacro Global Saber 11' : (tema.titulo || tema.id)}</p>
-      <div style="font-size: 1.05rem; font-weight: bold; color: var(--azul); background: var(--azul-claro); padding: 5px 12px; border-radius: 6px;">
-        ⏱️ Tiempo: <span id="reloj-tiempo">${minInicial}:${segInicial}</span>
-      </div>
-    </div>
+    <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; flex-direction: column; align-items: center;">
+          <a class="boton" href="${linkWompi}" target="_blank" style="background: #16a34a; color: white; text-decoration: none; padding: 12px 24px; border-radius: 6px; font-weight: bold; font-size: 1.05rem; width: 100%; box-sizing: border-box;">
+            💳 Pagar $15.000 con Wompi (Nequi / Tarjetas)
+          </a>
+          
+          <!-- BOTÓN DE PRUEBA PARA DESCARGAR EL PDF DIRECTAMENTE -->
+          <button id="btn-descargar-pdf" class="boton" style="background: #2563eb; color: white; padding: 12px 20px; border-radius: 6px; font-weight: bold; border: none; cursor: pointer; width: 100%;">
+            📥 Descargar Cuadernillo Pro (PDF de Prueba)
+          </button>
+
+          <a class="boton" href="index.html" style="background: #1e3a8a; color: white; text-decoration: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; width: 100%; box-sizing: border-box;">
+            Volver al Menú Principal
+          </a>
+        </div>
+        // Activamos el evento del botón de descarga del PDF pasándole los datos reales obtenidos
+  setTimeout(() => {
+    const btnPdf = document.getElementById("btn-descargar-pdf");
+    if (btnPdf) {
+      btnPdf.onclick = () => {
+        generarPDFInforme(aciertos, totalPreguntas, porcentaje, nivelDesempeno);
+      };
+    }
+  }, 100);
 
     <div class="progreso"><div class="progreso-barra" style="width:${((st.item + 1) / total) * 100}%"></div></div>
     <p class="progreso-texto">Ejercicio ${st.item + 1} de ${total}</p>
