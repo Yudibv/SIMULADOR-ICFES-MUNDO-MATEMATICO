@@ -4,67 +4,33 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Simulador ICFES Saber 11 - Mundo Matemático</title>
-  <link rel="stylesheet" href="css/estilo.css">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <!-- CABECERA INSTITUCIONAL -->
-  <header class="topbar">
-    <a class="marca" href="index.html">
-      <span class="marca-icfes">MUNDO MATEMÁTICO</span>
-      <span class="marca-area">Saber 11</span>
-    </a>
-    <p class="modo-todas">Simulador Oficial</p>
+  <!-- Cabecera Institucional -->
+  <header class="header-principal">
+    <div class="logo-contenedor">
+      <!-- Cambia 'logo.png' por el nombre exacto de tu archivo de imagen si es diferente -->
+      <img src="img/logo.png" alt="Mundo Matemático" onerror="this.onerror=null; this.style.display='none'; document.getElementById('logo-texto-alternativo').style.display='inline';">
+      <span id="logo-texto-alternativo" style="display:none; font-weight: 900; color: var(--azul); font-size: 1.2rem;">📐 MM</span>
+      <h1 class="titulo-sitio">MUNDO MATEMÁTICO <span class="sub-saber">Saber 11</span></h1>
+    </div>
+    <nav>
+      <a href="index.html" class="link-nav">Simulador Oficial</a>
+    </nav>
   </header>
 
-  <main class="contenedor">
-    
-    <!-- SECCIÓN DE PRESENTACIÓN -->
-    <section class="hero" style="margin-bottom: 1.5rem;">
-      <p class="etiqueta">Saber 11 · práctica</p>
-      <h1>Simulador de Matemáticas</h1>
-      <p class="lead">
-        <strong>Mundo Matemático</strong> ha creado este simulador como una herramienta de apoyo académico para fortalecer el razonamiento cuantitativo y asegurar tu ingreso a la educación superior.
-      </p>
-    </section>
-
-    <!-- BANNER SUPERIOR DE ESTRATEGIA Y MONETIZACIÓN -->
-    <div style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border-left: 5px solid var(--azul); border-right: 1px solid var(--borde); border-top: 1px solid var(--borde); border-bottom: 1px solid var(--borde); padding: 1.2rem 1.5rem; margin-bottom: 2rem; border-radius: 8px;">
-      <h3 style="color: var(--azul); margin-top: 0; margin-bottom: 0.4rem; font-size: 1.15rem;">🎯 ¡Prepárate al máximo nivel para el ICFES Saber 11!</h3>
-      <p style="margin: 0 0 0.8rem 0; color: #333; font-size: 0.95rem; line-height: 1.5;">
-        Puedes practicar libremente con nuestras <strong>carpetas temáticas individuales</strong> y recibir su respectiva retroalimentación gratuita. Si deseas medirte con una <strong>Prueba Completa (Simulacro Global)</strong>, podrás adquirir un <strong>informe analítico predictivo avanzado</strong> con costo preferencial para conocer tus fortalezas reales.
-      </p>
-      <div style="font-size: 0.85rem; font-weight: 700; color: var(--rojo);">
-        💡 Recomendación: Usa las carpetas para pulir tus vacíos y el simulacro global para tu evaluación definitiva.
-      </div>
-    </div>
-
-    <!-- BLOQUE PARA ACCEDER A LA PRUEBA COMPLETA -->
-    <div id="bloque-todas" class="bloque-todas oculto">
-      <div>
-        <h2>Presentar Simulacro Global (Todas las áreas)</h2>
-        <p>Realiza una evaluación completa uniendo todos los temas disponibles en una sola prueba integral.</p>
-      </div>
-      <a class="boton boton-verde" href="prueba.html?todas=1">Iniciar Simulacro Completo</a>
-    </div>
-
-    <!-- REJILLA DE CARPETAS TEMÁTICAS -->
-    <section>
-      <h2 style="color: var(--azul); margin-top: 1.5rem; font-size: 1.3rem;">Módulos de Práctica Focalizada</h2>
-      <div id="rejilla" class="rejilla">
-        <!-- Las tarjetas se cargan automáticamente desde JavaScript -->
-      </div>
-    </section>
-
-    <p id="aviso" class="alerta oculto" style="margin-top: 2rem;"></p>
-
+  <!-- Contenedor Principal que renderiza el Menú y las Tarjetas -->
+  <main id="vista" class="contenedor-principal">
+    <!-- El script de la aplicación cargará aquí las tarjetas de las competencias automáticamente -->
   </main>
 
-  <footer class="pie">
-    <p>Mundo Matemático &copy; 2026 · Educación y Refuerzo Académico en Bogotá</p>
+  <!-- Pie de página -->
+  <footer class="footer-principal">
+    <p>Mundo Matemático • Educación y pre-universitario de alto rendimiento</p>
   </footer>
 
-  <!-- SCRIPT DE CARGA DEL MENÚ -->
-  <script type="module" src="js/menu.js"></script>
+  <script type="module" src="js/app.js"></script>
 </body>
 </html>
