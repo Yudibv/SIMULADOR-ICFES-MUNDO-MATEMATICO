@@ -1,150 +1,70 @@
 /* ==============================================================================
-   ESTILOS GENERALES Y DISEÑO DE TARJETAS - MUNDO MATEMÁTICO
+   1. ALINEACIÓN GENERAL Y CONTENEDOR UNIFICADO (Para que todo guarde el mismo margen)
    ============================================================================== */
-
-:root {
-  --azul: #1e3a8a;
-  --azul-claro: #eff6ff;
-  --rojo: #dc2626;
-  --borde: #cbd5e1;
-  --fondo: #f8fafc;
+.contenedor-principal, .panel {
+  max-width: 900px;
+  width: 90%;
+  margin: 30px auto;
+  box-sizing: border-box;
 }
 
-body {
-  margin: 0;
-  padding: 0;
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  background-color: var(--fondo);
-  position: relative;
-  min-height: 100vh;
-  color: #1e293b;
-  display: flex;
-  flex-direction: column;
+/* Alineación exacta para las imágenes de las preguntas y los cajones */
+.pregunta-img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+  border-radius: 8px;
 }
+
 
 /* ==============================================================================
-   MARCA DE AGUA DISTRIBUIDA Y SÍMBOLOS MATEMÁTICOS EN EL FONDO
+   2. MARCA DE AGUA DISTRIBUIDA UNIFORMEMENTE POR TODA LA PANTALLA
    ============================================================================== */
-
 body::before {
-  content: "MUNDO MATEMÁTICO     Δ     π     e     ϕ     θ     ∫     ∑     ∞     √     MUNDO MATEMÁTICO     Δ     e     π     θ     ϕ     ∫     ∑     ∞     √     MUNDO MATEMÁTICO";
+  content: "MUNDO MATEMÁTICO     Δ     π     e     ϕ     θ     \A     ∫     ∑     ∞     √     MUNDO MATEMÁTICO     \A     Δ     e     π     θ     ϕ     \A     ∫     ∑     ∞     √     MUNDO MATEMÁTICO     Δ     π";
   position: fixed;
+  /* Centramos el contenedor de la marca de agua en toda la pantalla */
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  padding: 5vh 5vw;
-  box-sizing: border-box;
-  font-size: 2.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 2.5rem;
   font-weight: 800;
-  color: rgba(30, 58, 138, 0.045); /* Sutil y elegante */
+  color: rgba(30, 58, 138, 0.045);
+  white-space: pre-wrap;
   z-index: -1;
   pointer-events: none;
   user-select: none;
-  line-height: 4rem;
-  letter-spacing: 3px;
+  line-height: 4.5rem;
+  letter-spacing: 4px;
   transform: rotate(-15deg);
-  word-break: break-all;
   overflow: hidden;
 }
 
+
 /* ==============================================================================
-   CABECERA INSTITUCIONAL Y LOGOTIPO (TAMAÑO CONTROLADO)
+   3. ALINEACIÓN Y DISEÑO DE LAS MIGA DE PAN (El letrero de la esquina superior)
    ============================================================================== */
-
-.header-principal {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 15px 30px;
-  background: white;
-  border-bottom: 1px solid var(--borde);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-}
-
-.logo-contenedor {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.logo-contenedor img {
-  height: 42px !important;
-  width: auto !important;
-  max-width: 140px !important;
-  object-fit: contain !important;
-}
-
-.titulo-sitio {
-  font-size: 1.25rem;
-  color: var(--azul);
-  margin: 0;
-  font-weight: 800;
-  letter-spacing: -0.5px;
-}
-
-.sub-saber {
-  font-size: 0.8rem;
-  font-weight: 500;
+.migas {
+  font-size: 0.9rem;
   color: #64748b;
-}
-
-.link-nav {
-  text-decoration: none;
-  color: var(--azul);
+  margin-bottom: 15px;
   font-weight: 600;
-  font-size: 0.95rem;
-}
-
-
-/* ==============================================================================
-   ESTILOS PARA LOS CAJONCITOS DE LAS OPCIONES DE RESPUESTA EN PRUEBA.JS
-   ============================================================================== */
-
-.opciones {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin: 15px 0;
-}
-
-.opcion {
-  background: #ffffff;
-  border: 1px solid #cbd5e1;
-  border-radius: 8px;
-  padding: 12px 16px;
   display: flex;
   align-items: center;
-  gap: 12px;
-  cursor: pointer;
-  transition: all 0.2s ease;
+  gap: 8px;
 }
 
-.opcion:hover {
-  background: #eff6ff;
-  border-color: #1e3a8a;
-}
-
-.opcion input[type="radio"] {
-  accent-color: #1e3a8a;
-  transform: scale(1.1);
-}
-
-.opcion .letra {
-  font-weight: bold;
+.migas a {
   color: #1e3a8a;
-  background: #e2e8f0;
-  padding: 2px 8px;
-  border-radius: 4px;
+  text-decoration: none;
 }
 
-/* Subtítulos para preguntas con múltiples partes */
-.subtitulo-pregunta {
-  color: #1e3a8a;
-  font-size: 1.1rem;
-  font-weight: 700;
-  border-bottom: 2px solid #e2e8f0;
-  padding-bottom: 5px;
-  margin-top: 20px;
-  margin-bottom: 12px;
+.migas a:hover {
+  text-decoration: underline;
 }
