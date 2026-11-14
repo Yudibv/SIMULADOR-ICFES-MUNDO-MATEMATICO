@@ -9,7 +9,6 @@
   <link rel="stylesheet" href="css/estilo.css">
   
   <style>
-    /* Estilo para el aviso legal institucional */
     .aviso-legal {
       text-align: center;
       font-size: 0.85rem;
@@ -24,14 +23,24 @@
       color: var(--azul);
       text-decoration: underline;
     }
+    /* Estilo especial para la sección de prueba global */
+    .caja-simulacro-global {
+      background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+      border: 2px solid #3b82f6;
+      border-radius: 12px;
+      padding: 25px;
+      margin-bottom: 30px;
+      text-align: center;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+    }
   </style>
 </head>
 <body>
 
-  <!-- Cabecera Institucional con logo visible y claro -->
-  <header class="header-principal">
+  <!-- Cabecera Institucional con logo grande y claro -->
+  <header class="header-principal" style="padding: 15px 35px;">
     <div class="logo-contenedor">
-      <img src="logo.jpg" alt="Mundo Matemático" style="height: 55px; width: auto; max-width: 180px; object-fit: contain;">
+      <img src="logo.jpg" alt="Mundo Matemático" style="height: 65px; width: auto; max-width: 210px; object-fit: contain;">
       <h1 class="titulo-sitio">MUNDO MATEMÁTICO <span class="sub-saber">Saber 11</span></h1>
     </div>
     <nav>
@@ -39,21 +48,27 @@
     </nav>
   </header>
 
-  <!-- Contenedor principal -->
-  <main class="contenedor-principal">
+  <!-- Contenedor principal ampliado -->
+  <main class="contenedor-principal" style="max-width: 1180px; width: 94%;">
     <section class="presentacion-bienvenida">
       <div class="seccion-subtitulo">Saber 11 · Práctica</div>
       <h1>Simulador de Matemáticas</h1>
       <p><strong>Mundo Matemático</strong> siempre piensa en mejorar la calidad de la educación; por eso, ha creado este simulador como una herramienta de apoyo académico independiente para fortalecer el razonamiento cuantitativo.</p>
-      
-      <div class="caja-aviso-azul">
-        <h3>🎯 ¡Prepárate al máximo nivel para el ICFES Saber 11!</h3>
-        <p>Puedes practicar libremente con nuestras carpetas temáticas individuales y recibir su respectiva retroalimentación. Si deseas medirte con una Prueba Completa (Simulacro Global), podrás adquirir un <strong>informe analítico predictivo avanzado</strong> con costo preferencial para conocer tus fortalezas reales.</p>
-        <p style="color: var(--azul); font-weight: 600; margin-top: 6px;">💡 Recomendación: Usa las carpetas para pulir tus vacíos y el simulacro global para tu evaluación definitiva.</p>
-      </div>
     </section>
 
-    <h2 class="titulo-modulos">Módulos de Práctica Focalizada</h2>
+    <!-- SECCIÓN RESTAURADA: Invitación al Simulacro Global y la Prueba Completa -->
+    <div class="caja-simulacro-global">
+      <span style="background: #dc2626; color: white; padding: 4px 12px; border-radius: 4px; font-size: 0.85rem; font-weight: bold; text-transform: uppercase;">Evaluación Completa Pro</span>
+      <h2 style="color: var(--azul); margin-top: 10px; font-size: 1.5rem;">¿Listo para el Simulacro Global ICFES Saber 11?</h2>
+      <p style="color: #334155; max-width: 800px; margin: 10px auto 20px auto; line-height: 1.6;">
+        Mide tus conocimientos de forma integral con una prueba equilibrada de todas las áreas. Al finalizar, podrás adquirir tu <strong>Informe Analítico Predictivo Avanzado</strong> con parámetros TRI y recibir retroalimentación especializada para asegurar tu ingreso a la universidad.
+      </p>
+      <a class="boton" href="prueba.html?todas=1" style="background: #dc2626; font-size: 1.1rem; padding: 12px 30px;">
+        🚀 Presentar Simulacro Global Completo
+      </a>
+    </div>
+
+    <h2 class="titulo-modulos">Módulos de Práctica Focalizada (Gratis)</h2>
 
     <!-- Rejilla donde el script menu.js dibuja los cajoncitos -->
     <div id="rejilla"></div>
