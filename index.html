@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Simulador ICFES Saber 11 - Mundo Matemático</title>
   
-  <!-- Estilos embebidos directamente para garantizar que NUNCA den error 404 -->
   <style>
     :root {
       --azul: #1e3a8a;
@@ -27,27 +26,28 @@
       flex-direction: column;
     }
 
-    /* Marca de agua distribuida por todo el fondo */
+    /* Marca de agua distribuida y dispersa por todo el fondo de forma uniforme */
     body::before {
-      content: "MUNDO MATEMÁTICO     Δ     π     e     ϕ     θ     ∫     ∑     ∞     √     MUNDO MATEMÁTICO     Δ     e     π     θ     ϕ     ∫     ∑     ∞     √     MUNDO MATEMÁTICO";
+      content: "MUNDO MATEMÁTICO     Δ     π     e     ϕ     θ     \A     ∫     ∑     ∞     √     MUNDO MATEMÁTICO     \A     Δ     e     π     θ     ϕ     \A     ∫     ∑     ∞     √     MUNDO MATEMÁTICO     Δ     π";
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      padding: 5vh 5vw;
-      box-sizing: border-box;
-      font-size: 2.2rem;
+      top: -20vh;
+      left: -20vw;
+      width: 140vw;
+      height: 140vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-size: 2.8rem;
       font-weight: 800;
       color: rgba(30, 58, 138, 0.045);
+      white-space: pre-wrap;
       z-index: -1;
       pointer-events: none;
       user-select: none;
-      line-height: 4rem;
-      letter-spacing: 3px;
+      line-height: 5rem;
+      letter-spacing: 4px;
       transform: rotate(-15deg);
-      word-break: break-all;
-      overflow: hidden;
     }
 
     .header-principal {
@@ -100,6 +100,47 @@
       max-width: 1000px;
       width: 92%;
       margin: 30px auto;
+    }
+
+    /* Caja de presentación / bienvenida explicativa */
+    .presentacion-bienvenida {
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-left: 5px solid var(--azul);
+      border-radius: 8px;
+      padding: 20px 25px;
+      margin-bottom: 25px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    }
+
+    .presentacion-bienvenida h2 {
+      color: var(--azul);
+      margin-top: 0;
+      font-size: 1.4rem;
+    }
+
+    .presentacion-bienvenida p {
+      color: #475569;
+      margin-bottom: 0;
+      line-height: 1.5;
+    }
+
+    /* Caja institucional sobre el compromiso con los estudiantes */
+    .compromiso-estudiantes {
+      background: var(--azul-claro);
+      border: 1px solid #bfdbfe;
+      border-radius: 8px;
+      padding: 18px 22px;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    .compromiso-estudiantes p {
+      color: var(--azul);
+      font-weight: 600;
+      font-size: 0.95rem;
+      margin: 0;
+      line-height: 1.5;
     }
 
     #rejilla {
@@ -201,8 +242,20 @@
     </nav>
   </header>
 
-  <!-- Contenedor principal donde el menú dibuja las tarjetas -->
-  <main id="vista" class="contenedor-principal">
+  <!-- Contenedor principal -->
+  <main class="contenedor-principal">
+    <!-- Texto explicativo de bienvenida -->
+    <section class="presentacion-bienvenida">
+      <h2>Simulador Oficial de Razonamiento Cuantitativo</h2>
+      <p>Selecciona una competencia específica para iniciar tu práctica focalizada con preguntas seleccionadas al azar del cuadernillo ICFES Saber 11, o evalúa tu nivel global con parámetros analíticos avanzados.</p>
+    </section>
+
+    <!-- Frase institucional sobre el compromiso con los estudiantes -->
+    <section class="compromiso-estudiantes">
+      <p>En <strong>Mundo Matemático</strong> nos preocupamos profundamente por el éxito y la comprensión real de nuestros estudiantes. Cada ejercicio está diseñado para potenciar tu razonamiento y garantizar tu ingreso a la universidad.</p>
+    </section>
+
+    <!-- Rejilla donde el menú dibuja los cuadritos -->
     <div id="rejilla"></div>
     <div id="aviso" class="alerta oculto" style="color: red; padding: 20px; font-weight: bold;"></div>
   </main>
@@ -212,7 +265,7 @@
     <p>Mundo Matemático • Educación y pre-universitario de alto rendimiento</p>
   </footer>
 
-  <!-- Script del menú (apuntando a la carpeta js) -->
+  <!-- Script del menú -->
   <script type="module" src="js/menu.js"></script>
 </body>
 </html>
