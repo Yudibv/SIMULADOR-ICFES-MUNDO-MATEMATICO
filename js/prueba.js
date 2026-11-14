@@ -7,7 +7,9 @@ let state = {
   seleccion: [],
   item: 0,
   respuestas: {},
-  todas: false
+  todas: false,
+  tiempoRestante: 0, // en segundos
+  intervaloTimer: null
 };
 
 function obtenerContenedor() {
@@ -37,34 +39,71 @@ async function init() {
     state.todas = true;
     let preguntasGlobales = [];
     
-    // Toma exactamente 5 preguntas aleatorias de cada carpeta (tema)
     state.temas.forEach(t => {
       if (t.preguntas && t.preguntas.length > 0) {
-        // Mezclamos las preguntas del tema de forma aleatoria
         const preguntasMezcladas = [...t.preguntas].sort(() => Math.random() - 0.5);
-        // Seleccionamos máximo 5 (o las que tenga si son menos de 5)
-        const elegidas = preguntasMezcladas.slice(0, 5);
-        
+        const elegidas = preguntasMezcladas.slice(0, 5); // 5 preguntas por cada una de las 8 carpetas = 40 preguntas
         elegidas.forEach(archivo => {
           preguntasGlobales.push({ archivo: archivo, tema: t });
         });
       }
     });
 
-    // Mezclamos el orden final de las preguntas globales para que queden intercaladas
     state.seleccionGlobal = preguntasGlobales.sort(() => Math.random() - 0.5);
     state.seleccion = state.seleccionGlobal.map(x => x.archivo);
+    // 90 minutos para la prueba global de 40 preguntas (en segundos)
+    state.tiempoRestante = 90 * 60; 
   } else if (temaId) {
     state.cola = [temaId];
     prepararTemaActual();
+    // 20 minutos para la prueba focalizada individual (en segundos)
+    state.tiempoRestante = 20 * 60;
   } else {
     state.cola = [state.temas[0].id];
     prepararTemaActual();
+    state.tiempoRestante = 20 * 60;
   }
 
   state.item = 0;
   state.respuestas = {};
+  
+  iniciarTemporizador();
   renderPregunta(state);
+}
+
+function iniciarTemporizador() {
+  if (state.intervaloTimer) clearInterval(state.intervaloTimer);
+  
+  state.intervaloTimer = setInterval(() => {
+    if (state.tiempoRestante > 0) {
+      state.tiempoRestante--;
+      actualizarRelojVisual();
+    } else {
+      clearInterval(state.intervaloTimer);
+      alert("¡Se ha agotado el tiempo del simulacro!");
+      if (state.todas) {
+        mostrarResultadosFinalesGlobal(state);
+      } else {
+        const tema = temaPorId(state.cola[state.indiceTema]);
+        mostrarResultadosFinales(state, tema);
+      }
+    }
+  }, 1000);
+}
+
+function actualizarRelojVisual() {
+  const elReloj = document.getElementById("reloj-tiempo");
+  if (elReloj) {
+    const minutos = Math.floor(state.tiempoRestante / 60);
+    const segundos = state.tiempoRestante % 60;
+    elReloj.textContent = `${minutos.toString().padStart(2, '0')}:${segundos.toString().padStart(2, '0')}`;
+    
+    // Alerta visual si quedan menos de 5 minutos
+    if (state.tiempoRestante < 300) {
+      elReloj.style.color = "#dc2626";
+      elReloj.style.fontWeight = "bold";
+    }
+  }
 }
 
 function aliasTemas(temas) {
@@ -92,6 +131,7 @@ export function renderPregunta(st) {
   if (st.todas) {
     const actualGlobal = st.seleccionGlobal[st.item];
     if (!actualGlobal) {
+      if (st.intervaloTimer) clearInterval(st.intervaloTimer);
       mostrarResultadosFinalesGlobal(st);
       return;
     }
@@ -106,6 +146,7 @@ export function renderPregunta(st) {
   const root = obtenerContenedor();
 
   if (!archivo) {
+    if (st.intervaloTimer) clearInterval(st.intervaloTimer);
     if (st.todas) {
       mostrarResultadosFinalesGlobal(st);
     } else {
@@ -115,15 +156,23 @@ export function renderPregunta(st) {
   }
 
   const rutaImagenFinal = urlPng(tema, archivo);
-  
   const respuestasClave = (tema.respuestas || {})[archivo];
   const esMulti = respuestasClave && typeof respuestasClave === "object";
   const subPreguntas = esMulti ? Object.keys(respuestasClave) : [null];
-
   const respuestaPrevia = st.respuestas[st.item] || {};
 
+  // Formato inicial del reloj
+  const minInicial = Math.floor(st.tiempoRestante / 60).toString().padStart(2, '0');
+  const segInicial = (st.tiempoRestante % 60).toString().padStart(2, '0');
+
   root.innerHTML = `
-    <p class="migas"><a href="index.html">Menú</a> / ${st.todas ? 'Simulacro Global Saber 11' : (tema.titulo || tema.id)} / Ejercicio ${st.item + 1} de ${total}</p>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; background: #fff; padding: 10px 15px; border-radius: 8px; border: 1px solid #cbd5e1;">
+      <p class="migas" style="margin: 0;"><a href="index.html">Menú</a> / ${st.todas ? 'Simulacro Global Saber 11' : (tema.titulo || tema.id)}</p>
+      <div style="font-size: 1.05rem; font-weight: bold; color: var(--azul); background: var(--azul-claro); padding: 5px 12px; border-radius: 6px;">
+        ⏱️ Tiempo restante: <span id="reloj-tiempo">${minInicial}:${segInicial}</span>
+      </div>
+    </div>
+
     <div class="progreso"><div class="progreso-barra" style="width:${((st.item + 1) / total) * 100}%"></div></div>
     <p class="progreso-texto">Ejercicio ${st.item + 1} de ${total}</p>
     <section class="panel">
@@ -200,6 +249,7 @@ export function renderPregunta(st) {
       st.item += 1;
       renderPregunta(st);
     } else {
+      if (st.intervaloTimer) clearInterval(st.intervaloTimer);
       if (st.todas) {
         mostrarResultadosFinalesGlobal(st);
       } else {
@@ -210,6 +260,7 @@ export function renderPregunta(st) {
 }
 
 function mostrarResultadosFinalesGlobal(st) {
+  if (st.intervaloTimer) clearInterval(st.intervaloTimer);
   let aciertos = 0;
   let totalPreguntas = st.seleccionGlobal.length;
 
@@ -295,6 +346,7 @@ function mostrarResultadosFinalesGlobal(st) {
 }
 
 function mostrarResultadosFinales(st, tema) {
+  if (st.intervaloTimer) clearInterval(st.intervaloTimer);
   let aciertos = 0;
   let totalPreguntas = st.seleccion.length;
 
