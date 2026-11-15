@@ -578,15 +578,18 @@ function mostrarResultadosFinales(st, tema) {
 init();
 
 // ==========================================
-// 3. GENERACIÓN DE PDF NATIVO
+// 3. GENERACIÓN DE PDF NATIVO (DISEÑO PRO Y ORGANIZADO)
 // ==========================================
 function generarPDFInforme(aciertos, totalPreguntas, porcentaje, nivelDesempeno) {
   const ventanaImpresion = window.open('', '_blank');
   
   if (!ventanaImpresion) {
-    alert("Por favorable permite las ventanas emergentes (pop-ups) en tu navegador para descargar el PDF.");
+    alert("Por favor permite las ventanas emergentes (pop-ups) en tu navegador para descargar el PDF.");
     return;
   }
+
+  // URL o referencia de tu logo (puedes reemplazarla por la ruta exacta de tu logo en el repositorio)
+  const urlLogo = "url-de-tu-logo.png"; // O usa un ícono/encabezado tipográfico elegante
 
   ventanaImpresion.document.write(`
     <!DOCTYPE html>
@@ -595,13 +598,30 @@ function generarPDFInforme(aciertos, totalPreguntas, porcentaje, nivelDesempeno)
       <meta charset="UTF-8">
       <title>Cuadernillo Pro - Mundo Matemático</title>
       <style>
-        body { font-family: Arial, sans-serif; color: #1e293b; margin: 0; padding: 30px; background: #fff; }
-        .header { background: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
-        .header h1 { margin: 0; font-size: 22px; }
-        .header p { margin: 5px 0 0 0; font-size: 12px; opacity: 0.9; }
-        .card { background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 20px; margin-bottom: 20px; }
-        .card h3 { color: #1e3a8a; margin-top: 0; }
-        .footer { background: #f0fdf4; border: 1px solid #16a34a; color: #166534; padding: 15px; border-radius: 8px; text-align: center; font-weight: bold; }
+        body { font-family: 'Helvetica Neue', Arial, sans-serif; color: #1e293b; margin: 0; padding: 40px; background: #fff; line-height: 1.6; }
+        
+        /* Cabecera corporativa */
+        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #1e3a8a; padding-bottom: 15px; margin-bottom: 25px; }
+        .header-left h1 { margin: 0; font-size: 24px; color: #1e3a8a; font-weight: 800; letter-spacing: 0.5px; }
+        .header-left p { margin: 4px 0 0 0; font-size: 13px; color: #64748b; font-weight: 600; }
+        .header-right { text-align: right; font-size: 12px; color: #334155; }
+        .header-right span { display: block; font-weight: bold; color: #1e3a8a; }
+
+        /* Tarjetas de contenido */
+        .card { background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .card h3 { color: #1e3a8a; margin-top: 0; font-size: 16px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px; }
+        
+        /* Rejilla de resultados */
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
+        .metric-box { background: #fff; border: 1px solid #e2e8f0; padding: 12px; border-radius: 6px; text-align: center; }
+        .metric-box .num { font-size: 20px; font-weight: bold; color: #1e3a8a; }
+        .metric-box .label { font-size: 11px; color: #64748b; font-weight: bold; margin-top: 2px; }
+
+        /* Pie de página profesional */
+        .footer { background: #f0fdf4; border: 1px solid #16a34a; color: #166534; padding: 18px; border-radius: 8px; text-align: center; margin-top: 30px; }
+        .footer-title { font-weight: bold; font-size: 14px; margin-bottom: 5px; }
+        .footer-info { font-size: 12px; color: #334155; font-weight: normal; }
+
         @media print {
           body { padding: 0; }
           .no-print { display: none; }
@@ -609,43 +629,66 @@ function generarPDFInforme(aciertos, totalPreguntas, porcentaje, nivelDesempeno)
       </style>
     </head>
     <body onload="window.print();">
+      
+      <!-- CABECERA -->
       <div class="header">
-        <h1>MUNDO MATEMÁTICO</h1>
-        <p>Informe Analítico Predictivo - Estándar ICFES Saber 11 | Fecha: ${new Date().toLocaleDateString()}</p>
+        <div class="header-left">
+          <h1>MUNDO MATEMÁTICO</h1>
+          <p>Plataforma de Alto Rendimiento y Preparación Preuniversitaria</p>
+        </div>
+        <div class="header-right">
+          <span>INFORME PREDICTIVO SABER 11</span>
+          Fecha: ${new Date().toLocaleDateString()}
+        </div>
       </div>
 
+      <!-- RESUMEN DE DESEMPEÑO -->
       <div class="card">
-        <h3>Certificado de Diagnóstico y Cuadernillo de Retroalimentación</h3>
-        <p><strong>Herramienta académica independiente de Mundo Matemático.</strong></p>
-        <hr style="border: 0; border-top: 1px solid #cbd5e1; margin: 15px 0;">
-        <h4 style="margin: 0 0 10px 0; color: #334155;">RESUMEN DE DESEMPEÑO GLOBAL</h4>
-        <p>• Aciertos Totales: <strong>${aciertos} de ${totalPreguntas} (${porcentaje}%)</strong></p>
-        <p>• Nivel Estimado Saber 11: <strong>${nivelDesempeno}</strong></p>
-      </div>
-
-      <div class="card">
-        <h3 style="color: #1e3a8a;">Diagnóstico de Competencias (Parámetros TRI)</h3>
-        <p style="line-height: 1.5;">
-          Basado en la calibración de ítems de alta discriminación del simulacro global, se identifican fortalezas en razonamiento aritmético, así como vulnerabilidades críticas en componentes de análisis algebraico e interpretación geométrica que impactan directamente el puntaje en la prueba oficial del ICFES.
+        <h3>📊 Certificado de Diagnóstico y Métricas (Estándar TRI)</h3>
+        <div class="grid">
+          <div class="metric-box">
+            <div class="num">${aciertos} / ${totalPreguntas}</div>
+            <div class="label">Aciertos Totales (${porcentaje}%)</div>
+          </div>
+          <div class="metric-box">
+            <div class="num" style="font-size: 16px; color: #dc2626; margin-top: 4px;">${nivelDesempeno}</div>
+            <div class="label">Desempeño Estimado</div>
+          </div>
+        </div>
+        <p style="font-size: 13px; color: #334155; margin: 0;">
+          Evaluación analítica independiente basada en parámetros de discriminación de ítems para aspirantes a educación superior.
         </p>
       </div>
 
+      <!-- DIAGNÓSTICO DETALLADO -->
       <div class="card">
-        <h3 style="color: #1e3a8a;">Ruta de Corrección y Preguntas Trampa</h3>
-        <p style="line-height: 1.5; margin: 0;">
-          1. Revisión detallada de propiedades de exponentes y radicación en expresiones algebraicas.<br>
-          2. Fortalecimiento en la lectura de gráficos cartesianos y pendientes de rectas.<br>
-          3. Aplicación de la estrategia de eliminación de distractores lógicos en preguntas de opción múltiple.
+        <h3>🔍 Análisis de Competencias Latentes</h3>
+        <p style="font-size: 13px; color: #334155; margin: 0;">
+          Basado en la calibración del simulacro global, se identifican fortalezas en razonamiento aritmético, así como áreas de oportunidad críticas en componentes de análisis algebraico, funciones y geometría espacial que impactan directamente el puntaje en la prueba oficial del ICFES.
         </p>
       </div>
 
+      <!-- RUTA DE CORRECCIÓN -->
+      <div class="card">
+        <h3>🎯 Ruta de Corrección y Recomendaciones Clave</h3>
+        <p style="font-size: 13px; color: #334155; margin: 0; line-height: 1.5;">
+          1. <strong>Álgebra y Ecuaciones:</strong> Repaso estricto de factorización y manipulación de expresiones racionales.<br>
+          2. <strong>Geometría Analítica:</strong> Reforzar interpretación de pendientes y ecuaciones de la recta en plano cartesiano.<br>
+          3. <strong>Estrategia de Examen:</strong> Aplicación sistemática de eliminación de distractores lógicos en preguntas de opción múltiple con múltiple contexto.
+        </p>
+      </div>
+
+      <!-- PIE DE PÁGINA CON CONTACTO Y WEB -->
       <div class="footer">
-        ¡Asegura tu cupo universitario con Mundo Matemático!<br>
-        <span style="font-size: 11px; font-weight: normal; color: #334155;">
-          🌐 Web: <strong>mimundomatematico.com</strong> | 📞 WhatsApp / Contacto: <strong>311 557 4410</strong><br>
-          Este documento valida tu acceso al cuadernillo Pro. Ante cualquier duda, agenda tu refuerzo.
-        </span>
+        <div class="footer-title">¡Asegura tu cupo universitario con tutorías especializadas!</div>
+        <div class="footer-info">
+          🌐 Web oficial: <strong>mimundomatematico.com</strong> &nbsp;|&nbsp; 📞 WhatsApp / Contacto directo: <strong>311 557 4410</strong><br>
+          <span style="font-size: 10px; color: #64748b; display: block; margin-top: 6px;">
+            Mundo Matemático es una iniciativa educativa independiente. Documento exclusivo para validación de desempeño académico.
+          </span>
+        </div>
       </div>
+
     </body>
     </html>
   `);
