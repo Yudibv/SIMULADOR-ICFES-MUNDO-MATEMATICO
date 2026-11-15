@@ -485,86 +485,75 @@ function mostrarResultadosFinales(st, tema) {
 
 init();
 
+// ==========================================
+// FUNCIÓN DE GENERACIÓN DE PDF ROBUSTA Y NATIVA
+// ==========================================
 function generarPDFInforme(aciertos, totalPreguntas, porcentaje, nivelDesempeno) {
-  // Aseguramos que la librería jsPDF esté completamente lista antes de ejecutar
-  const jsPDFClass = window.jspdf ? window.jspdf.jsPDF : null;
+  // Creamos una ventana emergente limpia con todo el diseño del informe institucional
+  const ventanaImpresion = window.open('', '_blank');
   
-  if (!jsPDFClass) {
-    alert("Cargando motor de PDF. Por favor haz clic de nuevo en 2 segundos.");
+  if (!ventanaImpresion) {
+    alert("Por favor permite las ventanas emergentes (pop-ups) en tu navegador para descargar el PDF.");
     return;
   }
 
-  const doc = new jsPDFClass();
+  ventanaImpresion.document.write(`
+    <!DOCTYPE html>
+    <html lang="es">
+    <head>
+      <meta charset="UTF-8">
+      <title>Cuadernillo Pro - Mundo Matemático</title>
+      <style>
+        body { font-family: Arial, sans-serif; color: #1e293b; margin: 0; padding: 30px; background: #fff; }
+        .header { background: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+        .header h1 { margin: 0; font-size: 22px; }
+        .header p { margin: 5px 0 0 0; font-size: 12px; opacity: 0.9; }
+        .card { background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 20px; margin-bottom: 20px; }
+        .card h3 { color: #1e3a8a; margin-top: 0; }
+        .footer { background: #f0fdf4; border: 1px solid #16a34a; color: #166534; padding: 15px; border-radius: 8px; text-align: center; font-weight: bold; }
+        @media print {
+          body { padding: 0; }
+          .no-print { display: none; }
+        }
+      </style>
+    </head>
+    <body onload="window.print();">
+      <div class="header">
+        <h1>MUNDO MATEMÁTICO</h1>
+        <p>Informe Analítico Predictivo - Estándar ICFES Saber 11 | Fecha: ${new Date().toLocaleDateString()}</p>
+      </div>
 
-  doc.setFillColor(30, 58, 138);
-  doc.rect(0, 0, 210, 25, "F");
-  
-  doc.setTextColor(255, 255, 255);
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(15);
-  doc.text("MUNDO MATEMÁTICO", 14, 16);
-  
-  doc.setFontSize(9);
-  doc.text("Informe Analítico Predictivo - Estándar ICFES Saber 11", 138, 16, { align: "right" });
+      <div class="card">
+        <h3>Certificado de Diagnóstico y Cuadernillo de Retroalimentación</h3>
+        <p><strong>Herramienta académica independiente de Mundo Matemático.</strong></p>
+        <hr style="border: 0; border-top: 1px solid #cbd5e1; margin: 15px 0;">
+        <h4 style="margin: 0 0 10px 0; color: #334155;">RESUMEN DE DESEMPEÑO GLOBAL</h4>
+        <p>• Aciertos Totales: <strong>${aciertos} de ${totalPreguntas} (${porcentaje}%)</strong></p>
+        <p>• Nivel Estimado Saber 11: <strong>${nivelDesempeno}</strong></p>
+      </div>
 
-  doc.setTextColor(33, 37, 41);
-  doc.setFontSize(13);
-  doc.text("Certificado de Diagnóstico y Cuadernillo de Retroalimentación", 14, 38);
+      <div class="card">
+        <h3 style="color: #1e3a8a;">Diagnóstico de Competencias (Parámetros TRI)</h3>
+        <p style="line-height: 1.5;">
+          Basado en la calibración de ítems de alta discriminación del simulacro global, se identifican fortalezas en razonamiento aritmético, así como vulnerabilidades críticas en componentes de análisis algebraico e interpretación geométrica que impactan directamente el puntaje en la prueba oficial del ICFES.
+        </p>
+      </div>
 
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(9);
-  doc.text(`Fecha de emisión: ${new Date().toLocaleDateString()}`, 14, 45);
-  doc.text(`Herramienta académica independiente de Mundo Matemático.`, 14, 51);
+      <div class="card">
+        <h3 style="color: #1e3a8a;">Ruta de Corrección y Preguntas Trampa</h3>
+        <p style="line-height: 1.5; margin: 0;">
+          1. Revisión detallada de propiedades de exponentes y radicación en expresiones algebraicas.<br>
+          2. Fortalecimiento en la lectura de gráficos cartesianos y pendientes de rectas.<br>
+          3. Aplicación de la estrategia de eliminación de distractores lógicos en preguntas de opción múltiple.
+        </p>
+      </div>
 
-  doc.setDrawColor(203, 213, 225);
-  doc.setFillColor(248, 250, 252);
-  doc.roundedRect(14, 58, 182, 32, 3, 3, "FD");
-
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(11);
-  doc.text("RESUMEN DE DESEMPEÑO GLOBAL", 20, 67);
-  
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(10);
-  doc.text(`• Aciertos Totales: ${aciertos} de ${totalPreguntas} (${porcentaje}%)`, 20, 76);
-  doc.text(`• Nivel Estimado Saber 11: ${nivelDesempeno}`, 20, 84);
-
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(11);
-  doc.text("Diagnóstico de Competencias (Parámetros TRI)", 14, 103);
-
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(9.5);
-  const textoDiagnostico = doc.splitTextToSize(
-    "Basado en la calibración de ítems de alta discriminación del simulacro global, se identifican fortalezas en razonamiento aritmético, así como vulnerabilidades críticas en componentes de análisis algebraico e interpretación geométrica que impactan directamente el puntaje en la prueba oficial del ICFES.",
-    182
-  );
-  doc.text(textoDiagnostico, 14, 110);
-
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(11);
-  doc.text("Ruta de Corrección y Preguntas Trampa", 14, 137);
-
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(9.5);
-  const textoRuta = doc.splitTextToSize(
-    "1. Revisión detallada de propiedades de exponentes y radicación en expresiones algebraicas.\n2. Fortalecimiento en la lectura de gráficos cartesianos y pendientes de rectas.\n3. Aplicación de la estrategia de eliminación de distractores lógicos en preguntas de opción múltiple.",
-    182
-  );
-  doc.text(textoRuta, 14, 144);
-
-  doc.setFillColor(240, 253, 244);
-  doc.setDraw(34, 197, 94);
-  doc.roundedRect(14, 178, 182, 28, 3, 3, "FD");
-
-  doc.setTextColor(22, 101, 52);
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(10);
-  doc.text("¡Asegura tu cupo universitario con Mundo Matemático!", 20, 187);
-  
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(8.5);
-  doc.text("Este documento valida tu acceso al cuadernillo Pro. Ante cualquier duda, agenda tu refuerzo.", 20, 195);
-
-  doc.save("Cuadernillo_Pro_Mundo_Matematico.pdf");
+      <div class="footer">
+        ¡Asegura tu cupo universitario con Mundo Matemático!<br>
+        <span style="font-size: 11px; font-weight: normal; color: #334155;">Este documento valida tu acceso al cuadernillo Pro. Ante cualquier duda, agenda tu refuerzo.</span>
+      </div>
+    </body>
+    </html>
+  `);
+  ventanaImpresion.document.close();
 }
