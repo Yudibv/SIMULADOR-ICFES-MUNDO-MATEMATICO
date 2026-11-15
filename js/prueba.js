@@ -263,7 +263,7 @@ export function renderPregunta(st) {
 }
 
 // ==========================================
-// 1. RESULTADOS Y PAGO PARA EL SIMULACRO GLOBAL (Con PDF y Referencia Wompi)
+// 1. RESULTADOS Y PAGO PARA EL SIMULACRO GLOBAL (Con PDF, Referencia Wompi y Advertencia)
 // ==========================================
 function mostrarResultadosFinalesGlobal(st) {
   if (st.intervaloTimer) clearInterval(st.intervaloTimer);
@@ -373,6 +373,11 @@ function mostrarResultadosFinalesGlobal(st) {
             Paga en Wompi (Nequi, PSE o Tarjeta) por valor de <strong>$15.000 COP</strong> escaneando el QR o usando el botón.
           </p>
 
+          <!-- ADVERTENCIA IMPORTANTE ANTES DE PAGAR -->
+          <div style="background: #fffbeb; border: 1px solid #f59e0b; padding: 12px; border-radius: 6px; margin-bottom: 15px; text-align: left; font-size: 0.85rem; color: #92400e;">
+            ⚠️ <strong>Importante:</strong> Al realizar tu pago, <strong>copia y guarda el número de referencia</strong> que te entrega Wompi en el comprobante. Lo necesitarás para validar tu acceso y poder descargar o volver a consultar tu PDF en cualquier momento.
+          </div>
+
           <div style="display: flex; flex-direction: column; align-items: center; gap: 15px; margin-bottom: 20px;">
             <a class="boton" href="${linkWompi}" target="_blank" style="background: #16a34a; color: white; text-decoration: none; padding: 12px 24px; border-radius: 6px; font-weight: bold; font-size: 1.05rem; width: 100%; max-width: 350px; box-sizing: border-box; text-align: center;">
               💳 Pagar $15.000 con Wompi
@@ -384,16 +389,16 @@ function mostrarResultadosFinalesGlobal(st) {
             </div>
           </div>
 
-          <!-- VALIDACIÓN POR REFERENCIA DE WOMPI -->
+          <!-- VALIDACIÓN POR REFERENCIA DE WOMPI (SIN RECARGAR, MANTENIENDO EL EXAMEN) -->
           <div style="background: #fff; padding: 15px; border-radius: 8px; border: 1px solid #cbd5e1; max-width: 350px; margin: 0 auto 15px auto; text-align: left;">
             <label style="font-size: 0.85rem; font-weight: bold; color: #334155; display: block; margin-bottom: 5px;">
               ¿Ya pagaste? Ingresa tu referencia de Wompi:
             </label>
             <div style="display: flex; gap: 8px;">
-              <input type="text" id="input-referencia" placeholder="Ej. WOMPI-..." style="flex: 1; padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 0.9rem;">
+              <input type="text" id="input-referencia" placeholder="Ej. ref_prod_..." style="flex: 1; padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 0.9rem;">
               <button id="btn-validar-ref" style="background: #1e3a8a; color: white; border: none; padding: 8px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 0.9rem;">Validar</button>
             </div>
-            <span style="font-size: 0.75rem; color: #64748b; display: block; margin-top: 4px;">Encuentra la referencia en el comprobante que te dio Wompi.</span>
+            <span style="font-size: 0.75rem; color: #64748b; display: block; margin-top: 4px;">Usa esta misma referencia si necesitas volver a descargar tu PDF después.</span>
           </div>
 
           <a class="boton" href="index.html" style="background: #1e3a8a; color: white; text-decoration: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; width: 100%; max-width: 350px; box-sizing: border-box; text-align: center; display: inline-block;">
@@ -422,8 +427,11 @@ function mostrarResultadosFinalesGlobal(st) {
       btnValidarRef.onclick = () => {
         const refInput = document.getElementById("input-referencia").value.trim();
         if (refInput.length > 3) {
+          // Guardamos el pago y la referencia sin recargar la página para no perder el examen
           localStorage.setItem("mundo_matematico_pagado_pro", "true");
-          location.reload();
+          localStorage.setItem("mundo_matematico_ref_wompi", refInput);
+          
+          mostrarResultadosFinalesGlobal(st);
         } else {
           alert("Por favor ingresa una referencia de pago válida de Wompi.");
         }
@@ -481,7 +489,7 @@ function mostrarResultadosFinales(st, tema) {
   }
 
   const linkSimulacroGlobal = "prueba.html?todas=1";
-  const numeroWhatsApp = "573115574410"; // Némero de telefono whatsApp
+  const numeroWhatsApp = "573000000000"; // Cambia por tu número real de WhatsApp
   const mensajeWp = encodeURIComponent(`Hola, acabo de hacer la práctica focalizada de ${tema.titulo} en Mundo Matemático y saqué ${aciertos}/${totalPreguntas}. Me gustaría recibir más información sobre tutorías.`);
 
   root.innerHTML = `
