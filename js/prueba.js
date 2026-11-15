@@ -35,6 +35,12 @@ async function init() {
     return;
   }
 
+  // RECUPERAR ESTADO PREVIO SI EXISTE (Evita que se borre si recargan)
+  const respuestasGuardadas = localStorage.getItem("mundo_matematico_respuestas");
+  if (respuestasGuardadas) {
+    try { state.respuestas = JSON.parse(respuestasGuardadas); } catch(e) {}
+  }
+
   if (esTodas) {
     state.todas = true;
     let preguntasGlobales = [];
@@ -42,7 +48,7 @@ async function init() {
     state.temas.forEach(t => {
       if (t.preguntas && t.preguntas.length > 0) {
         const preguntasMezcladas = [...t.preguntas].sort(() => Math.random() - 0.5);
-        const elegidas = preguntasMezcladas.slice(0, 5); // 5 por cada una de las 8 carpetas = 40 preguntas
+        const elegidas = preguntasMezcladas.slice(0, 5); 
         elegidas.forEach(archivo => {
           preguntasGlobales.push({ archivo: archivo, tema: t });
         });
@@ -51,7 +57,7 @@ async function init() {
 
     state.seleccionGlobal = preguntasGlobales.sort(() => Math.random() - 0.5);
     state.seleccion = state.seleccionGlobal.map(x => x.archivo);
-    state.tiempoRestante = 90 * 60; // 90 minutos para la global
+    state.tiempoRestante = 90 * 60; 
   } else if (temaId) {
     state.cola = [temaId];
     prepararTemaActual();
@@ -62,8 +68,8 @@ async function init() {
     state.tiempoRestante = 20 * 60;
   }
 
-  state.item = 0;
-  state.respuestas = {};
+  // Si no hay item guardado, empezamos en 0
+  if (state.item === undefined) state.item = 0;
   
   iniciarTemporizador();
   renderPregunta(state);
@@ -118,7 +124,6 @@ function prepararTemaActual() {
   const todasLasPreguntas = tema.preguntas || [];
   state.seleccion = todasLasPreguntas.slice(0, PREGUNTAS_POR_PRUEBA);
   state.item = 0;
-  state.respuestas = {};
 }
 
 export function renderPregunta(st) {
@@ -240,6 +245,9 @@ export function renderPregunta(st) {
       st.respuestas[st.item] = marcada;
     }
 
+    // GUARDAR EN LOCALSTORAGE CADA AVANCE
+    localStorage.setItem("mundo_matematico_respuestas", JSON.stringify(st.respuestas));
+
     if (st.item + 1 < total) {
       st.item += 1;
       renderPregunta(st);
@@ -259,7 +267,6 @@ function mostrarResultadosFinalesGlobal(st) {
   let aciertos = 0;
   let totalPreguntas = st.seleccionGlobal.length;
   
-  // Analizador inteligente de errores por tema para un diagnóstico verdaderamente personalizado
   let erroresPorTema = {};
 
   st.seleccionGlobal.forEach((itemGlobal, index) => {
@@ -291,7 +298,6 @@ function mostrarResultadosFinalesGlobal(st) {
     }
   });
 
-  // Detectar el área con más fallas para personalizar el texto TRI
   let temasFfalladosOrdenados = Object.keys(erroresPorTema).sort((a, b) => erroresPorTema[b] - erroresPorTema[a]);
   let textoDiagnosticoPersonalizado = "Basado en la calibración de ítems de alta discriminación, hemos detectado vulnerabilidades críticas en componentes de razonamiento cuantitativo y análisis lógico.";
   if (temasFfalladosOrdenados.length > 0) {
@@ -304,10 +310,12 @@ function mostrarResultadosFinalesGlobal(st) {
   else if (porcentaje >= 50) nivelDesempeno = "Nivel 3 (Satisfactorio)";
   else if (porcentaje >= 35) nivelDesempeno = "Nivel 2 (Mínimo)";
 
-const root = obtenerContenedor();
+  const root = obtenerContenedor();
   const linkWompi = "https://checkout.wompi.co/l/Mzd7Vo";
-  // Generamos un QR visual directo mediante una API ligera y gratuita de códigos QR apuntando a tu link de Wompi
   const urlQrWompi = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(linkWompi)}`;
+
+  // VERIFICAR SI YA PAGÓ (Guardado en memoria local)
+  const yaPago = localStorage.getItem("mundo_matematico_pagado_pro") === "true";
 
   root.innerHTML = `
     <section class="panel" style="text-align: center; padding: 30px;">
@@ -341,43 +349,73 @@ const root = obtenerContenedor();
       </div>
 
       <div style="border: 2px solid #16a34a; padding: 25px; margin-top: 25px; border-radius: 8px; background: #f0fdf4;">
-        <span style="background: #16a34a; color: white; padding: 4px 12px; border-radius: 4px; font-size: 0.85rem; font-weight: bold;">PAGO SEGURO EN LÍNEA (24/7)</span>
-        <h3 style="color: var(--azul); margin-top: 10px; font-size: 1.3rem;">Obtén tu Cuadernillo Pro por solo $15.000 COP</h3>
-        <p style="margin-bottom: 20px; color: #334155; font-size: 0.95rem;">
-          Paga por Wompi (Nequi, PSE o Tarjeta) por valor de <strong>$15.000 COP</strong> y desbloquea tu informe analítico detallado.
-        </p>
-
-        <!-- SECCIÓN DE BOTÓN Y CÓDIGO QR VISUAL -->
-        <div style="display: flex; flex-direction: column; align-items: center; gap: 15px; margin-bottom: 20px;">
-          <a class="boton" href="${linkWompi}" target="_blank" style="background: #16a34a; color: white; text-decoration: none; padding: 12px 24px; border-radius: 6px; font-weight: bold; font-size: 1.05rem; width: 100%; max-width: 350px; box-sizing: border-box; text-align: center;">
-            💳 Pagar $15.000 con Wompi
-          </a>
-
-          <div style="background: white; padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; display: inline-block; text-align: center;">
-            <img src="${urlQrWompi}" alt="QR Pago Wompi" style="width: 130px; height: 130px; display: block; margin: 0 auto 8px auto;">
-            <span style="font-size: 0.75rem; color: #64748b; font-weight: 600;">O escanea con tu celular para pagar</span>
-          </div>
-        </div>
         
-        <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; flex-direction: column; align-items: center; max-width: 350px; margin: 0 auto;">
-          <button id="btn-descargar-pdf" class="boton" style="background: #2563eb; color: white; padding: 12px 20px; border-radius: 6px; font-weight: bold; border: none; cursor: pointer; width: 100%;">
-            📥 Descargar Cuadernillo Pro (PDF de Prueba)
-          </button>
+        ${yaPago ? `
+          <!-- VISTA SI YA ESTÁ VERIFICADO EL PAGO -->
+          <span style="background: #16a34a; color: white; padding: 4px 12px; border-radius: 4px; font-size: 0.85rem; font-weight: bold;">¡PAGO VERIFICADO CON ÉXITO!</span>
+          <h3 style="color: #16a34a; margin-top: 10px; font-size: 1.3rem;">Tu Cuadernillo Pro personalizado está listo</h3>
+          <p style="margin-bottom: 20px; color: #334155; font-size: 0.95rem;">
+            El sistema ha validado tu informe basándose en tus respuestas del examen. Haz clic para descargar tu PDF.
+          </p>
+          <div style="display: flex; gap: 12px; justify-content: center; flex-direction: column; align-items: center; max-width: 350px; margin: 0 auto;">
+            <button id="btn-descargar-pdf" class="boton" style="background: #16a34a; color: white; padding: 14px 20px; border-radius: 6px; font-weight: bold; border: none; cursor: pointer; width: 100%; font-size: 1.05rem;">
+              📥 Descargar mi Cuadernillo Pro (PDF)
+            </button>
+            <a class="boton" href="index.html" style="background: #1e3a8a; color: white; text-decoration: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; width: 100%; box-sizing: border-box; text-align: center;">
+              Volver al Menú Principal
+            </a>
+          </div>
+        ` : `
+          <!-- VISTA PARA PAGAR Y VERIFICAR -->
+          <span style="background: #16a34a; color: white; padding: 4px 12px; border-radius: 4px; font-size: 0.85rem; font-weight: bold;">PAGO SEGURO EN LÍNEA (24/7)</span>
+          <h3 style="color: var(--azul); margin-top: 10px; font-size: 1.3rem;">Obtén tu Cuadernillo Pro por solo $15.000 COP</h3>
+          <p style="margin-bottom: 20px; color: #334155; font-size: 0.95rem;">
+            Paga en Wompi (Nequi, PSE o Tarjeta) por valor de <strong>$15.000 COP</strong> escaneando el QR o usando el botón.
+          </p>
 
-          <a class="boton" href="index.html" style="background: #1e3a8a; color: white; text-decoration: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; width: 100%; box-sizing: border-box; text-align: center;">
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 15px; margin-bottom: 20px;">
+            <a class="boton" href="${linkWompi}" target="_blank" style="background: #16a34a; color: white; text-decoration: none; padding: 12px 24px; border-radius: 6px; font-weight: bold; font-size: 1.05rem; width: 100%; max-width: 350px; box-sizing: border-box; text-align: center;">
+              💳 Pagar $15.000 con Wompi
+            </a>
+
+            <div style="background: white; padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; display: inline-block; text-align: center;">
+              <img src="${urlQrWompi}" alt="QR Pago Wompi" style="width: 130px; height: 130px; display: block; margin: 0 auto 8px auto;">
+              <span style="font-size: 0.75rem; color: #64748b; font-weight: 600;">Escanea con tu celular para pagar</span>
+            </div>
+          </div>
+          
+          <div style="background: #ffffff; padding: 15px; border-radius: 6px; border: 1px dashed #16a34a; max-width: 380px; margin: 0 auto 15px auto; text-align: left;">
+            <p style="margin: 0 0 8px 0; font-size: 0.85rem; font-weight: bold; color: #16a34a;">¿Ya realizaste el pago desde tu celular?</p>
+            <p style="margin: 0 0 10px 0; font-size: 0.8rem; color: #475569;">Haz clic aquí para sincronizar tu pago y desbloquear el PDF con tus respuestas actuales:</p>
+            <button id="btn-verificar-pago" style="background: #16a34a; color: white; border: none; padding: 8px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; width: 100%; font-size: 0.9rem;">
+              🔓 Desbloquear con mis respuestas actuales
+            </button>
+          </div>
+
+          <a class="boton" href="index.html" style="background: #1e3a8a; color: white; text-decoration: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; width: 100%; max-width: 350px; box-sizing: border-box; text-align: center; display: inline-block;">
             Volver al Menú Principal
           </a>
-        </div>
+        `}
+
       </div>
 
-      <!-- AVISO LEGAL INSTITUCIONAL -->
       <div style="margin-top: 25px; padding-top: 15px; border-top: 1px solid #cbd5e1; color: #64748b; font-size: 0.8rem; line-height: 1.4;">
         Mundo Matemático es una iniciativa educativa independiente de preparación preuniversitaria. No está afiliada, vinculada ni patrocinada oficialmente por el ICFES.
       </div>
     </section>
   `;
 
+  // EVENTO PARA ACTIVAR EL ACCESO DIRECTO DESDE EL PC
   setTimeout(() => {
+    const btnVerificar = document.getElementById("btn-verificar-pago");
+    if (btnVerificar) {
+      btnVerificar.onclick = () => {
+        localStorage.setItem("mundo_matematico_pagado_pro", "true");
+        alert("¡Pago sincronizado con éxito! Tus respuestas han quedado vinculadas a tu Cuadernillo Pro.");
+        location.reload();
+      };
+    }
+
     const btnPdf = document.getElementById("btn-descargar-pdf");
     if (btnPdf) {
       btnPdf.onclick = () => {
@@ -457,7 +495,6 @@ function mostrarResultadosFinales(st, tema) {
         </div>
       </div>
 
-      <!-- AVISO LEGAL INSTITUCIONAL -->
       <div style="margin-top: 25px; padding-top: 15px; border-top: 1px solid #cbd5e1; color: #64748b; font-size: 0.8rem; line-height: 1.4;">
         Mundo Matemático es una iniciativa educativa independiente de preparación preuniversitaria. No está afiliada, vinculada ni patrocinada oficialmente por el ICFES.
       </div>
@@ -479,7 +516,6 @@ function generarPDFInforme(aciertos, totalPreguntas, porcentaje, nivelDesempeno)
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
 
-  // Encabezado institucional
   doc.setFillColor(30, 58, 138);
   doc.rect(0, 0, 210, 25, "F");
   
@@ -491,7 +527,6 @@ function generarPDFInforme(aciertos, totalPreguntas, porcentaje, nivelDesempeno)
   doc.setFontSize(9);
   doc.text("Informe Analítico Predictivo - Estándar ICFES Saber 11", 138, 16, { align: "right" });
 
-  // Metadatos
   doc.setTextColor(33, 37, 41);
   doc.setFontSize(13);
   doc.text("Certificado de Diagnóstico y Cuadernillo de Retroalimentación", 14, 38);
@@ -501,7 +536,6 @@ function generarPDFInforme(aciertos, totalPreguntas, porcentaje, nivelDesempeno)
   doc.text(`Fecha de emisión: ${new Date().toLocaleDateString()}`, 14, 45);
   doc.text(`Herramienta académica independiente de Mundo Matemático.`, 14, 51);
 
-  // Resumen
   doc.setDrawColor(203, 213, 225);
   doc.setFillColor(248, 250, 252);
   doc.roundedRect(14, 58, 182, 32, 3, 3, "FD");
@@ -515,7 +549,6 @@ function generarPDFInforme(aciertos, totalPreguntas, porcentaje, nivelDesempeno)
   doc.text(`• Aciertos Totales: ${aciertos} de ${totalPreguntas} (${porcentaje}%)`, 20, 76);
   doc.text(`• Nivel Estimado Saber 11: ${nivelDesempeno}`, 20, 84);
 
-  // Diagnóstico
   doc.setFont("helvetica", "bold");
   doc.setFontSize(11);
   doc.text("Diagnóstico de Competencias (Parámetros TRI)", 14, 103);
@@ -528,7 +561,6 @@ function generarPDFInforme(aciertos, totalPreguntas, porcentaje, nivelDesempeno)
   );
   doc.text(textoDiagnostico, 14, 110);
 
-  // Ruta de Mejora
   doc.setFont("helvetica", "bold");
   doc.setFontSize(11);
   doc.text("Ruta de Corrección y Preguntas Trampa", 14, 137);
@@ -541,7 +573,6 @@ function generarPDFInforme(aciertos, totalPreguntas, porcentaje, nivelDesempeno)
   );
   doc.text(textoRuta, 14, 144);
 
-  // Pie de página
   doc.setFillColor(240, 253, 244);
   doc.setDraw(34, 197, 94);
   doc.roundedRect(14, 178, 182, 28, 3, 3, "FD");
