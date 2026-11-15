@@ -48,7 +48,6 @@ async function init() {
     let preguntasGlobales = [];
     let rutasYaAgregadas = new Set();
     
-    // 🔒 Filtro estricto anti-duplicados y mezcla real por cada tema
     state.temas.forEach(t => {
       if (t.preguntas && t.preguntas.length > 0) {
         const preguntasMezcladas = [...t.preguntas].sort(() => Math.random() - 0.5);
@@ -68,7 +67,6 @@ async function init() {
       }
     });
 
-    // Mezclamos el resultado global final para que el orden de los temas también sea aleatorio
     state.seleccionGlobal = preguntasGlobales.sort(() => Math.random() - 0.5);
     state.seleccion = state.seleccionGlobal.map(x => x.archivo);
     state.tiempoRestante = 90 * 60; 
@@ -349,6 +347,7 @@ function mostrarResultadosFinalesGlobal(st) {
   const linkWompi = "https://checkout.wompi.co/l/Mzd7Vo";
   const urlQrWompi = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(linkWompi)}`;
 
+  // Lectura corregida y limpia de la bandera de pago
   const yaPago = localStorage.getItem("mundo_matematico_pagado_pro") === "true";
 
   root.innerHTML = `
@@ -393,6 +392,9 @@ function mostrarResultadosFinalesGlobal(st) {
           <div style="display: flex; gap: 12px; justify-content: center; flex-direction: column; align-items: center; max-width: 350px; margin: 0 auto;">
             <button id="btn-descargar-pdf" class="boton" style="background: #16a34a; color: white; padding: 14px 20px; border-radius: 6px; font-weight: bold; border: none; cursor: pointer; width: 100%; font-size: 1.05rem;">
               📥 Descargar mi Cuadernillo Pro (PDF)
+            </button>
+            <button id="btn-reiniciar-pago" class="boton" style="background: #64748b; color: white; padding: 8px 12px; border-radius: 6px; font-weight: bold; border: none; cursor: pointer; width: 100%; font-size: 0.85rem; margin-top: 5px;">
+              🔄 Simular como usuario sin pagar (Prueba)
             </button>
             <a class="boton" href="index.html" style="background: #1e3a8a; color: white; text-decoration: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; width: 100%; box-sizing: border-box; text-align: center;">
               Volver al Menú Principal
@@ -449,6 +451,15 @@ function mostrarResultadosFinalesGlobal(st) {
     if (btnPdf) {
       btnPdf.onclick = () => {
         generarPDFInforme(aciertos, totalPreguntas, porcentaje, nivelDesempeno);
+      };
+    }
+
+    // Botón de ayuda para ti: permite reiniciar el estado de pago directamente en pantalla para hacer pruebas rápidas
+    const btnReiniciarPago = document.getElementById("btn-reiniciar-pago");
+    if (btnReiniciarPago) {
+      btnReiniciarPago.onclick = () => {
+        localStorage.removeItem("mundo_matematico_pagado_pro");
+        mostrarResultadosFinalesGlobal(st);
       };
     }
 
