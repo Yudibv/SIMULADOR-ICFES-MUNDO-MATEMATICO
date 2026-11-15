@@ -46,14 +46,24 @@ async function init() {
   if (esTodas) {
     state.todas = true;
     let preguntasGlobales = [];
+    let rutasYaAgregadas = new Set(); // 🔒 Filtro estricto anti-duplicados para el simulacro global
     
     state.temas.forEach(t => {
       if (t.preguntas && t.preguntas.length > 0) {
         const preguntasMezcladas = [...t.preguntas].sort(() => Math.random() - 0.5);
-        const elegidas = preguntasMezcladas.slice(0, 5); 
-        elegidas.forEach(archivo => {
-          preguntasGlobales.push({ archivo: archivo, tema: t });
-        });
+        const cantidadASeleccionar = Math.min(5, preguntasMezcladas.length);
+        let seleccionadasTema = 0;
+        
+        for (let archivo of preguntasMezcladas) {
+          if (seleccionadasTema >= cantidadASeleccionar) break;
+          const claveUnica = `${t.carpeta || t.id}_${archivo}`;
+          
+          if (!rutasYaAgregadas.has(claveUnica)) {
+            rutasYaAgregadas.add(claveUnica);
+            preguntasGlobales.push({ archivo: archivo, tema: t });
+            seleccionadasTema++;
+          }
+        }
       }
     });
 
@@ -121,10 +131,33 @@ function temaPorId(id) {
   return state.temas.find(t => t.id === id || t.carpeta === id) || state.temas[0];
 }
 
+// ==========================================
+// PREPARACIÓN DE CARPETAS INDIVIDUALES (FOCALIZADAS - Anti-duplicados y Aleatorias)
+// ==========================================
 function prepararTemaActual() {
   const tema = temaPorId(state.cola[state.indiceTema]);
   const todasLasPreguntas = tema.preguntas || [];
-  state.seleccion = todasLasPreguntas.slice(0, PREGUNTAS_POR_PRUEBA);
+  
+  if (todasLasPreguntas.length > 0) {
+    const preguntasMezcladas = [...todasLasPreguntas].sort(() => Math.random() - 0.5);
+    const cantidadDeseada = Math.min(PREGUNTAS_POR_PRUEBA || 10, preguntasMezcladas.length);
+    
+    let unicas = [];
+    let vistas = new Set();
+    
+    for (let archivo of preguntasMezcladas) {
+      if (unicas.length >= cantidadDeseada) break;
+      if (!vistas.has(archivo)) {
+        vistas.add(archivo);
+        unicas.push(archivo);
+      }
+    }
+    
+    state.seleccion = unicas;
+  } else {
+    state.seleccion = [];
+  }
+  
   state.item = 0;
   state.respuestas = {};
 }
@@ -263,7 +296,7 @@ export function renderPregunta(st) {
 }
 
 // ==========================================
-// 1. RESULTADOS Y PAGO PARA EL SIMULACRO GLOBAL (Con PDF, Referencia Wompi y Advertencia)
+// 1. SIMULACRO GLOBAL (Con Wompi, Referencia y PDF sin borrar respuestas)
 // ==========================================
 function mostrarResultadosFinalesGlobal(st) {
   if (st.intervaloTimer) clearInterval(st.intervaloTimer);
@@ -373,7 +406,7 @@ function mostrarResultadosFinalesGlobal(st) {
             Paga en Wompi (Nequi, PSE o Tarjeta) por valor de <strong>$15.000 COP</strong> escaneando el QR o usando el botón.
           </p>
 
-          <!-- ADVERTENCIA IMPORTANTE ANTES DE PAGAR -->
+          <!-- ADVERTENCIA ANTES DE PAGAR -->
           <div style="background: #fffbeb; border: 1px solid #f59e0b; padding: 12px; border-radius: 6px; margin-bottom: 15px; text-align: left; font-size: 0.85rem; color: #92400e;">
             ⚠️ <strong>Importante:</strong> Al realizar tu pago, <strong>copia y guarda el número de referencia</strong> que te entrega Wompi en el comprobante. Lo necesitarás para validar tu acceso y poder descargar o volver a consultar tu PDF en cualquier momento.
           </div>
@@ -389,7 +422,7 @@ function mostrarResultadosFinalesGlobal(st) {
             </div>
           </div>
 
-          <!-- VALIDACIÓN POR REFERENCIA DE WOMPI (SIN RECARGAR, MANTENIENDO EL EXAMEN) -->
+          <!-- VALIDACIÓN POR REFERENCIA -->
           <div style="background: #fff; padding: 15px; border-radius: 8px; border: 1px solid #cbd5e1; max-width: 350px; margin: 0 auto 15px auto; text-align: left;">
             <label style="font-size: 0.85rem; font-weight: bold; color: #334155; display: block; margin-bottom: 5px;">
               ¿Ya pagaste? Ingresa tu referencia de Wompi:
@@ -427,10 +460,10 @@ function mostrarResultadosFinalesGlobal(st) {
       btnValidarRef.onclick = () => {
         const refInput = document.getElementById("input-referencia").value.trim();
         if (refInput.length > 3) {
-          // Guardamos el pago y la referencia sin recargar la página para no perder el examen
           localStorage.setItem("mundo_matematico_pagado_pro", "true");
           localStorage.setItem("mundo_matematico_ref_wompi", refInput);
           
+          // Actualiza la vista al instante sin reiniciar el examen
           mostrarResultadosFinalesGlobal(st);
         } else {
           alert("Por favor ingresa una referencia de pago válida de Wompi.");
@@ -441,7 +474,7 @@ function mostrarResultadosFinalesGlobal(st) {
 }
 
 // ==========================================
-// 2. RESULTADOS PARA LAS PRÁCTICAS FOCALIZADAS (Por Temas / Con WhatsApp Comercial)
+// 2. PRÁCTICAS FOCALIZADAS (Por Temas / Con WhatsApp Comercial)
 // ==========================================
 function mostrarResultadosFinales(st, tema) {
   if (st.intervaloTimer) clearInterval(st.intervaloTimer);
