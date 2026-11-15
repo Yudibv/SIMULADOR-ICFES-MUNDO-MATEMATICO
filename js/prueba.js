@@ -25,14 +25,9 @@ function obtenerContenedor() {
 async function init() {
   const params = new URLSearchParams(window.location.search);
   
-  // DETECCIÓN AUTOMÁTICA DE RETORNO DE PAGOS
   if (params.get("pagado") === "true") {
     localStorage.setItem("mundo_matematico_pagado_pro", "true");
     window.history.replaceState({}, document.title, window.location.pathname + "?todas=1");
-  } else {
-    // Si entran normal, verificamos si ya pagaron en esta sesión o limpiamos para alumno nuevo
-    // Nota: Comenta la siguiente línea temporalmente si quieres mantener tu pago activo mientras pruebas
-    // localStorage.removeItem("mundo_matematico_pagado_pro");
   }
 
   localStorage.removeItem("mundo_matematico_respuestas");
@@ -386,11 +381,16 @@ function mostrarResultadosFinalesGlobal(st) {
             </div>
           </div>
 
-          <!-- ENLACE DE EMERGENCIA PARA VALIDAR AL INSTANTE -->
-          <div style="margin-bottom: 15px;">
-            <button id="btn-simular-retorno" style="background: none; border: none; color: #1e3a8a; text-decoration: underline; cursor: pointer; font-size: 0.95rem; font-weight: 600;">
-              👉 ¿Ya realizaste el pago? Haz clic aquí para validar y ver tu PDF
-            </button>
+          <!-- VALIDACIÓN POR REFERENCIA DE WOMPI (CERO INVASIVO, PROFESIONAL Y SEGURO) -->
+          <div style="background: #fff; padding: 15px; border-radius: 8px; border: 1px solid #cbd5e1; max-width: 350px; margin: 0 auto 15px auto; text-align: left;">
+            <label style="font-size: 0.85rem; font-weight: bold; color: #334155; display: block; margin-bottom: 5px;">
+              ¿Ya pagaste? Ingresa tu referencia de Wompi:
+            </label>
+            <div style="display: flex; gap: 8px;">
+              <input type="text" id="input-referencia" placeholder="Ej. WOMPI-..." style="flex: 1; padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 0.9rem;">
+              <button id="btn-validar-ref" style="background: #1e3a8a; color: white; border: none; padding: 8px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 0.9rem;">Validar</button>
+            </div>
+            <span style="font-size: 0.75rem; color: #64748b; display: block; margin-top: 4px;">Encuentra la referencia en el comprobante que te dio Wompi.</span>
           </div>
 
           <a class="boton" href="index.html" style="background: #1e3a8a; color: white; text-decoration: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; width: 100%; max-width: 350px; box-sizing: border-box; text-align: center; display: inline-block;">
@@ -414,11 +414,16 @@ function mostrarResultadosFinalesGlobal(st) {
       };
     }
 
-    const btnSimular = document.getElementById("btn-simular-retorno");
-    if (btnSimular) {
-      btnSimular.onclick = () => {
-        localStorage.setItem("mundo_matematico_pagado_pro", "true");
-        location.reload();
+    const btnValidarRef = document.getElementById("btn-validar-ref");
+    if (btnValidarRef) {
+      btnValidarRef.onclick = () => {
+        const refInput = document.getElementById("input-referencia").value.trim();
+        if (refInput.length > 3) {
+          localStorage.setItem("mundo_matematico_pagado_pro", "true");
+          location.reload();
+        } else {
+          alert("Por favor ingresa una referencia de pago válida de Wompi.");
+        }
       };
     }
   }, 100);
@@ -488,7 +493,7 @@ function mostrarResultadosFinales(st, tema) {
           <a class="boton" href="${linkSimulacroGlobal}" style="background: var(--azul); color: white; text-decoration: none; padding: 12px 24px; border-radius: 6px; font-weight: bold; font-size: 1.05rem; width: 100%; box-sizing: border-box; text-align: center;">
             🚀 Presentar Simulacro Global Completo
           </a>
-          <a class="boton" href="index.html" style="background: #64748b; color: white; text-decoration: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; width: 100%; box-sizing: border-box; text-align: center;">
+          <a class="boton" href="index.html" style="background: #64748b; color: white; text-navigation: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; width: 100%; box-sizing: border-box; text-align: center;">
             Volver al Menú Principal
           </a>
         </div>
