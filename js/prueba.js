@@ -29,6 +29,9 @@ async function init() {
   if (params.get("pagado") === "true") {
     localStorage.setItem("mundo_matematico_pagado_pro", "true");
     window.history.replaceState({}, document.title, window.location.pathname + "?todas=1");
+  } else {
+    // SI ENTRA NORMAL (ALUMNO NUEVO): Borramos el pago anterior para obligar a pasar por Wompi
+    localStorage.removeItem("mundo_matematico_pagado_pro");
   }
 
   // CADA ALUMNO EMPIEZA LIMPIO: Borramos respuestas anteriores para que no queden marcadas
@@ -489,7 +492,6 @@ init();
 // FUNCIÓN DE GENERACIÓN DE PDF ROBUSTA Y NATIVA
 // ==========================================
 function generarPDFInforme(aciertos, totalPreguntas, porcentaje, nivelDesempeno) {
-  // Creamos una ventana emergente limpia con todo el diseño del informe institucional
   const ventanaImpresion = window.open('', '_blank');
   
   if (!ventanaImpresion) {
