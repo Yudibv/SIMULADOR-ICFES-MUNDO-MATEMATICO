@@ -25,16 +25,16 @@ function obtenerContenedor() {
 async function init() {
   const params = new URLSearchParams(window.location.search);
   
-  // DETECCIÓN AUTOMÁTICA DE RETORNO DE PAGOS (Wompi redirige aquí con ?pagado=true)
+  // DETECCIÓN AUTOMÁTICA DE RETORNO DE PAGOS
   if (params.get("pagado") === "true") {
     localStorage.setItem("mundo_matematico_pagado_pro", "true");
     window.history.replaceState({}, document.title, window.location.pathname + "?todas=1");
   } else {
-    // SI ENTRA NORMAL (ALUMNO NUEVO): Borramos el pago anterior para obligar a pasar por Wompi
-    localStorage.removeItem("mundo_matematico_pagado_pro");
+    // Si entran normal, verificamos si ya pagaron en esta sesión o limpiamos para alumno nuevo
+    // Nota: Comenta la siguiente línea temporalmente si quieres mantener tu pago activo mientras pruebas
+    // localStorage.removeItem("mundo_matematico_pagado_pro");
   }
 
-  // CADA ALUMNO EMPIEZA LIMPIO: Borramos respuestas anteriores para que no queden marcadas
   localStorage.removeItem("mundo_matematico_respuestas");
 
   const temaId = params.get("tema");
@@ -386,6 +386,13 @@ function mostrarResultadosFinalesGlobal(st) {
             </div>
           </div>
 
+          <!-- ENLACE DE EMERGENCIA PARA VALIDAR AL INSTANTE -->
+          <div style="margin-bottom: 15px;">
+            <button id="btn-simular-retorno" style="background: none; border: none; color: #1e3a8a; text-decoration: underline; cursor: pointer; font-size: 0.95rem; font-weight: 600;">
+              👉 ¿Ya realizaste el pago? Haz clic aquí para validar y ver tu PDF
+            </button>
+          </div>
+
           <a class="boton" href="index.html" style="background: #1e3a8a; color: white; text-decoration: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; width: 100%; max-width: 350px; box-sizing: border-box; text-align: center; display: inline-block;">
             Volver al Menú Principal
           </a>
@@ -404,6 +411,14 @@ function mostrarResultadosFinalesGlobal(st) {
     if (btnPdf) {
       btnPdf.onclick = () => {
         generarPDFInforme(aciertos, totalPreguntas, porcentaje, nivelDesempeno);
+      };
+    }
+
+    const btnSimular = document.getElementById("btn-simular-retorno");
+    if (btnSimular) {
+      btnSimular.onclick = () => {
+        localStorage.setItem("mundo_matematico_pagado_pro", "true");
+        location.reload();
       };
     }
   }, 100);
