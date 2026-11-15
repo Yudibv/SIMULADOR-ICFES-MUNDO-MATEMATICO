@@ -304,8 +304,10 @@ function mostrarResultadosFinalesGlobal(st) {
   else if (porcentaje >= 50) nivelDesempeno = "Nivel 3 (Satisfactorio)";
   else if (porcentaje >= 35) nivelDesempeno = "Nivel 2 (Mínimo)";
 
-  const root = obtenerContenedor();
-  const linkWompi = "https://checkout.wompi.co/l/VPOS_9PaOd7";
+const root = obtenerContenedor();
+  const linkWompi = "https://checkout.wompi.co/l/Mzd7Vo";
+  // Generamos un QR visual directo mediante una API ligera y gratuita de códigos QR apuntando a tu link de Wompi
+  const urlQrWompi = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(linkWompi)}`;
 
   root.innerHTML = `
     <section class="panel" style="text-align: center; padding: 30px;">
@@ -342,14 +344,22 @@ function mostrarResultadosFinalesGlobal(st) {
         <span style="background: #16a34a; color: white; padding: 4px 12px; border-radius: 4px; font-size: 0.85rem; font-weight: bold;">PAGO SEGURO EN LÍNEA (24/7)</span>
         <h3 style="color: var(--azul); margin-top: 10px; font-size: 1.3rem;">Obtén tu Cuadernillo Pro por solo $15.000 COP</h3>
         <p style="margin-bottom: 20px; color: #334155; font-size: 0.95rem;">
-          Paga de forma inmediata por Wompi (Nequi, PSE o Tarjeta) por valor de <strong>$15.000 COP</strong> y desbloquea tu informe analítico detallado de inmediato.
+          Paga por Wompi (Nequi, PSE o Tarjeta) por valor de <strong>$15.000 COP</strong> y desbloquea tu informe analítico detallado.
         </p>
-        
-        <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; flex-direction: column; align-items: center;">
-          <a class="boton" href="${linkWompi}" target="_blank" style="background: #16a34a; color: white; text-decoration: none; padding: 12px 24px; border-radius: 6px; font-weight: bold; font-size: 1.05rem; width: 100%; box-sizing: border-box; text-align: center;">
-            💳 Pagar $15.000 con Wompi (Nequi / Tarjetas)
+
+        <!-- SECCIÓN DE BOTÓN Y CÓDIGO QR VISUAL -->
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 15px; margin-bottom: 20px;">
+          <a class="boton" href="${linkWompi}" target="_blank" style="background: #16a34a; color: white; text-decoration: none; padding: 12px 24px; border-radius: 6px; font-weight: bold; font-size: 1.05rem; width: 100%; max-width: 350px; box-sizing: border-box; text-align: center;">
+            💳 Pagar $15.000 con Wompi
           </a>
 
+          <div style="background: white; padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; display: inline-block; text-align: center;">
+            <img src="${urlQrWompi}" alt="QR Pago Wompi" style="width: 130px; height: 130px; display: block; margin: 0 auto 8px auto;">
+            <span style="font-size: 0.75rem; color: #64748b; font-weight: 600;">O escanea con tu celular para pagar</span>
+          </div>
+        </div>
+        
+        <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; flex-direction: column; align-items: center; max-width: 350px; margin: 0 auto;">
           <button id="btn-descargar-pdf" class="boton" style="background: #2563eb; color: white; padding: 12px 20px; border-radius: 6px; font-weight: bold; border: none; cursor: pointer; width: 100%;">
             📥 Descargar Cuadernillo Pro (PDF de Prueba)
           </button>
@@ -360,7 +370,7 @@ function mostrarResultadosFinalesGlobal(st) {
         </div>
       </div>
 
-      <!-- AVISO LEGAL INSTITUCIONAL (INDEPENDIENTE DEL ICFES) -->
+      <!-- AVISO LEGAL INSTITUCIONAL -->
       <div style="margin-top: 25px; padding-top: 15px; border-top: 1px solid #cbd5e1; color: #64748b; font-size: 0.8rem; line-height: 1.4;">
         Mundo Matemático es una iniciativa educativa independiente de preparación preuniversitaria. No está afiliada, vinculada ni patrocinada oficialmente por el ICFES.
       </div>
