@@ -24,6 +24,16 @@ function obtenerContenedor() {
 
 async function init() {
   const params = new URLSearchParams(window.location.search);
+  
+  // DETECCIÓN AUTOMÁTICA DE RETORNO DE PAGOS (Wompi redirige aquí con ?pagado=true)
+  if (params.get("pagado") === "true") {
+    localStorage.setItem("mundo_matematico_pagado_pro", "true");
+    window.history.replaceState({}, document.title, window.location.pathname + "?todas=1");
+  }
+
+  // CADA ALUMNO EMPIEZA LIMPIO: Borramos respuestas anteriores para que no queden marcadas
+  localStorage.removeItem("mundo_matematico_respuestas");
+
   const temaId = params.get("tema");
   const esTodas = params.get("todas") === "1";
 
@@ -33,12 +43,6 @@ async function init() {
   if (!state.temas.length) {
     root.innerHTML = `<p class="alerta" style="padding: 20px; color: red;">No se pudieron cargar los temas. Revisa el archivo indice.json.</p>`;
     return;
-  }
-
-  // RECUPERAR ESTADO PREVIO SI EXISTE (Evita que se borre si recargan)
-  const respuestasGuardadas = localStorage.getItem("mundo_matematico_respuestas");
-  if (respuestasGuardadas) {
-    try { state.respuestas = JSON.parse(respuestasGuardadas); } catch(e) {}
   }
 
   if (esTodas) {
@@ -68,8 +72,8 @@ async function init() {
     state.tiempoRestante = 20 * 60;
   }
 
-  // Si no hay item guardado, empezamos en 0
-  if (state.item === undefined) state.item = 0;
+  state.item = 0;
+  state.respuestas = {};
   
   iniciarTemporizador();
   renderPregunta(state);
@@ -124,6 +128,7 @@ function prepararTemaActual() {
   const todasLasPreguntas = tema.preguntas || [];
   state.seleccion = todasLasPreguntas.slice(0, PREGUNTAS_POR_PRUEBA);
   state.item = 0;
+  state.respuestas = {};
 }
 
 export function renderPregunta(st) {
@@ -245,9 +250,6 @@ export function renderPregunta(st) {
       st.respuestas[st.item] = marcada;
     }
 
-    // GUARDAR EN LOCALSTORAGE CADA AVANCE
-    localStorage.setItem("mundo_matematico_respuestas", JSON.stringify(st.respuestas));
-
     if (st.item + 1 < total) {
       st.item += 1;
       renderPregunta(st);
@@ -314,7 +316,6 @@ function mostrarResultadosFinalesGlobal(st) {
   const linkWompi = "https://checkout.wompi.co/l/Mzd7Vo";
   const urlQrWompi = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(linkWompi)}`;
 
-  // VERIFICAR SI YA PAGÓ (Guardado en memoria local)
   const yaPago = localStorage.getItem("mundo_matematico_pagado_pro") === "true";
 
   root.innerHTML = `
@@ -351,7 +352,6 @@ function mostrarResultadosFinalesGlobal(st) {
       <div style="border: 2px solid #16a34a; padding: 25px; margin-top: 25px; border-radius: 8px; background: #f0fdf4;">
         
         ${yaPago ? `
-          <!-- VISTA SI YA ESTÁ VERIFICADO EL PAGO -->
           <span style="background: #16a34a; color: white; padding: 4px 12px; border-radius: 4px; font-size: 0.85rem; font-weight: bold;">¡PAGO VERIFICADO CON ÉXITO!</span>
           <h3 style="color: #16a34a; margin-top: 10px; font-size: 1.3rem;">Tu Cuadernillo Pro personalizado está listo</h3>
           <p style="margin-bottom: 20px; color: #334155; font-size: 0.95rem;">
@@ -366,7 +366,6 @@ function mostrarResultadosFinalesGlobal(st) {
             </a>
           </div>
         ` : `
-          <!-- VISTA PARA PAGAR Y VERIFICAR -->
           <span style="background: #16a34a; color: white; padding: 4px 12px; border-radius: 4px; font-size: 0.85rem; font-weight: bold;">PAGO SEGURO EN LÍNEA (24/7)</span>
           <h3 style="color: var(--azul); margin-top: 10px; font-size: 1.3rem;">Obtén tu Cuadernillo Pro por solo $15.000 COP</h3>
           <p style="margin-bottom: 20px; color: #334155; font-size: 0.95rem;">
@@ -383,14 +382,6 @@ function mostrarResultadosFinalesGlobal(st) {
               <span style="font-size: 0.75rem; color: #64748b; font-weight: 600;">Escanea con tu celular para pagar</span>
             </div>
           </div>
-          
-          <div style="background: #ffffff; padding: 15px; border-radius: 6px; border: 1px dashed #16a34a; max-width: 380px; margin: 0 auto 15px auto; text-align: left;">
-            <p style="margin: 0 0 8px 0; font-size: 0.85rem; font-weight: bold; color: #16a34a;">¿Ya realizaste el pago desde tu celular?</p>
-            <p style="margin: 0 0 10px 0; font-size: 0.8rem; color: #475569;">Haz clic aquí para sincronizar tu pago y desbloquear el PDF con tus respuestas actuales:</p>
-            <button id="btn-verificar-pago" style="background: #16a34a; color: white; border: none; padding: 8px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; width: 100%; font-size: 0.9rem;">
-              🔓 Desbloquear con mis respuestas actuales
-            </button>
-          </div>
 
           <a class="boton" href="index.html" style="background: #1e3a8a; color: white; text-decoration: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; width: 100%; max-width: 350px; box-sizing: border-box; text-align: center; display: inline-block;">
             Volver al Menú Principal
@@ -405,17 +396,7 @@ function mostrarResultadosFinalesGlobal(st) {
     </section>
   `;
 
-  // EVENTO PARA ACTIVAR EL ACCESO DIRECTO DESDE EL PC
   setTimeout(() => {
-    const btnVerificar = document.getElementById("btn-verificar-pago");
-    if (btnVerificar) {
-      btnVerificar.onclick = () => {
-        localStorage.setItem("mundo_matematico_pagado_pro", "true");
-        alert("¡Pago sincronizado con éxito! Tus respuestas han quedado vinculadas a tu Cuadernillo Pro.");
-        location.reload();
-      };
-    }
-
     const btnPdf = document.getElementById("btn-descargar-pdf");
     if (btnPdf) {
       btnPdf.onclick = () => {
@@ -504,17 +485,16 @@ function mostrarResultadosFinales(st, tema) {
 
 init();
 
-// ==========================================
-// FUNCIÓN PARA GENERAR EL CUADERNILLO PRO EN PDF
-// ==========================================
 function generarPDFInforme(aciertos, totalPreguntas, porcentaje, nivelDesempeno) {
-  if (!window.jspdf) {
-    alert("La librería del PDF se está cargando. Inténtalo de nuevo en un segundo.");
+  // Aseguramos que la librería jsPDF esté completamente lista antes de ejecutar
+  const jsPDFClass = window.jspdf ? window.jspdf.jsPDF : null;
+  
+  if (!jsPDFClass) {
+    alert("Cargando motor de PDF. Por favor haz clic de nuevo en 2 segundos.");
     return;
   }
 
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
+  const doc = new jsPDFClass();
 
   doc.setFillColor(30, 58, 138);
   doc.rect(0, 0, 210, 25, "F");
