@@ -481,7 +481,7 @@ function mostrarResultadosFinales(st, tema) {
   }
 
   const linkSimulacroGlobal = "prueba.html?todas=1";
-  const numeroWhatsApp = "573000000000"; // Reemplaza con tu número real
+  const numeroWhatsApp = "573115574410"; // Némero de telefono whatsApp
   const mensajeWp = encodeURIComponent(`Hola, acabo de hacer la práctica focalizada de ${tema.titulo} en Mundo Matemático y saqué ${aciertos}/${totalPreguntas}. Me gustaría recibir más información sobre tutorías.`);
 
   root.innerHTML = `
