@@ -262,6 +262,9 @@ export function renderPregunta(st) {
   };
 }
 
+// ==========================================
+// 1. RESULTADOS Y PAGO PARA EL SIMULACRO GLOBAL (Con PDF y Referencia Wompi)
+// ==========================================
 function mostrarResultadosFinalesGlobal(st) {
   if (st.intervaloTimer) clearInterval(st.intervaloTimer);
   let aciertos = 0;
@@ -381,7 +384,7 @@ function mostrarResultadosFinalesGlobal(st) {
             </div>
           </div>
 
-          <!-- VALIDACIÓN POR REFERENCIA DE WOMPI (CERO INVASIVO, PROFESIONAL Y SEGURO) -->
+          <!-- VALIDACIÓN POR REFERENCIA DE WOMPI -->
           <div style="background: #fff; padding: 15px; border-radius: 8px; border: 1px solid #cbd5e1; max-width: 350px; margin: 0 auto 15px auto; text-align: left;">
             <label style="font-size: 0.85rem; font-weight: bold; color: #334155; display: block; margin-bottom: 5px;">
               ¿Ya pagaste? Ingresa tu referencia de Wompi:
@@ -429,6 +432,9 @@ function mostrarResultadosFinalesGlobal(st) {
   }, 100);
 }
 
+// ==========================================
+// 2. RESULTADOS PARA LAS PRÁCTICAS FOCALIZADAS (Por Temas / Con WhatsApp Comercial)
+// ==========================================
 function mostrarResultadosFinales(st, tema) {
   if (st.intervaloTimer) clearInterval(st.intervaloTimer);
   let aciertos = 0;
@@ -457,15 +463,26 @@ function mostrarResultadosFinales(st, tema) {
   const root = obtenerContenedor();
 
   let mensajeDesempeno = "";
+  let alertaColor = "var(--rojo)";
+  let fondoCaja = "#fff5f5";
+
   if (porcentaje >= 80) {
-    mensajeDesempeno = `¡Excelente nivel en <strong>${tema.titulo}</strong>! Tienes bases muy sólidas en este componente. Te invitamos a medirte en el simulacro global completo para asegurar tu puntaje máximo.`;
+    alertaColor = "#16a34a";
+    fondoCaja = "#f0fdf4";
+    mensajeDesempeno = `¡Excelente nivel en <strong>${tema.titulo}</strong>! Tienes bases muy sólidas. Sigue manteniendo este gran ritmo de estudio para asegurar puntaje sobresaliente en el ICFES.`;
   } else if (porcentaje >= 50) {
-    mensajeDesempeno = `Tienes bases regulares en <strong>${tema.titulo}</strong>, pero hay vacíos conceptuales en preguntas clave que el ICFES suele evaluar con trampa.`;
+    alertaColor = "#d97706";
+    fondoCaja = "#fffbeb";
+    mensajeDesempeno = `Tienes bases regulares en <strong>${tema.titulo}</strong>, pero hay vacíos conceptuales en preguntas clave que el ICFES suele evaluar con trampa. ¡Un repaso a tiempo marca la diferencia!`;
   } else {
-    mensajeDesempeno = `Identificamos oportunidades de mejora críticas en <strong>${tema.titulo}</strong>. Te sugerimos repasar este módulo antes de enfrentarte a la prueba real.`;
+    alertaColor = "var(--rojo)";
+    fondoCaja = "#fff5f5";
+    mensajeDesempeno = `Identificamos oportunidades de mejora críticas en <strong>${tema.titulo}</strong>. Te sugerimos reforzar urgentemente este módulo con asesoría especializada antes de la prueba real.`;
   }
 
   const linkSimulacroGlobal = "prueba.html?todas=1";
+  const numeroWhatsApp = "573000000000"; // Reemplaza con tu número real
+  const mensajeWp = encodeURIComponent(`Hola, acabo de hacer la práctica focalizada de ${tema.titulo} en Mundo Matemático y saqué ${aciertos}/${totalPreguntas}. Me gustaría recibir más información sobre tutorías.`);
 
   root.innerHTML = `
     <section class="panel" style="text-align: center; padding: 30px;">
@@ -477,24 +494,29 @@ function mostrarResultadosFinales(st, tema) {
         <p style="margin: 5px 0; font-weight: 600; color: #555;">Aciertos logrados (${porcentaje}%)</p>
       </div>
 
-      <div style="background: var(--suave); border: 1px solid var(--borde); padding: 20px; margin: 20px 0; border-radius: 6px; text-align: left;">
-        <h3 style="color: var(--rojo); margin-top: 0;">Análisis personalizado:</h3>
-        <p style="margin: 0; line-height: 1.6;">${mensajeDesempeno}</p>
+      <div style="background: ${fondoCaja}; border: 1px solid ${alertaColor}; padding: 20px; margin: 20px 0; border-radius: 6px; text-align: left;">
+        <h3 style="color: ${alertaColor}; margin-top: 0;">Análisis personalizado:</h3>
+        <p style="margin: 0; line-height: 1.6; color: #334155;">${mensajeDesempeno}</p>
       </div>
 
       <div style="border: 2px solid var(--azul); padding: 25px; margin-top: 25px; border-radius: 8px; background: #eff6ff;">
-        <span style="background: var(--azul); color: white; padding: 4px 12px; border-radius: 4px; font-size: 0.85rem; font-weight: bold;">ENTRENAMIENTO OFICIAL ICFES</span>
-        <h3 style="color: var(--azul); margin-top: 10px; font-size: 1.3rem;">¿Listo para el reto completo de 40 preguntas?</h3>
+        <span style="background: var(--azul); color: white; padding: 4px 12px; border-radius: 4px; font-size: 0.85rem; font-weight: bold;">ASESORÍA Y PREPARACIÓN MUNDO MATEMÁTICO</span>
+        <h3 style="color: var(--azul); margin-top: 10px; font-size: 1.3rem;">¿Quieres dominar este tema y subir tu puntaje ICFES?</h3>
         <p style="margin-bottom: 20px; color: #334155; font-size: 0.95rem;">
-          Pon a prueba tu tiempo, resistencia y todos los componentes de razonamiento cuantitativo con nuestro <strong>Simulacro Global Saber 11</strong> con temporizador de 90 minutos.
+          Fortalece tus habilidades con nuestras clases personalizadas, simulacros globales y material exclusivo de preuniversitario.
         </p>
         
-        <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; flex-direction: column; align-items: center;">
-          <a class="boton" href="${linkSimulacroGlobal}" style="background: var(--azul); color: white; text-decoration: none; padding: 12px 24px; border-radius: 6px; font-weight: bold; font-size: 1.05rem; width: 100%; box-sizing: border-box; text-align: center;">
-            🚀 Presentar Simulacro Global Completo
+        <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; flex-direction: column; align-items: center; max-width: 400px; margin: 0 auto;">
+          <a class="boton" href="https://wa.me/${numeroWhatsApp}?text=${mensajeWp}" target="_blank" style="background: #16a34a; color: white; text-decoration: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; font-size: 1rem; width: 100%; box-sizing: border-box; text-align: center;">
+            💬 Pedir Tutoría o Refuerzo por WhatsApp
           </a>
-          <a class="boton" href="index.html" style="background: #64748b; color: white; text-navigation: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; width: 100%; box-sizing: border-box; text-align: center;">
-            Volver al Menú Principal
+
+          <a class="boton" href="${linkSimulacroGlobal}" style="background: var(--azul); color: white; text-decoration: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; font-size: 1rem; width: 100%; box-sizing: border-box; text-align: center;">
+            🚀 Presentar Simulacro Global Completo (40 Preguntas)
+          </a>
+
+          <a class="boton" href="index.html" style="background: #64748b; color: white; text-decoration: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; font-size: 1rem; width: 100%; box-sizing: border-box; text-align: center;">
+            🏠 Volver al Menú Principal / Sitio Web
           </a>
         </div>
       </div>
@@ -509,7 +531,7 @@ function mostrarResultadosFinales(st, tema) {
 init();
 
 // ==========================================
-// FUNCIÓN DE GENERACIÓN DE PDF ROBUSTA Y NATIVA
+// 3. GENERACIÓN DE PDF NATIVO PARA EL SIMULACRO GLOBAL
 // ==========================================
 function generarPDFInforme(aciertos, totalPreguntas, porcentaje, nivelDesempeno) {
   const ventanaImpresion = window.open('', '_blank');
