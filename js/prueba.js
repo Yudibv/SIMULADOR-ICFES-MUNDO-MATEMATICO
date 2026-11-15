@@ -48,6 +48,7 @@ async function init() {
     let preguntasGlobales = [];
     let rutasYaAgregadas = new Set();
     
+    // 🔒 Filtro estricto anti-duplicados y mezcla real por cada tema
     state.temas.forEach(t => {
       if (t.preguntas && t.preguntas.length > 0) {
         const preguntasMezcladas = [...t.preguntas].sort(() => Math.random() - 0.5);
@@ -67,6 +68,7 @@ async function init() {
       }
     });
 
+    // Mezclamos el resultado global final para que el orden de los temas también sea aleatorio
     state.seleccionGlobal = preguntasGlobales.sort(() => Math.random() - 0.5);
     state.seleccion = state.seleccionGlobal.map(x => x.archivo);
     state.tiempoRestante = 90 * 60; 
@@ -172,7 +174,7 @@ export function renderPregunta(st) {
     tema = actualGlobal.tema;
     archivo = actualGlobal.archivo;
   } else {
-    tema = temaPorId(st.cola[state.indiceTema]);
+    tema = temaPorId(st.cola[st.indiceTema]);
     archivo = st.seleccion[st.item];
   }
 
@@ -293,7 +295,7 @@ export function renderPregunta(st) {
 }
 
 // ==========================================
-// 1. SIMULACRO GLOBAL (Con advertencia de celular)
+// 1. SIMULACRO GLOBAL
 // ==========================================
 function mostrarResultadosFinalesGlobal(st) {
   if (st.intervaloTimer) clearInterval(st.intervaloTimer);
@@ -403,7 +405,6 @@ function mostrarResultadosFinalesGlobal(st) {
             Paga en Wompi (Nequi, PSE o Tarjeta) por valor de <strong>$15.000 COP</strong> escaneando el QR o usando el botón.
           </p>
 
-          <!-- ADVERTENCIA CLARA PARA EL ESTUDIANTE -->
           <div style="background: #fffbeb; border: 1px solid #f59e0b; padding: 12px; border-radius: 6px; margin-bottom: 15px; text-align: left; font-size: 0.85rem; color: #92400e;">
             ⚠️ <strong>¡Atención!</strong> Al pagar en Wompi, registra <strong>tu número de celular personal</strong>. Luego, ingresa <strong>ese mismo número</strong> aquí abajo para validar y descargar tu PDF.
           </div>
