@@ -293,7 +293,7 @@ export function renderPregunta(st) {
 }
 
 // ==========================================
-// 1. SIMULACRO GLOBAL
+// 1. SIMULACRO GLOBAL (Validación por Celular)
 // ==========================================
 function mostrarResultadosFinalesGlobal(st) {
   if (st.intervaloTimer) clearInterval(st.intervaloTimer);
@@ -403,10 +403,6 @@ function mostrarResultadosFinalesGlobal(st) {
             Paga en Wompi (Nequi, PSE o Tarjeta) por valor de <strong>$15.000 COP</strong> escaneando el QR o usando el botón.
           </p>
 
-          <div style="background: #fffbeb; border: 1px solid #f59e0b; padding: 12px; border-radius: 6px; margin-bottom: 15px; text-align: left; font-size: 0.85rem; color: #92400e;">
-            ⚠️ <strong>Importante:</strong> Al realizar tu pago, <strong>copia y guarda el número de referencia</strong> que te entrega Wompi en el comprobante. Lo necesitarás para validar tu acceso y poder descargar o volver a consultar tu PDF en cualquier momento.
-          </div>
-
           <div style="display: flex; flex-direction: column; align-items: center; gap: 15px; margin-bottom: 20px;">
             <a class="boton" href="${linkWompi}" target="_blank" style="background: #16a34a; color: white; text-decoration: none; padding: 12px 24px; border-radius: 6px; font-weight: bold; font-size: 1.05rem; width: 100%; max-width: 350px; box-sizing: border-box; text-align: center;">
               💳 Pagar $15.000 con Wompi
@@ -420,13 +416,13 @@ function mostrarResultadosFinalesGlobal(st) {
 
           <div style="background: #fff; padding: 15px; border-radius: 8px; border: 1px solid #cbd5e1; max-width: 350px; margin: 0 auto 15px auto; text-align: left;">
             <label style="font-size: 0.85rem; font-weight: bold; color: #334155; display: block; margin-bottom: 5px;">
-              ¿Ya pagaste? Ingresa tu referencia de Wompi:
+              ¿Ya pagaste? Ingresa tu número de celular:
             </label>
             <div style="display: flex; gap: 8px;">
-              <input type="text" id="input-referencia" placeholder="Ej. ref_prod_..." style="flex: 1; padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 0.9rem;">
+              <input type="tel" id="input-referencia" placeholder="Ej. 3115574410" style="flex: 1; padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 0.9rem;">
               <button id="btn-validar-ref" style="background: #1e3a8a; color: white; border: none; padding: 8px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 0.9rem;">Validar</button>
             </div>
-            <span style="font-size: 0.75rem; color: #64748b; display: block; margin-top: 4px;">Usa esta misma referencia si necesitas volver a descargar tu PDF después.</span>
+            <span style="font-size: 0.75rem; color: #64748b; display: block; margin-top: 4px;">Usa este mismo número si necesitas volver a descargar tu PDF después.</span>
           </div>
 
           <a class="boton" href="index.html" style="background: #1e3a8a; color: white; text-decoration: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; width: 100%; max-width: 350px; box-sizing: border-box; text-align: center; display: inline-block;">
@@ -453,13 +449,13 @@ function mostrarResultadosFinalesGlobal(st) {
     const btnValidarRef = document.getElementById("btn-validar-ref");
     if (btnValidarRef) {
       btnValidarRef.onclick = () => {
-        const refInput = document.getElementById("input-referencia").value.trim();
-        if (refInput.length > 3) {
+        const telInput = document.getElementById("input-referencia").value.trim();
+        if (telInput.length >= 7) {
           localStorage.setItem("mundo_matematico_pagado_pro", "true");
-          localStorage.setItem("mundo_matematico_ref_wompi", refInput);
+          localStorage.setItem("mundo_matematico_celular", telInput);
           mostrarResultadosFinalesGlobal(st);
         } else {
-          alert("Por favor ingresa una referencia de pago válida de Wompi.");
+          alert("Por favor ingresa un número de celular válido.");
         }
       };
     }
@@ -467,7 +463,7 @@ function mostrarResultadosFinalesGlobal(st) {
 }
 
 // ==========================================
-// 2. PRÁCTICAS FOCALIZADAS (Con el diseño y alerta en rojo que te gusta)
+// 2. PRÁCTICAS FOCALIZADAS
 // ==========================================
 function mostrarResultadosFinales(st, tema) {
   if (st.intervaloTimer) clearInterval(st.intervaloTimer);
@@ -515,7 +511,7 @@ function mostrarResultadosFinales(st, tema) {
   }
 
   const linkSimulacroGlobal = "prueba.html?todas=1";
-  const numeroWhatsApp = "573000000000"; // Cambia por tu número real de WhatsApp
+  const numeroWhatsApp = "573115574410"; // Tu número actualizado para WhatsApp
   const mensajeWp = encodeURIComponent(`Hola, acabo de hacer la práctica focalizada de ${tema.titulo} en Mundo Matemático y saqué ${aciertos}/${totalPreguntas}. Me gustaría recibir más información sobre tutorías.`);
 
   root.innerHTML = `
@@ -528,7 +524,6 @@ function mostrarResultadosFinales(st, tema) {
         <p style="margin: 5px 0; font-weight: 600; color: #555;">Aciertos logrados (${porcentaje}%)</p>
       </div>
 
-      <!-- CAJA DE ANÁLISIS CON EL DISEÑO EN ROJO/ALERTA QUE TE GUSTA -->
       <div style="background: ${fondoCaja}; border: 1px solid ${alertaColor}; padding: 20px; margin: 20px 0; border-radius: 6px; text-align: left;">
         <h3 style="color: ${alertaColor}; margin-top: 0;">Análisis personalizado:</h3>
         <p style="margin: 0; line-height: 1.6; color: #334155;">${mensajeDesempeno}</p>
@@ -550,7 +545,7 @@ function mostrarResultadosFinales(st, tema) {
             🚀 Presentar Simulacro Global Completo (40 Preguntas)
           </a>
 
-          <a class="boton" href="index.html" style="background: #64748b; color: white; text-decoration: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; width: 100%; box-sizing: border-box; text-align: center;">
+          <a class="boton" href="index.html" style="background: #64748b; color: white; text-decoration: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; font-size: 1rem; width: 100%; box-sizing: border-box; text-align: center;">
             🏠 Volver al Menú Principal / Sitio Web
           </a>
         </div>
@@ -566,7 +561,7 @@ function mostrarResultadosFinales(st, tema) {
 init();
 
 // ==========================================
-// 3. GENERACIÓN DE PDF NATIVO
+// 3. GENERACIÓN DE PDF NATIVO (Actualizado con Sitio Web y Teléfono)
 // ==========================================
 function generarPDFInforme(aciertos, totalPreguntas, porcentaje, nivelDesempeno) {
   const ventanaImpresion = window.open('', '_blank');
@@ -629,7 +624,10 @@ function generarPDFInforme(aciertos, totalPreguntas, porcentaje, nivelDesempeno)
 
       <div class="footer">
         ¡Asegura tu cupo universitario con Mundo Matemático!<br>
-        <span style="font-size: 11px; font-weight: normal; color: #334155;">Este documento valida tu acceso al cuadernillo Pro. Ante cualquier duda, agenda tu refuerzo.</span>
+        <span style="font-size: 11px; font-weight: normal; color: #334155;">
+          🌐 Web: <strong>mimundomatematico.com</strong> | 📞 WhatsApp / Contacto: <strong>311 557 4410</strong><br>
+          Este documento valida tu acceso al cuadernillo Pro. Ante cualquier duda, agenda tu refuerzo.
+        </span>
       </div>
     </body>
     </html>
