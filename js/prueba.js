@@ -26,11 +26,12 @@ async function init() {
   const params = new URLSearchParams(window.location.search);
   
   if (params.get("pagado") === "true") {
-    localStorage.setItem("mundo_matematico_pagado_pro", "true");
+    // Usamos sessionStorage para que el pago aplique solo a esta sesión/intento específico del usuario
+    sessionStorage.setItem("mundo_matematico_pagado_pro", "true");
     window.history.replaceState({}, document.title, window.location.pathname + "?todas=1");
   }
 
-  localStorage.removeItem("mundo_matematico_respuestas");
+  sessionStorage.removeItem("mundo_matematico_respuestas");
 
   const temaId = params.get("tema");
   const esTodas = params.get("todas") === "1";
@@ -347,8 +348,8 @@ function mostrarResultadosFinalesGlobal(st) {
   const linkWompi = "https://checkout.wompi.co/l/Mzd7Vo";
   const urlQrWompi = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(linkWompi)}`;
 
-  // Lectura corregida y limpia de la bandera de pago
-  const yaPago = localStorage.getItem("mundo_matematico_pagado_pro") === "true";
+  // Verificación limpia basada en sesión por intento
+  const yaPago = sessionStorage.getItem("mundo_matematico_pagado_pro") === "true";
 
   root.innerHTML = `
     <section class="panel" style="text-align: center; padding: 30px;">
@@ -454,11 +455,10 @@ function mostrarResultadosFinalesGlobal(st) {
       };
     }
 
-    // Botón de ayuda para ti: permite reiniciar el estado de pago directamente en pantalla para hacer pruebas rápidas
     const btnReiniciarPago = document.getElementById("btn-reiniciar-pago");
     if (btnReiniciarPago) {
       btnReiniciarPago.onclick = () => {
-        localStorage.removeItem("mundo_matematico_pagado_pro");
+        sessionStorage.removeItem("mundo_matematico_pagado_pro");
         mostrarResultadosFinalesGlobal(st);
       };
     }
@@ -468,8 +468,8 @@ function mostrarResultadosFinalesGlobal(st) {
       btnValidarRef.onclick = () => {
         const telInput = document.getElementById("input-referencia").value.trim();
         if (telInput.length >= 7) {
-          localStorage.setItem("mundo_matematico_pagado_pro", "true");
-          localStorage.setItem("mundo_matematico_celular", telInput);
+          sessionStorage.setItem("mundo_matematico_pagado_pro", "true");
+          sessionStorage.setItem("mundo_matematico_celular", telInput);
           mostrarResultadosFinalesGlobal(st);
         } else {
           alert("Por favor ingresa un número de celular válido.");
@@ -584,7 +584,7 @@ function generarPDFInforme(aciertos, totalPreguntas, porcentaje, nivelDesempeno)
   const ventanaImpresion = window.open('', '_blank');
   
   if (!ventanaImpresion) {
-    alert("Por favor permite las ventanas emergentes (pop-ups) en tu navegador para descargar el PDF.");
+    alert("Por favorable permite las ventanas emergentes (pop-ups) en tu navegador para descargar el PDF.");
     return;
   }
 
