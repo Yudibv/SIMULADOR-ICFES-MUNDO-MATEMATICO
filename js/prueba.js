@@ -46,7 +46,7 @@ async function init() {
   if (esTodas) {
     state.todas = true;
     let preguntasGlobales = [];
-    let rutasYaAgregadas = new Set(); // 🔒 Filtro estricto anti-duplicados para el simulacro global
+    let rutasYaAgregadas = new Set();
     
     state.temas.forEach(t => {
       if (t.preguntas && t.preguntas.length > 0) {
@@ -131,9 +131,6 @@ function temaPorId(id) {
   return state.temas.find(t => t.id === id || t.carpeta === id) || state.temas[0];
 }
 
-// ==========================================
-// PREPARACIÓN DE CARPETAS INDIVIDUALES (FOCALIZADAS - Anti-duplicados y Aleatorias)
-// ==========================================
 function prepararTemaActual() {
   const tema = temaPorId(state.cola[state.indiceTema]);
   const todasLasPreguntas = tema.preguntas || [];
@@ -296,7 +293,7 @@ export function renderPregunta(st) {
 }
 
 // ==========================================
-// 1. SIMULACRO GLOBAL (Con Wompi, Referencia y PDF sin borrar respuestas)
+// 1. SIMULACRO GLOBAL
 // ==========================================
 function mostrarResultadosFinalesGlobal(st) {
   if (st.intervaloTimer) clearInterval(st.intervaloTimer);
@@ -406,7 +403,6 @@ function mostrarResultadosFinalesGlobal(st) {
             Paga en Wompi (Nequi, PSE o Tarjeta) por valor de <strong>$15.000 COP</strong> escaneando el QR o usando el botón.
           </p>
 
-          <!-- ADVERTENCIA ANTES DE PAGAR -->
           <div style="background: #fffbeb; border: 1px solid #f59e0b; padding: 12px; border-radius: 6px; margin-bottom: 15px; text-align: left; font-size: 0.85rem; color: #92400e;">
             ⚠️ <strong>Importante:</strong> Al realizar tu pago, <strong>copia y guarda el número de referencia</strong> que te entrega Wompi en el comprobante. Lo necesitarás para validar tu acceso y poder descargar o volver a consultar tu PDF en cualquier momento.
           </div>
@@ -422,7 +418,6 @@ function mostrarResultadosFinalesGlobal(st) {
             </div>
           </div>
 
-          <!-- VALIDACIÓN POR REFERENCIA -->
           <div style="background: #fff; padding: 15px; border-radius: 8px; border: 1px solid #cbd5e1; max-width: 350px; margin: 0 auto 15px auto; text-align: left;">
             <label style="font-size: 0.85rem; font-weight: bold; color: #334155; display: block; margin-bottom: 5px;">
               ¿Ya pagaste? Ingresa tu referencia de Wompi:
@@ -462,8 +457,6 @@ function mostrarResultadosFinalesGlobal(st) {
         if (refInput.length > 3) {
           localStorage.setItem("mundo_matematico_pagado_pro", "true");
           localStorage.setItem("mundo_matematico_ref_wompi", refInput);
-          
-          // Actualiza la vista al instante sin reiniciar el examen
           mostrarResultadosFinalesGlobal(st);
         } else {
           alert("Por favor ingresa una referencia de pago válida de Wompi.");
@@ -474,7 +467,7 @@ function mostrarResultadosFinalesGlobal(st) {
 }
 
 // ==========================================
-// 2. PRÁCTICAS FOCALIZADAS (Por Temas / Con WhatsApp Comercial)
+// 2. PRÁCTICAS FOCALIZADAS (Con el diseño y alerta en rojo que te gusta)
 // ==========================================
 function mostrarResultadosFinales(st, tema) {
   if (st.intervaloTimer) clearInterval(st.intervaloTimer);
@@ -535,6 +528,7 @@ function mostrarResultadosFinales(st, tema) {
         <p style="margin: 5px 0; font-weight: 600; color: #555;">Aciertos logrados (${porcentaje}%)</p>
       </div>
 
+      <!-- CAJA DE ANÁLISIS CON EL DISEÑO EN ROJO/ALERTA QUE TE GUSTA -->
       <div style="background: ${fondoCaja}; border: 1px solid ${alertaColor}; padding: 20px; margin: 20px 0; border-radius: 6px; text-align: left;">
         <h3 style="color: ${alertaColor}; margin-top: 0;">Análisis personalizado:</h3>
         <p style="margin: 0; line-height: 1.6; color: #334155;">${mensajeDesempeno}</p>
@@ -556,7 +550,7 @@ function mostrarResultadosFinales(st, tema) {
             🚀 Presentar Simulacro Global Completo (40 Preguntas)
           </a>
 
-          <a class="boton" href="index.html" style="background: #64748b; color: white; text-decoration: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; font-size: 1rem; width: 100%; box-sizing: border-box; text-align: center;">
+          <a class="boton" href="index.html" style="background: #64748b; color: white; text-decoration: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; width: 100%; box-sizing: border-box; text-align: center;">
             🏠 Volver al Menú Principal / Sitio Web
           </a>
         </div>
@@ -572,7 +566,7 @@ function mostrarResultadosFinales(st, tema) {
 init();
 
 // ==========================================
-// 3. GENERACIÓN DE PDF NATIVO PARA EL SIMULACRO GLOBAL
+// 3. GENERACIÓN DE PDF NATIVO
 // ==========================================
 function generarPDFInforme(aciertos, totalPreguntas, porcentaje, nivelDesempeno) {
   const ventanaImpresion = window.open('', '_blank');
