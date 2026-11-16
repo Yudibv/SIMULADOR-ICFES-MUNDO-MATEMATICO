@@ -1,5 +1,12 @@
+/**
+ * ==========================================================================
+ * MUNDO MATEMÁTICO - MOTOR PRINCIPAL DE PRUEBAS Y SIMULACROS (prueba.js)
+ * ==========================================================================
+ */
+
 import { cargarTemas, urlPng, PREGUNTAS_POR_PRUEBA } from "./temas.js";
 
+// Estado global de la aplicación (preguntas, tiempos, respuestas)
 let state = {
   temas: [],
   cola: [],
@@ -12,6 +19,11 @@ let state = {
   intervaloTimer: null
 };
 
+/**
+ * ==========================================================================
+ * SECCIÓN 1: GESTIÓN DE CONTENEDORES Y DOM
+ * ==========================================================================
+ */
 function obtenerContenedor() {
   let root = document.getElementById("vista") || document.getElementById("root") || document.getElementById("panel") || document.querySelector("main");
   if (!root) {
@@ -22,11 +34,16 @@ function obtenerContenedor() {
   return root;
 }
 
+/**
+ * ==========================================================================
+ * SECCIÓN 2: INICIALIZACIÓN DEL SISTEMA Y PARÁMETROS
+ * ==========================================================================
+ */
 async function init() {
   const params = new URLSearchParams(window.location.search);
   
+  // Si viene de Wompi con éxito, marcamos como pagado de forma temporal para esta sesión
   if (params.get("pagado") === "true") {
-    // Usamos sessionStorage para que el pago aplique solo a esta sesión/intento específico del usuario
     sessionStorage.setItem("mundo_matematico_pagado_pro", "true");
     window.history.replaceState({}, document.title, window.location.pathname + "?todas=1");
   }
@@ -44,6 +61,7 @@ async function init() {
     return;
   }
 
+  // Configuración del Simulacro Global o Práctica por Tema
   if (esTodas) {
     state.todas = true;
     let preguntasGlobales = [];
@@ -88,6 +106,11 @@ async function init() {
   renderPregunta(state);
 }
 
+/**
+ * ==========================================================================
+ * SECCIÓN 3: TEMPORIZADOR Y RELOJ VISUAL
+ * ==========================================================================
+ */
 function iniciarTemporizador() {
   if (state.intervaloTimer) clearInterval(state.intervaloTimer);
   
@@ -160,6 +183,11 @@ function prepararTemaActual() {
   state.respuestas = {};
 }
 
+/**
+ * ==========================================================================
+ * SECCIÓN 4: RENDERIZADO DE PREGUNTAS Y NAVEGACIÓN
+ * ==========================================================================
+ */
 export function renderPregunta(st) {
   let tema, archivo;
   
@@ -173,7 +201,7 @@ export function renderPregunta(st) {
     tema = actualGlobal.tema;
     archivo = actualGlobal.archivo;
   } else {
-    tema = temaPorId(st.cola[st.indiceTema]);
+    tema = temaPorId(st.cola[state.indiceTema]);
     archivo = st.seleccion[st.item];
   }
 
@@ -293,9 +321,11 @@ export function renderPregunta(st) {
   };
 }
 
-// ==========================================
-// 1. SIMULACRO GLOBAL
-// ==========================================
+/**
+ * ==========================================================================
+ * SECCIÓN 5: RESULTADOS GLOBALES, PASARELA WOMPI Y VALIDACIÓN POR CELULAR
+ * ==========================================================================
+ */
 function mostrarResultadosFinalesGlobal(st) {
   if (st.intervaloTimer) clearInterval(st.intervaloTimer);
   let aciertos = 0;
@@ -348,7 +378,7 @@ function mostrarResultadosFinalesGlobal(st) {
   const linkWompi = "https://checkout.wompi.co/l/Mzd7Vo";
   const urlQrWompi = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(linkWompi)}`;
 
-  // Verificación limpia basada en sesión por intento
+  // CORRECCIÓN CLAVE: Por defecto inicia en false limpio. Solo se activa si el usuario valida o paga.
   const yaPago = sessionStorage.getItem("mundo_matematico_pagado_pro") === "true";
 
   root.innerHTML = `
@@ -395,7 +425,7 @@ function mostrarResultadosFinalesGlobal(st) {
               📥 Descargar mi Cuadernillo Pro (PDF)
             </button>
             <button id="btn-reiniciar-pago" class="boton" style="background: #64748b; color: white; padding: 8px 12px; border-radius: 6px; font-weight: bold; border: none; cursor: pointer; width: 100%; font-size: 0.85rem; margin-top: 5px;">
-              🔄 Simular como usuario sin pagar (Prueba)
+              🔄 Volver a pantalla de pago (Pruebas)
             </button>
             <a class="boton" href="index.html" style="background: #1e3a8a; color: white; text-decoration: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; width: 100%; box-sizing: border-box; text-align: center;">
               Volver al Menú Principal
@@ -479,9 +509,11 @@ function mostrarResultadosFinalesGlobal(st) {
   }, 100);
 }
 
-// ==========================================
-// 2. PRÁCTICAS FOCALIZADAS
-// ==========================================
+/**
+ * ==========================================================================
+ * SECCIÓN 6: PRÁCTICAS FOCALIZADAS (MÓDULOS INDIVIDUALES)
+ * ==========================================================================
+ */
 function mostrarResultadosFinales(st, tema) {
   if (st.intervaloTimer) clearInterval(st.intervaloTimer);
   let aciertos = 0;
@@ -577,9 +609,11 @@ function mostrarResultadosFinales(st, tema) {
 
 init();
 
-// ==========================================
-// 3. GENERACIÓN DE PDF NATIVO (DISEÑO PRO Y ORGANIZADO)
-// ==========================================
+/**
+ * ==========================================================================
+ * SECCIÓN 7: GENERACIÓN DE PDF NATIVO (CUADERNILLO PRO)
+ * ==========================================================================
+ */
 function generarPDFInforme(aciertos, totalPreguntas, porcentaje, nivelDesempeno) {
   const ventanaImpresion = window.open('', '_blank');
   
@@ -587,9 +621,6 @@ function generarPDFInforme(aciertos, totalPreguntas, porcentaje, nivelDesempeno)
     alert("Por favor permite las ventanas emergentes (pop-ups) en tu navegador para descargar el PDF.");
     return;
   }
-
-  // URL o referencia de tu logo (puedes reemplazarla por la ruta exacta de tu logo en el repositorio)
-  const urlLogo = "url-de-tu-logo.png"; // O usa un ícono/encabezado tipográfico elegante
 
   ventanaImpresion.document.write(`
     <!DOCTYPE html>
@@ -617,7 +648,7 @@ function generarPDFInforme(aciertos, totalPreguntas, porcentaje, nivelDesempeno)
         .metric-box .num { font-size: 20px; font-weight: bold; color: #1e3a8a; }
         .metric-box .label { font-size: 11px; color: #64748b; font-weight: bold; margin-top: 2px; }
 
-        /* Pie de página profesional */
+        /* Pie de página profesional con web y teléfono */
         .footer { background: #f0fdf4; border: 1px solid #16a34a; color: #166534; padding: 18px; border-radius: 8px; text-align: center; margin-top: 30px; }
         .footer-title { font-weight: bold; font-size: 14px; margin-bottom: 5px; }
         .footer-info { font-size: 12px; color: #334155; font-weight: normal; }
