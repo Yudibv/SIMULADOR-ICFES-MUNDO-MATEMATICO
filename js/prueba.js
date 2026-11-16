@@ -481,7 +481,7 @@ function mostrarResultadosFinalesGlobal(st) {
     const btnPdf = document.getElementById("btn-descargar-pdf");
     if (btnPdf) {
       btnPdf.onclick = () => {
-        generarPDFInforme(aciertos, totalPreguntas, porcentaje, nivelDesempeno);
+        generarPDFInformePersonalizado(aciertos, totalPreguntas, porcentaje, nivelDesempeno, erroresPorTema);
       };
     }
 
@@ -611,15 +611,33 @@ init();
 
 /**
  * ==========================================================================
- * SECCIÓN 7: GENERACIÓN DE PDF NATIVO (CUADERNILLO PRO)
+ * SECCIÓN 7: GENERACIÓN DE PDF NATIVO (CUADERNILLO PRO 100% PERSONALIZADO)
  * ==========================================================================
  */
-function generarPDFInforme(aciertos, totalPreguntas, porcentaje, nivelDesempeno) {
+function generarPDFInformePersonalizado(aciertos, totalPreguntas, porcentaje, nivelDesempeno, erroresPorTema) {
   const ventanaImpresion = window.open('', '_blank');
   
   if (!ventanaImpresion) {
     alert("Por favor permite las ventanas emergentes (pop-ups) en tu navegador para descargar el PDF.");
     return;
+  }
+
+  // Ordenamos los temas que el estudiante más falló
+  const temasFallados = Object.keys(erroresPorTema).sort((a, b) => erroresPorTema[b] - erroresPorTema[a]);
+  
+  // Creamos dinámicamente las recomendaciones según lo que falló el alumno
+  let recomendacionTemas = "";
+  if (temasFallados.length > 0) {
+    recomendacionTemas = `
+      1. <strong>Área prioritaria de refuerzo:</strong> Se detectaron mayores vacíos en <strong>${temasFallados[0]}</strong>. Te sugerimos repasar los conceptos fundamentales de este módulo.<br>
+      2. <strong>Segunda área de atención:</strong> Fortalecer la práctica en <strong>${temasFallados[1] || 'componentes de análisis lógico y resolución de problemas'}</strong>.<br>
+      3. <strong>Estrategia de Examen:</strong> Aplicación sistemática de eliminación de distractores lógicos en preguntas de opción múltiple tipo ICFES.
+    `;
+  } else {
+    recomendacionTemas = `
+      1. <strong>Excelente desempeño general:</strong> Mantén el ritmo de estudio afianzando la velocidad de resolución.<br>
+      2. <strong>Precisión:</strong> Revisa aquellos puntos donde el tiempo de respuesta fue elevado para asegurar el puntaje máximo en la prueba real.
+    `;
   }
 
   ventanaImpresion.document.write(`
@@ -691,21 +709,19 @@ function generarPDFInforme(aciertos, totalPreguntas, porcentaje, nivelDesempeno)
         </p>
       </div>
 
-      <!-- DIAGNÓSTICO DETALLADO -->
+      <!-- DIAGNÓSTICO DETALLADO PERSONALIZADO -->
       <div class="card">
         <h3>🔍 Análisis de Competencias Latentes</h3>
         <p style="font-size: 13px; color: #334155; margin: 0;">
-          Basado en la calibración del simulacro global, se identifican fortalezas en razonamiento aritmético, así como áreas de oportunidad críticas en componentes de análisis algebraico, funciones y geometría espacial que impactan directamente el puntaje en la prueba oficial del ICFES.
+          Basado en la calibración del simulacro global, el estudiante presenta mayor dificultad en componentes como <strong>${temasFallados[0] || 'Razonamiento General'}</strong>, lo cual incide directamente en la estimación de su puntaje bajo el modelo TRI del ICFES.
         </p>
       </div>
 
-      <!-- RUTA DE CORRECCIÓN -->
+      <!-- RUTA DE CORRECCIÓN PERSONALIZADA -->
       <div class="card">
-        <h3>🎯 Ruta de Corrección y Recomendaciones Clave</h3>
+        <h3>🎯 Ruta de Corrección y Recomendaciones a la Medida</h3>
         <p style="font-size: 13px; color: #334155; margin: 0; line-height: 1.5;">
-          1. <strong>Álgebra y Ecuaciones:</strong> Repaso estricto de factorización y manipulación de expresiones racionales.<br>
-          2. <strong>Geometría Analítica:</strong> Reforzar interpretación de pendientes y ecuaciones de la recta en plano cartesiano.<br>
-          3. <strong>Estrategia de Examen:</strong> Aplicación sistemática de eliminación de distractores lógicos en preguntas de opción múltiple con múltiple contexto.
+          ${recomendacionTemas}
         </p>
       </div>
 
