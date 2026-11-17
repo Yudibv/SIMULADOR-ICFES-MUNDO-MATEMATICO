@@ -35,77 +35,79 @@ function obtenerContenedor() {
 }
 
 /**
- * ==========================================================================
- * SECCIÓN 2: INICIALIZACIÓN DEL SISTEMA Y PARÁMETROS
- * ==========================================================================
- */
+ * ==========================================================================
+ * SECCIÓN 2: INICIALIZACIÓN DEL SISTEMA Y PARÁMETROS (ANTIDUPLICADOS ESTRICTO)
+ * ==========================================================================
+ */
 async function init() {
-  const params = new URLSearchParams(window.location.search);
-  
-  // Si viene de Wompi con éxito, marcamos como pagado de forma temporal para esta sesión
-  if (params.get("pagado") === "true") {
-    sessionStorage.setItem("mundo_matematico_pagado_pro", "true");
-    window.history.replaceState({}, document.title, window.location.pathname + "?todas=1");
-  }
+  const params = new URLSearchParams(window.location.search);
+  
+  if (params.get("pagado") === "true") {
+    sessionStorage.setItem("mundo_matematico_pagado_pro", "true");
+    window.history.replaceState({}, document.title, window.location.pathname + "?todas=1");
+  }
 
-  sessionStorage.removeItem("mundo_matematico_respuestas");
+  sessionStorage.removeItem("mundo_matematico_respuestas");
 
-  const temaId = params.get("tema");
-  const esTodas = params.get("todas") === "1";
+  const temaId = params.get("tema");
+  const esTodas = params.get("todas") === "1";
 
-  state.temas = aliasTemas(await cargarTemas());
-  const root = obtenerContenedor();
-  
-  if (!state.temas.length) {
-    root.innerHTML = `<p class="alerta" style="padding: 20px; color: red;">No se pudieron cargar los temas. Revisa el archivo indice.json.</p>`;
-    return;
-  }
+  state.temas = aliasTemas(await cargarTemas());
+  const root = obtenerContenedor();
+  
+  if (!state.temas.length) {
+    root.innerHTML = `<p class="alerta" style="padding: 20px; color: red;">No se pudieron cargar los temas. Revisa el archivo indice.json.</p>`;
+    return;
+  }
 
-  // Configuración del Simulacro Global o Práctica por Tema
-  if (esTodas) {
-    state.todas = true;
-    let preguntasGlobales = [];
-    let rutasYaAgregadas = new Set();
-    
-    state.temas.forEach(t => {
-      if (t.preguntas && t.preguntas.length > 0) {
-        const preguntasMezcladas = [...t.preguntas].sort(() => Math.random() - 0.5);
-        const cantidadASeleccionar = Math.min(5, preguntasMezcladas.length);
-        let seleccionadasTema = 0;
-        
-        for (let archivo of preguntasMezcladas) {
-          if (seleccionadasTema >= cantidadASeleccionar) break;
-          const claveUnica = `${t.carpeta || t.id}_${archivo}`;
-          
-          if (!rutasYaAgregadas.has(claveUnica)) {
-            rutasYaAgregadas.add(claveUnica);
-            preguntasGlobales.push({ archivo: archivo, tema: t });
-            seleccionadasTema++;
-          }
-        }
-      }
-    });
+  if (esTodas) {
+    state.todas = true;
+    let preguntasGlobales = [];
+    let rutasYaAgregadas = new Set();
+    
+    // 🔒 Filtro estricto anti-duplicados a nivel global y por tema
+    state.temas.forEach(t => {
+      if (t.preguntas && t.preguntas.length > 0) {
+        // Mezclamos aleatoriamente el banco de este tema
+        const preguntasMezcladas = [...t.preguntas].sort(() => Math.random() - 0.5);
+        const cantidadASeleccionar = Math.min(5, preguntasMezcladas.length);
+        let seleccionadasTema = 0;
+        
+        for (let archivo of preguntasMezcladas) {
+          if (seleccionadasTema >= cantidadASeleccionar) break;
+          
+          // Creamos una clave única combinando la carpeta y el nombre exacto del archivo de imagen
+          const claveUnica = `${t.carpeta || t.id}___${archivo.trim()}`;
+          
+          if (!rutasYaAgregadas.has(claveUnica)) {
+            rutasYaAgregadas.add(claveUnica);
+            preguntasGlobales.push({ archivo: archivo, tema: t });
+            seleccionadasTema++;
+          }
+        }
+      }
+    });
 
-    state.seleccionGlobal = preguntasGlobales.sort(() => Math.random() - 0.5);
-    state.seleccion = state.seleccionGlobal.map(x => x.archivo);
-    state.tiempoRestante = 90 * 60; 
-  } else if (temaId) {
-    state.cola = [temaId];
-    prepararTemaActual();
-    state.tiempoRestante = 20 * 60;
-  } else {
-    state.cola = [state.temas[0].id];
-    prepararTemaActual();
-    state.tiempoRestante = 20 * 60;
-  }
+    // Mezclamos el arreglo global final para que las preguntas de los diferentes temas salgan intercaladas
+    state.seleccionGlobal = preguntasGlobales.sort(() => Math.random() - 0.5);
+    state.seleccion = state.seleccionGlobal.map(x => x.archivo);
+    state.tiempoRestante = 90 * 60; 
+  } else if (temaId) {
+    state.cola = [temaId];
+    prepararTemaActual();
+    state.tiempoRestante = 20 * 60;
+  } else {
+    state.cola = [state.temas[0].id];
+    prepararTemaActual();
+    state.tiempoRestante = 20 * 60;
+  }
 
-  state.item = 0;
-  state.respuestas = {};
-  
-  iniciarTemporizador();
-  renderPregunta(state);
+  state.item = 0;
+  state.respuestas = {};
+  
+  iniciarTemporizador();
+  renderPregunta(state);
 }
-
 /**
  * ==========================================================================
  * SECCIÓN 3: TEMPORIZADOR Y RELOJ VISUAL
