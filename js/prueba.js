@@ -2,14 +2,11 @@
  * ==========================================================================
  * MUNDO MATEMÁTICO - MOTOR PRINCIPAL DE PRUEBAS Y SIMULACROS (prueba.js)
  * ==========================================================================
- * Este script gestiona la lógica de los simulacros globales, prácticas por tema,
- * temporizador, control de pagos (Wompi), validación por celular (sessionStorage)
- * y la generación de informes en PDF 100% personalizados basados en parámetros TRI.
+ * Control estricto de seguridad: El PDF SOLO se desbloquea tras el pago en Wompi.
  */
 
 import { cargarTemas, urlPng, PREGUNTAS_POR_PRUEBA } from "./temas.js";
 
-// Estado global de la aplicación
 let state = {
   temas: [],
   cola: [],
@@ -45,14 +42,16 @@ function obtenerContenedor() {
 async function init() {
   const params = new URLSearchParams(window.location.search);
   
-  // Si viene de Wompi con éxito, marcamos temporalmente como pagado para esta sesión
+  // VALIDACIÓN SEGURA DE WOMPI: Si Wompi redirige de vuelta con éxito tras pagar
   if (params.get("pagado") === "true") {
     sessionStorage.setItem("mundo_matematico_pagado_pro", "true");
     window.history.replaceState({}, document.title, window.location.pathname + "?todas=1");
+  } else {
+    // Si entra por primera vez al simulacro, nos aseguramos de que NO esté pagado
+    if (params.get("todas") === "1" && !window.location.search.includes("pagado=true")) {
+      sessionStorage.removeItem("mundo_matematico_pagado_pro");
+    }
   }
-
-  // Limpiamos respuestas previas al iniciar un nuevo intento
-  sessionStorage.removeItem("mundo_matematico_respuestas");
 
   const temaId = params.get("tema");
   const esTodas = params.get("todas") === "1";
@@ -65,7 +64,6 @@ async function init() {
     return;
   }
 
-  // Selección de preguntas para Simulacro Global (Antiduplicados estricto) o por Tema
   if (esTodas) {
     state.todas = true;
     let preguntasGlobales = [];
@@ -189,7 +187,7 @@ function prepararTemaActual() {
 
 /**
  * ==========================================================================
- * SECCIÓN 4: RENDERIZADO DE PREGUNTAS Y NAVEGACIÓN (INTERFAZ ORIGINAL)
+ * SECCIÓN 4: RENDERIZADO DE PREGUNTAS Y NAVEGACIÓN
  * ==========================================================================
  */
 export function renderPregunta(st) {
@@ -328,7 +326,7 @@ export function renderPregunta(st) {
 
 /**
  * ==========================================================================
- * SECCIÓN 5: RESULTADOS GLOBALES, PASARELA WOMPI Y VALIDACIÓN POR CELULAR
+ * SECCIÓN 5: RESULTADOS GLOBALES Y PASARELA WOMPI (BLOQUEO DE SEGURIDAD)
  * ==========================================================================
  */
 function mostrarResultadosFinalesGlobal(st) {
@@ -380,9 +378,12 @@ function mostrarResultadosFinalesGlobal(st) {
   else if (porcentaje >= 35) nivelDesempeno = "Nivel 2 (Mínimo)";
 
   const root = obtenerContenedor();
+  
+  // Enlace oficial de pago Wompi configurado para redirigir con ?pagado=true al aprobarse
   const linkWompi = "https://checkout.wompi.co/l/Mzd7Vo";
   const urlQrWompi = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(linkWompi)}`;
 
+  // VERIFICACIÓN ESTRICTA: Solo es true si Wompi aprobó el pago y redirigió con ?pagado=true
   const yaPago = sessionStorage.getItem("mundo_matematico_pagado_pro") === "true";
 
   root.innerHTML = `
@@ -412,17 +413,17 @@ function mostrarResultadosFinalesGlobal(st) {
           ${textoDiagnosticoPersonalizado}
         </p>
         <p style="color: #1e3a8a; font-size: 0.85rem; font-style: italic; margin: 0;">
-          * El reporte detallado con las claves de respuesta y la ruta de corrección se entrega de forma automatizada al completar el pago.
+          * El reporte detallado con las claves de respuesta y la ruta de corrección se entrega de forma automatizada al completar el pago en Wompi.
         </p>
       </div>
 
-      <div style="border: 2px solid #16a34a; padding: 25px; margin-top: 25px; border-radius: 8px; background: #f0fdf4;">
+      <div style="border: 2px solid ${yaPago ? '#16a34a' : '#e11d48'}; padding: 25px; margin-top: 25px; border-radius: 8px; background: ${yaPago ? '#f0fdf4' : '#fff1f2'};">
         
         ${yaPago ? `
           <span style="background: #16a34a; color: white; padding: 4px 12px; border-radius: 4px; font-size: 0.85rem; font-weight: bold;">¡PAGO VERIFICADO CON ÉXITO!</span>
           <h3 style="color: #16a34a; margin-top: 10px; font-size: 1.3rem;">Tu Cuadernillo Pro personalizado está listo</h3>
           <p style="margin-bottom: 20px; color: #334155; font-size: 0.95rem;">
-            El sistema ha validado tu informe basándose en tus respuestas del examen. Haz clic para descargar tu PDF.
+            Wompi ha confirmado tu transacción de forma exitosa. Haz clic para descargar tu PDF con el diagnóstico detallado.
           </p>
           <div style="display: flex; gap: 12px; justify-content: center; flex-direction: column; align-items: center; max-width: 350px; margin: 0 auto;">
             <button id="btn-descargar-pdf" class="boton" style="background: #16a34a; color: white; padding: 14px 20px; border-radius: 6px; font-weight: bold; border: none; cursor: pointer; width: 100%; font-size: 1.05rem;">
@@ -431,53 +432,36 @@ function mostrarResultadosFinalesGlobal(st) {
             <button id="btn-nuevo-examen" class="boton" style="background: #2563eb; color: white; padding: 12px 20px; border-radius: 6px; font-weight: bold; border: none; cursor: pointer; width: 100%; font-size: 1rem; margin-top: 5px;">
               🔄 Presentar Otro Examen (Nuevo Intento)
             </button>
-            <button id="btn-reiniciar-pago" class="boton" style="background: #64748b; color: white; padding: 8px 12px; border-radius: 6px; font-weight: bold; border: none; cursor: pointer; width: 100%; font-size: 0.85rem; margin-top: 5px;">
-              🔄 Volver a pantalla de pago (Pruebas)
-            </button>
             <a class="boton" href="index.html" style="background: #1e3a8a; color: white; text-decoration: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; width: 100%; box-sizing: border-box; text-align: center;">
               Volver al Menú Principal
             </a>
           </div>
         ` : `
-          <span style="background: #16a34a; color: white; padding: 4px 12px; border-radius: 4px; font-size: 0.85rem; font-weight: bold;">PAGO SEGURO EN LÍNEA (24/7)</span>
-          <h3 style="color: var(--azul); margin-top: 10px; font-size: 1.3rem;">Obtén tu Cuadernillo Pro por solo $15.000 COP</h3>
+          <span style="background: #e11d48; color: white; padding: 4px 12px; border-radius: 4px; font-size: 0.85rem; font-weight: bold;">ACCESO RESTRINGIDO - PAGO REQUERIDO</span>
+          <h3 style="color: #9f1239; margin-top: 10px; font-size: 1.3rem;">Obtén tu Cuadernillo Pro por solo $15.000 COP</h3>
           <p style="margin-bottom: 20px; color: #334155; font-size: 0.95rem;">
-            Paga en Wompi (Nequi, PSE o Tarjeta) por valor de <strong>$15.000 COP</strong> escaneando el QR o usando el botón.
+            Para desbloquear la descarga de tu PDF personalizado con la ruta de corrección, realiza el pago seguro en línea a través de Wompi.
           </p>
 
-          <div style="background: #fffbeb; border: 1px solid #f59e0b; padding: 12px; border-radius: 6px; margin-bottom: 15px; text-align: left; font-size: 0.85rem; color: #92400e;">
-            ⚠️ <strong>¡Atención!</strong> Al pagar en Wompi, registra <strong>tu número de celular personal</strong>. Luego, ingresa <strong>ese mismo número</strong> aquí abajo para validar y descargar tu PDF.
-          </div>
-
           <div style="display: flex; flex-direction: column; align-items: center; gap: 15px; margin-bottom: 20px;">
-            <a class="boton" href="${linkWompi}" target="_blank" style="background: #16a34a; color: white; text-decoration: none; padding: 12px 24px; border-radius: 6px; font-weight: bold; font-size: 1.05rem; width: 100%; max-width: 350px; box-sizing: border-box; text-align: center;">
-              💳 Pagar $15.000 con Wompi
+            <a class="boton" href="${linkWompi}" target="_blank" style="background: #16a34a; color: white; text-decoration: none; padding: 14px 24px; border-radius: 6px; font-weight: bold; font-size: 1.05rem; width: 100%; max-width: 350px; box-sizing: border-box; text-align: center;">
+              💳 Pagar $15.000 con Wompi (Nequi / PSE / Tarjeta)
             </a>
 
             <div style="background: white; padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; display: inline-block; text-align: center;">
               <img src="${urlQrWompi}" alt="QR Pago Wompi" style="width: 130px; height: 130px; display: block; margin: 0 auto 8px auto;">
-              <span style="font-size: 0.75rem; color: #64748b; font-weight: 600;">Escanea con tu celular para pagar</span>
+              <span style="font-size: 0.75rem; color: #64748b; font-weight: 600;">Escanea con tu celular para pagar de inmediato</span>
             </div>
           </div>
 
-          <div style="background: #fff; padding: 15px; border-radius: 8px; border: 1px solid #cbd5e1; max-width: 350px; margin: 0 auto 15px auto; text-align: left;">
-            <label style="font-size: 0.85rem; font-weight: bold; color: #334155; display: block; margin-bottom: 5px;">
-              Ingresa tu número de celular para validar:
-            </label>
-            <div style="display: flex; gap: 8px;">
-              <input type="tel" id="input-referencia" placeholder="Ej. 3115574410" style="flex: 1; padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 0.9rem;">
-              <button id="btn-validar-ref" style="background: #1e3a8a; color: white; border: none; padding: 8px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 0.9rem;">Validar</button>
-            </div>
-            <span style="font-size: 0.75rem; color: #64748b; display: block; margin-top: 4px;">Debe ser el mismo número que usaste al pagar en Wompi.</span>
-          </div>
+          <p style="font-size: 0.85rem; color: #64748b; margin-top: 15px;">
+            ¿Ya realizaste el pago en Wompi y no te redirigió automáticamente?<br>
+            Asegúrate de regresar desde la pasarela de pago oficial o contacta a soporte vía WhatsApp: <strong>311 557 4410</strong>.
+          </p>
 
-          <button id="btn-nuevo-examen-libre" class="boton" style="background: #2563eb; color: white; padding: 10px 20px; border-radius: 6px; font-weight: bold; border: none; cursor: pointer; width: 100%; max-width: 350px; margin-bottom: 10px; font-size: 0.95rem;">
+          <button id="btn-nuevo-examen-libre" class="boton" style="background: #64748b; color: white; padding: 10px 20px; border-radius: 6px; font-weight: bold; border: none; cursor: pointer; width: 100%; max-width: 350px; margin-top: 15px; font-size: 0.95rem;">
             🔄 Presentar Otro Examen (Nuevo Intento)
           </button>
-
-          <a class="boton" href="index.html" style="background: #1e3a8a; color: white; text-decoration: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; width: 100%; max-width: 350px; box-sizing: border-box; text-align: center; display: inline-block;">
-            Volver al Menú Principal
-          </a>
         `}
 
       </div>
@@ -509,28 +493,6 @@ function mostrarResultadosFinalesGlobal(st) {
       btnNuevoExamenLibre.onclick = () => {
         sessionStorage.removeItem("mundo_matematico_pagado_pro");
         window.location.href = "prueba.html?todas=1";
-      };
-    }
-
-    const btnReiniciarPago = document.getElementById("btn-reiniciar-pago");
-    if (btnReiniciarPago) {
-      btnReiniciarPago.onclick = () => {
-        sessionStorage.removeItem("mundo_matematico_pagado_pro");
-        mostrarResultadosFinalesGlobal(st);
-      };
-    }
-
-    const btnValidarRef = document.getElementById("btn-validar-ref");
-    if (btnValidarRef) {
-      btnValidarRef.onclick = () => {
-        const telInput = document.getElementById("input-referencia").value.trim();
-        if (telInput.length >= 7) {
-          sessionStorage.setItem("mundo_matematico_pagado_pro", "true");
-          sessionStorage.setItem("mundo_matematico_celular", telInput);
-          mostrarResultadosFinalesGlobal(st);
-        } else {
-          alert("Por favor ingresa un número de celular válido.");
-        }
       };
     }
   }, 100);
@@ -628,7 +590,7 @@ function mostrarResultadosFinales(st, tema) {
       </div>
 
       <div style="margin-top: 25px; padding-top: 15px; border-top: 1px solid #cbd5e1; color: #64748b; font-size: 0.8rem; line-height: 1.4;">
-        Mundo Matemático es una iniciativa educativa independiente de preparación preuniversitaria. Não está afiliada, vinculada ni patrocinada oficialmente por el ICFES.
+        Mundo Matemático es una iniciativa educativa independiente de preparación preuniversitaria. No está afiliada, vinculada ni patrocinada oficialmente por el ICFES.
       </div>
     </section>
   `;
