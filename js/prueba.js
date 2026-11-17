@@ -187,7 +187,7 @@ function prepararTemaActual() {
 
 /**
  * ==========================================================================
- * SECCIÓN 4: RENDERIZADO DE PREGUNTAS Y NAVEGACIÓN
+ * SECCIÓN 4: RENDERIZADO DE PREGUNTAS Y NAVEGACIÓN (INTERFAZ COMPACTA Y ELEGANTE)
  * ==========================================================================
  */
 export function renderPregunta(st) {
@@ -230,48 +230,50 @@ export function renderPregunta(st) {
   const segInicial = (st.tiempoRestante % 60).toString().padStart(2, '0');
 
   root.innerHTML = `
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-      <p class="migas" style="margin: 0;"><a href="index.html">Menú</a> / ${st.todas ? 'Simulacro Global Saber 11' : (tema.titulo || tema.id)}</p>
-      <div style="font-size: 1rem; font-weight: bold; color: var(--azul, #1e3a8a); background: var(--azul-claro, #eff6ff); padding: 5px 12px; border-radius: 6px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; background: #fff; padding: 8px 12px; border-radius: 6px; border: 1px solid #cbd5e1;">
+      <p class="migas" style="margin: 0; font-size: 0.85rem;"><a href="index.html">Menú</a> / ${st.todas ? 'Simulacro Global Saber 11' : (tema.titulo || tema.id)}</p>
+      <div style="font-size: 0.9rem; font-weight: bold; color: var(--azul, #1e3a8a); background: var(--azul-claro, #eff6ff); padding: 4px 10px; border-radius: 6px;">
         ⏱️ Tiempo: <span id="reloj-tiempo">${minInicial}:${segInicial}</span>
       </div>
     </div>
 
-    <div class="progreso"><div class="progreso-barra" style="width:${((st.item + 1) / total) * 100}%"></div></div>
-    <p class="progreso-texto">Ejercicio ${st.item + 1} de ${total}</p>
+    <div class="progreso" style="height: 6px; background: #e2e8f0; border-radius: 3px; margin-bottom: 5px;"><div class="progreso-barra" style="height: 100%; background: #1e3a8a; border-radius: 3px; width:${((st.item + 1) / total) * 100}%"></div></div>
+    <p class="progreso-texto" style="font-size: 0.85rem; color: #64748b; margin-bottom: 15px; font-weight: 600;">Ejercicio ${st.item + 1} de ${total}</p>
     
-    <section class="panel">
-      <div style="text-align: center; margin-bottom: 20px;">
-        <img class="pregunta-img" alt="Pregunta ${st.item + 1}" src="${rutaImagenFinal}" onerror="this.style.display='none'; document.getElementById('img-error').style.display='block';">
-        <p id="img-error" style="display:none; color: red; font-size: 0.9rem;">[No se pudo cargar la imagen: ${archivo} en la carpeta ${tema.carpeta}]</p>
+    <section class="panel" style="background: #fff; padding: 20px; border-radius: 8px; border: 1px solid #cbd5e1; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+      <div style="text-align: center; margin-bottom: 15px;">
+        <img class="pregunta-img" alt="Pregunta ${st.item + 1}" src="${rutaImagenFinal}" style="max-width: 100%; height: auto; max-height: 380px; border-radius: 4px;" onerror="this.style.display='none'; document.getElementById('img-error').style.display='block';">
+        <p id="img-error" style="display:none; color: red; font-size: 0.85rem;">[No se pudo cargar la imagen: ${archivo} en la carpeta ${tema.carpeta}]</p>
       </div>
-      <p id="error" class="alerta oculto" style="margin-bottom: 15px; color: red;">Por favor responde la pregunta para continuar.</p>
+      <p id="error" class="alerta oculto" style="margin-bottom: 10px; color: #dc2626; font-size: 0.85rem; font-weight: bold;">Por favor responde la pregunta para continuar.</p>
       
       <form id="form-opciones">
         ${subPreguntas.map((num) => {
           const valorAnterior = esMulti ? respuestaPrevia[num] : respuestaPrevia;
           return `
-            ${num ? `<h3 class="subtitulo-pregunta" style="color: var(--azul, #1e3a8a); margin-top: 15px; margin-bottom: 8px;">Pregunta ${num}</h3>` : ""}
-            <fieldset class="opciones" style="margin-bottom: 20px; border: none; padding: 0;">
+            ${num ? `<h4 class="subtitulo-pregunta" style="color: var(--azul, #1e3a8a); margin-top: 10px; margin-bottom: 6px; font-size: 0.95rem;">Pregunta ${num}</h4>` : ""}
+            <fieldset class="opciones" style="margin-bottom: 15px; border: none; padding: 0;">
               <legend class="sr">Elige una respuesta</legend>
-              ${["A", "B", "C", "D"]
-                .map((l) => {
-                  const marcado = valorAnterior === l ? 'checked' : '';
-                  return `<label class="opcion">
-                    <input type="radio" name="opcion_${num || 'unica'}" value="${l}" ${marcado} required>
-                    <span class="letra">${l}</span><span>Opción ${l}</span>
-                  </label>`;
-                })
-                .join("")}
+              <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                ${["A", "B", "C", "D"]
+                  .map((l) => {
+                    const marcado = valorAnterior === l ? 'checked' : '';
+                    return `<label style="display: flex; align-items: center; justify-content: center; gap: 6px; background: #f8fafc; border: 1px solid #cbd5e1; padding: 8px 14px; border-radius: 6px; cursor: pointer; flex: 1; min-width: 60px; font-size: 0.9rem; font-weight: 600; transition: all 0.2s;">
+                      <input type="radio" name="opcion_${num || 'unica'}" value="${l}" ${marcado} required style="margin: 0;">
+                      <span style="color: #1e293b;">${l}</span>
+                    </label>`;
+                  })
+                  .join("")}
+              </div>
             </fieldset>
           `;
         }).join("")}
 
-        <div class="acciones" style="display: flex; justify-content: space-between; gap: 15px; margin-top: 25px;">
-          <button class="boton" type="button" id="btn-anterior" ${st.item === 0 ? 'style="opacity: 0.5; cursor: not-allowed; background: #64748b;"' : 'style="background: #64748b;"'}>
+        <div class="acciones" style="display: flex; justify-content: space-between; gap: 12px; margin-top: 20px; border-top: 1px solid #e2e8f0; padding-top: 15px;">
+          <button class="boton" type="button" id="btn-anterior" ${st.item === 0 ? 'style="opacity: 0.4; cursor: not-allowed; background: #64748b; color: white; padding: 10px 18px; border-radius: 6px; border: none; font-weight: bold;"' : 'style="background: #64748b; color: white; padding: 10px 18px; border-radius: 6px; border: none; font-weight: bold; cursor: pointer;"'}>
             ← Anterior
           </button>
-          <button class="boton" type="submit" style="flex: 1;">
+          <button class="boton" type="submit" style="flex: 1; background: #1e3a8a; color: white; padding: 10px 18px; border-radius: 6px; border: none; font-weight: bold; cursor: pointer; font-size: 0.95rem;">
             ${st.item + 1 < total ? 'Siguiente →' : 'Ver Diagnóstico y Resultados 🏁'}
           </button>
         </div>
@@ -323,7 +325,6 @@ export function renderPregunta(st) {
     }
   };
 }
-
 /**
  * ==========================================================================
  * SECCIÓN 5: RESULTADOS GLOBALES Y PASARELA WOMPI (BLOQUEO DE SEGURIDAD)
