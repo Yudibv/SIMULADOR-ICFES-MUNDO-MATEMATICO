@@ -1,52 +1,57 @@
 /**
- * ==========================================================================
- * MUNDO MATEMÁTICO - MOTOR PRINCIPAL DE PRUEBAS Y SIMULACROS 
- * ==========================================================================
- */
+ * ==========================================================================
+ * MUNDO MATEMÁTICO - MOTOR PRINCIPAL DE PRUEBAS Y SIMULACROS (prueba.js)
+ * ==========================================================================
+ * Este script gestiona la lógica de los simulacros globales, prácticas por tema,
+ * temporizador, control de pagos (Wompi), validación por celular (sessionStorage)
+ * y la generación de informes en PDF 100% personalizados basados en parámetros TRI.
+ */
 
 import { cargarTemas, urlPng, PREGUNTAS_POR_PRUEBA } from "./temas.js";
 
-// Estado global de la aplicación (preguntas, tiempos, respuestas)
+// Estado global de la aplicación
 let state = {
-  temas: [],
-  cola: [],
-  indiceTema: 0,
-  seleccion: [],
-  item: 0,
-  respuestas: {},
-  todas: false,
-  tiempoRestante: 0,
-  intervaloTimer: null
+  temas: [],
+  cola: [],
+  indiceTema: 0,
+  seleccion: [],
+  item: 0,
+  respuestas: {},
+  todas: false,
+  tiempoRestante: 0,
+  intervaloTimer: null
 };
 
 /**
- * ==========================================================================
- * SECCIÓN 1: GESTIÓN DE CONTENEDORES Y DOM
- * ==========================================================================
- */
+ * ==========================================================================
+ * SECCIÓN 1: GESTIÓN DE CONTENEDORES Y DOM
+ * ==========================================================================
+ */
 function obtenerContenedor() {
-  let root = document.getElementById("vista") || document.getElementById("root") || document.getElementById("panel") || document.querySelector("main");
-  if (!root) {
-    root = document.createElement("main");
-    root.id = "vista";
-    document.body.appendChild(root);
-  }
-  return root;
+  let root = document.getElementById("vista") || document.getElementById("root") || document.getElementById("panel") || document.querySelector("main");
+  if (!root) {
+    root = document.createElement("main");
+    root.id = "vista";
+    document.body.appendChild(root);
+  }
+  return root;
 }
 
 /**
  * ==========================================================================
- * SECCIÓN 2: INICIALIZACIÓN DEL SISTEMA Y PARÁMETROS (ANTIDUPLICADOS ESTRICTO)
+ * SECCIÓN 2: INICIALIZACIÓN DEL SISTEMA Y PARÁMETROS (ANTIDUPLICADOS)
  * ==========================================================================
  */
 async function init() {
   const params = new URLSearchParams(window.location.search);
   
+  // Si viene de Wompi con éxito, marcamos temporalmente como pagado para esta sesión
   if (params.get("pagado") === "true") {
     sessionStorage.setItem("mundo_matematico_pagado_pro", "true");
     window.history.replaceState({}, document.title, window.location.pathname + "?todas=1");
   }
 
+  // Limpiamos respuestas previas al iniciar un nuevo intento
   sessionStorage.removeItem("mundo_matematico_respuestas");
 
   const temaId = params.get("tema");
@@ -60,23 +65,20 @@ async function init() {
     return;
   }
 
+  // Selección de preguntas para Simulacro Global (Antiduplicados estricto) o por Tema
   if (esTodas) {
     state.todas = true;
     let preguntasGlobales = [];
     let rutasYaAgregadas = new Set();
     
-    // 🔒 Filtro estricto anti-duplicados a nivel global y por tema
     state.temas.forEach(t => {
       if (t.preguntas && t.preguntas.length > 0) {
-        // Mezclamos aleatoriamente el banco de este tema
         const preguntasMezcladas = [...t.preguntas].sort(() => Math.random() - 0.5);
         const cantidadASeleccionar = Math.min(5, preguntasMezcladas.length);
         let seleccionadasTema = 0;
         
         for (let archivo of preguntasMezcladas) {
           if (seleccionadasTema >= cantidadASeleccionar) break;
-          
-          // Creamos una clave única combinando la carpeta y el nombre exacto del archivo de imagen
           const claveUnica = `${t.carpeta || t.id}___${archivo.trim()}`;
           
           if (!rutasYaAgregadas.has(claveUnica)) {
@@ -88,7 +90,6 @@ async function init() {
       }
     });
 
-    // Mezclamos el arreglo global final para que las preguntas de los diferentes temas salgan intercaladas
     state.seleccionGlobal = preguntasGlobales.sort(() => Math.random() - 0.5);
     state.seleccion = state.seleccionGlobal.map(x => x.archivo);
     state.tiempoRestante = 90 * 60; 
@@ -108,219 +109,221 @@ async function init() {
   iniciarTemporizador();
   renderPregunta(state);
 }
+
 /**
- * ==========================================================================
- * SECCIÓN 3: TEMPORIZADOR Y RELOJ VISUAL
- * ==========================================================================
- */
+ * ==========================================================================
+ * SECCIÓN 3: TEMPORIZADOR Y RELOJ VISUAL
+ * ==========================================================================
+ */
 function iniciarTemporizador() {
-  if (state.intervaloTimer) clearInterval(state.intervaloTimer);
-  
-  state.intervaloTimer = setInterval(() => {
-    if (state.tiempoRestante > 0) {
-      state.tiempoRestante--;
-      actualizarRelojVisual();
-    } else {
-      clearInterval(state.intervaloTimer);
-      alert("¡Se ha agotado el tiempo del simulacro!");
-      if (state.todas) {
-        mostrarResultadosFinalesGlobal(state);
-      } else {
-        const tema = temaPorId(state.cola[state.indiceTema]);
-        mostrarResultadosFinales(state, tema);
-      }
-    }
-  }, 1000);
+  if (state.intervaloTimer) clearInterval(state.intervaloTimer);
+  
+  state.intervaloTimer = setInterval(() => {
+    if (state.tiempoRestante > 0) {
+      state.tiempoRestante--;
+      actualizarRelojVisual();
+    } else {
+      clearInterval(state.intervaloTimer);
+      alert("¡Se ha agotado el tiempo del simulacro!");
+      if (state.todas) {
+        mostrarResultadosFinalesGlobal(state);
+      } else {
+        const tema = temaPorId(state.cola[state.indiceTema]);
+        mostrarResultadosFinales(state, tema);
+      }
+    }
+  }, 1000);
 }
 
 function actualizarRelojVisual() {
-  const elReloj = document.getElementById("reloj-tiempo");
-  if (elReloj) {
-    const minutos = Math.floor(state.tiempoRestante / 60);
-    const segundos = state.tiempoRestante % 60;
-    elReloj.textContent = `${minutos.toString().padStart(2, '0')}:${segundos.toString().padStart(2, '0')}`;
-    if (state.tiempoRestante < 300) {
-      elReloj.style.color = "#dc2626";
-      elReloj.style.fontWeight = "bold";
-    }
-  }
+  const elReloj = document.getElementById("reloj-tiempo");
+  if (elReloj) {
+    const minutos = Math.floor(state.tiempoRestante / 60);
+    const segundos = state.tiempoRestante % 60;
+    elReloj.textContent = `${minutos.toString().padStart(2, '0')}:${segundos.toString().padStart(2, '0')}`;
+    if (state.tiempoRestante < 300) {
+      elReloj.style.color = "#dc2626";
+      elReloj.style.fontWeight = "bold";
+    }
+  }
 }
 
 function aliasTemas(temas) {
-  return temas.map(t => ({
-    ...t,
-    id: t.id || t.carpeta
-  }));
+  return temas.map(t => ({
+    ...t,
+    id: t.id || t.carpeta
+  }));
 }
 
 function temaPorId(id) {
-  return state.temas.find(t => t.id === id || t.carpeta === id) || state.temas[0];
+  return state.temas.find(t => t.id === id || t.carpeta === id) || state.temas[0];
 }
 
 function prepararTemaActual() {
-  const tema = temaPorId(state.cola[state.indiceTema]);
-  const todasLasPreguntas = tema.preguntas || [];
-  
-  if (todasLasPreguntas.length > 0) {
-    const preguntasMezcladas = [...todasLasPreguntas].sort(() => Math.random() - 0.5);
-    const cantidadDeseada = Math.min(PREGUNTAS_POR_PRUEBA || 10, preguntasMezcladas.length);
-    
-    let unicas = [];
-    let vistas = new Set();
-    
-    for (let archivo of preguntasMezcladas) {
-      if (unicas.length >= cantidadDeseada) break;
-      if (!vistas.has(archivo)) {
-        vistas.add(archivo);
-        unicas.push(archivo);
-      }
-    }
-    
-    state.seleccion = unicas;
-  } else {
-    state.seleccion = [];
-  }
-  
-  state.item = 0;
-  state.respuestas = {};
+  const tema = temaPorId(state.cola[state.indiceTema]);
+  const todasLasPreguntas = tema.preguntas || [];
+  
+  if (todasLasPreguntas.length > 0) {
+    const preguntasMezcladas = [...todasLasPreguntas].sort(() => Math.random() - 0.5);
+    const cantidadDeseada = Math.min(PREGUNTAS_POR_PRUEBA || 10, preguntasMezcladas.length);
+    
+    let unicas = [];
+    let vistas = new Set();
+    
+    for (let archivo of preguntasMezcladas) {
+      if (unicas.length >= cantidadDeseada) break;
+      if (!vistas.has(archivo)) {
+        vistas.add(archivo);
+        unicas.push(archivo);
+      }
+    }
+    
+    state.seleccion = unicas;
+  } else {
+    state.seleccion = [];
+  }
+  
+  state.item = 0;
+  state.respuestas = {};
 }
 
 /**
- * ==========================================================================
- * SECCIÓN 4: RENDERIZADO DE PREGUNTAS Y NAVEGACIÓN
- * ==========================================================================
- */
+ * ==========================================================================
+ * SECCIÓN 4: RENDERIZADO DE PREGUNTAS Y NAVEGACIÓN (INTERFAZ ORIGINAL)
+ * ==========================================================================
+ */
 export function renderPregunta(st) {
-  let tema, archivo;
-  
-  if (st.todas) {
-    const actualGlobal = st.seleccionGlobal[st.item];
-    if (!actualGlobal) {
-      if (st.intervaloTimer) clearInterval(st.intervaloTimer);
-      mostrarResultadosFinalesGlobal(st);
-      return;
-    }
-    tema = actualGlobal.tema;
-    archivo = actualGlobal.archivo;
-  } else {
-    tema = temaPorId(st.cola[state.indiceTema]);
-    archivo = st.seleccion[st.item];
-  }
+  let tema, archivo;
+  
+  if (st.todas) {
+    const actualGlobal = st.seleccionGlobal[st.item];
+    if (!actualGlobal) {
+      if (st.intervaloTimer) clearInterval(st.intervaloTimer);
+      mostrarResultadosFinalesGlobal(st);
+      return;
+    }
+    tema = actualGlobal.tema;
+    archivo = actualGlobal.archivo;
+  } else {
+    tema = temaPorId(st.cola[state.indiceTema]);
+    archivo = st.seleccion[st.item];
+  }
 
-  const total = st.todas ? st.seleccionGlobal.length : st.seleccion.length;
-  const root = obtenerContenedor();
+  const total = st.todas ? st.seleccionGlobal.length : st.seleccion.length;
+  const root = obtenerContenedor();
 
-  if (!archivo) {
-    if (st.intervaloTimer) clearInterval(st.intervaloTimer);
-    if (st.todas) {
-      mostrarResultadosFinalesGlobal(st);
-    } else {
-      mostrarResultadosFinales(st, tema);
-    }
-    return;
-  }
+  if (!archivo) {
+    if (st.intervaloTimer) clearInterval(st.intervaloTimer);
+    if (st.todas) {
+      mostrarResultadosFinalesGlobal(st);
+    } else {
+      mostrarResultadosFinales(st, tema);
+    }
+    return;
+  }
 
-  const rutaImagenFinal = urlPng(tema, archivo);
-  const respuestasClave = (tema.respuestas || {})[archivo];
-  const esMulti = respuestasClave && typeof respuestasClave === "object";
-  const subPreguntas = esMulti ? Object.keys(respuestasClave) : [null];
-  const respuestaPrevia = st.respuestas[st.item] || {};
+  const rutaImagenFinal = urlPng(tema, archivo);
+  const respuestasClave = (tema.respuestas || {})[archivo];
+  const esMulti = respuestasClave && typeof respuestasClave === "object";
+  const subPreguntas = esMulti ? Object.keys(respuestasClave) : [null];
+  const respuestaPrevia = st.respuestas[st.item] || {};
 
-  const minInicial = Math.floor(st.tiempoRestante / 60).toString().padStart(2, '0');
-  const segInicial = (st.tiempoRestante % 60).toString().padStart(2, '0');
+  const minInicial = Math.floor(st.tiempoRestante / 60).toString().padStart(2, '0');
+  const segInicial = (st.tiempoRestante % 60).toString().padStart(2, '0');
 
-  root.innerHTML = `
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; background: #fff; padding: 10px 15px; border-radius: 8px; border: 1px solid #cbd5e1;">
-      <p class="migas" style="margin: 0;"><a href="index.html">Menú</a> / ${st.todas ? 'Simulacro Global Saber 11' : (tema.titulo || tema.id)}</p>
-      <div style="font-size: 1.05rem; font-weight: bold; color: var(--azul); background: var(--azul-claro); padding: 5px 12px; border-radius: 6px;">
-        ⏱️ Tiempo: <span id="reloj-tiempo">${minInicial}:${segInicial}</span>
-      </div>
-    </div>
+  root.innerHTML = `
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+      <p class="migas" style="margin: 0;"><a href="index.html">Menú</a> / ${st.todas ? 'Simulacro Global Saber 11' : (tema.titulo || tema.id)}</p>
+      <div style="font-size: 1rem; font-weight: bold; color: var(--azul, #1e3a8a); background: var(--azul-claro, #eff6ff); padding: 5px 12px; border-radius: 6px;">
+        ⏱️ Tiempo: <span id="reloj-tiempo">${minInicial}:${segInicial}</span>
+      </div>
+    </div>
 
-    <div class="progreso"><div class="progreso-barra" style="width:${((st.item + 1) / total) * 100}%"></div></div>
-    <p class="progreso-texto">Ejercicio ${st.item + 1} de ${total}</p>
-    <section class="panel">
-      <div style="text-align: center; margin-bottom: 20px;">
-        <img class="pregunta-img" alt="Pregunta ${st.item + 1}" src="${rutaImagenFinal}" onerror="this.style.display='none'; document.getElementById('img-error').style.display='block';">
-        <p id="img-error" style="display:none; color: red; font-size: 0.9rem;">[No se pudo cargar la imagen: ${archivo} en la carpeta ${tema.carpeta}]</p>
-      </div>
-      <p id="error" class="alerta oculto" style="margin-bottom: 15px; color: red;">Por favor responde la pregunta para continuar.</p>
-      
-      <form id="form-opciones">
-        ${subPreguntas.map((num) => {
-          const valorAnterior = esMulti ? respuestaPrevia[num] : respuestaPrevia;
-          return `
-            ${num ? `<h3 class="subtitulo-pregunta" style="color: var(--azul); margin-top: 15px; margin-bottom: 8px;">Pregunta ${num}</h3>` : ""}
-            <fieldset class="opciones" style="margin-bottom: 20px; border: none; padding: 0;">
-              <legend class="sr">Elige una respuesta</legend>
-              ${["A", "B", "C", "D"]
-                .map((l) => {
-                  const marcado = valorAnterior === l ? 'checked' : '';
-                  return `<label class="opcion" style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; cursor: pointer;">
-                    <input type="radio" name="opcion_${num || 'unica'}" value="${l}" ${marcado} required>
-                    <span class="letra" style="font-weight: bold;">${l}</span><span>Opción ${l}</span>
-                  </label>`;
-                })
-                .join("")}
-            </fieldset>
-          `;
-        }).join("")}
+    <div class="progreso"><div class="progreso-barra" style="width:${((st.item + 1) / total) * 100}%"></div></div>
+    <p class="progreso-texto">Ejercicio ${st.item + 1} de ${total}</p>
+    
+    <section class="panel">
+      <div style="text-align: center; margin-bottom: 20px;">
+        <img class="pregunta-img" alt="Pregunta ${st.item + 1}" src="${rutaImagenFinal}" onerror="this.style.display='none'; document.getElementById('img-error').style.display='block';">
+        <p id="img-error" style="display:none; color: red; font-size: 0.9rem;">[No se pudo cargar la imagen: ${archivo} en la carpeta ${tema.carpeta}]</p>
+      </div>
+      <p id="error" class="alerta oculto" style="margin-bottom: 15px; color: red;">Por favor responde la pregunta para continuar.</p>
+      
+      <form id="form-opciones">
+        ${subPreguntas.map((num) => {
+          const valorAnterior = esMulti ? respuestaPrevia[num] : respuestaPrevia;
+          return `
+            ${num ? `<h3 class="subtitulo-pregunta" style="color: var(--azul, #1e3a8a); margin-top: 15px; margin-bottom: 8px;">Pregunta ${num}</h3>` : ""}
+            <fieldset class="opciones" style="margin-bottom: 20px; border: none; padding: 0;">
+              <legend class="sr">Elige una respuesta</legend>
+              ${["A", "B", "C", "D"]
+                .map((l) => {
+                  const marcado = valorAnterior === l ? 'checked' : '';
+                  return `<label class="opcion">
+                    <input type="radio" name="opcion_${num || 'unica'}" value="${l}" ${marcado} required>
+                    <span class="letra">${l}</span><span>Opción ${l}</span>
+                  </label>`;
+                })
+                .join("")}
+            </fieldset>
+          `;
+        }).join("")}
 
-        <div class="acciones" style="display: flex; justify-content: space-between; gap: 10px; margin-top: 20px;">
-          <button class="boton" type="button" id="btn-anterior" ${st.item === 0 ? 'style="opacity: 0.5; cursor: not-allowed;"' : 'style="background: #64748b;"'}>
-            ← Anterior
-          </button>
-          <button class="boton" type="submit" style="flex: 1;">
-            ${st.item + 1 < total ? 'Siguiente →' : 'Ver Diagnóstico y Resultados 🏁'}
-          </button>
-        </div>
-      </form>
-    </section>
-  `;
+        <div class="acciones" style="display: flex; justify-content: space-between; gap: 15px; margin-top: 25px;">
+          <button class="boton" type="button" id="btn-anterior" ${st.item === 0 ? 'style="opacity: 0.5; cursor: not-allowed; background: #64748b;"' : 'style="background: #64748b;"'}>
+            ← Anterior
+          </button>
+          <button class="boton" type="submit" style="flex: 1;">
+            ${st.item + 1 < total ? 'Siguiente →' : 'Ver Diagnóstico y Resultados 🏁'}
+          </button>
+        </div>
+      </form>
+    </section>
+  `;
 
-  document.getElementById("btn-anterior").onclick = () => {
-    if (st.item > 0) {
-      st.item -= 1;
-      renderPregunta(st);
-    }
-  };
+  document.getElementById("btn-anterior").onclick = () => {
+    if (st.item > 0) {
+      st.item -= 1;
+      renderPregunta(st);
+    }
+  };
 
-  document.getElementById("form-opciones").onsubmit = (ev) => {
-    ev.preventDefault();
-    const formData = new FormData(ev.target);
-    
-    if (esMulti) {
-      const respuestasObj = {};
-      for (const num of subPreguntas) {
-        const marcada = formData.get(`opcion_${num}`);
-        if (!marcada) {
-          document.getElementById("error").classList.remove("oculto");
-          return;
-        }
-        respuestasObj[num] = marcada;
-      }
-      st.respuestas[st.item] = respuestasObj;
-    } else {
-      const marcada = formData.get("opcion_unica");
-      if (!marcada) {
-        document.getElementById("error").classList.remove("oculto");
-        return;
-      }
-      st.respuestas[st.item] = marcada;
-    }
+  document.getElementById("form-opciones").onsubmit = (ev) => {
+    ev.preventDefault();
+    const formData = new FormData(ev.target);
+    
+    if (esMulti) {
+      const respuestasObj = {};
+      for (const num of subPreguntas) {
+        const marcada = formData.get(`opcion_${num}`);
+        if (!marcada) {
+          document.getElementById("error").classList.remove("oculto");
+          return;
+        }
+        respuestasObj[num] = marcada;
+      }
+      st.respuestas[st.item] = respuestasObj;
+    } else {
+      const marcada = formData.get("opcion_unica");
+      if (!marcada) {
+        document.getElementById("error").classList.remove("oculto");
+        return;
+      }
+      st.respuestas[st.item] = marcada;
+    }
 
-    if (st.item + 1 < total) {
-      st.item += 1;
-      renderPregunta(st);
-    } else {
-      if (st.intervaloTimer) clearInterval(st.intervaloTimer);
-      if (st.todas) {
-        mostrarResultadosFinalesGlobal(st);
-      } else {
-        mostrarResultadosFinales(st, tema);
-      }
-    }
-  };
+    if (st.item + 1 < total) {
+      st.item += 1;
+      renderPregunta(st);
+    } else {
+      if (st.intervaloTimer) clearInterval(st.intervaloTimer);
+      if (st.todas) {
+        mostrarResultadosFinalesGlobal(st);
+      } else {
+        mostrarResultadosFinales(st, tema);
+      }
+    }
+  };
 }
 
 /**
@@ -380,7 +383,6 @@ function mostrarResultadosFinalesGlobal(st) {
   const linkWompi = "https://checkout.wompi.co/l/Mzd7Vo";
   const urlQrWompi = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(linkWompi)}`;
 
-  // Verificamos si ya pagó en esta sesión
   const yaPago = sessionStorage.getItem("mundo_matematico_pagado_pro") === "true";
 
   root.innerHTML = `
@@ -426,6 +428,9 @@ function mostrarResultadosFinalesGlobal(st) {
             <button id="btn-descargar-pdf" class="boton" style="background: #16a34a; color: white; padding: 14px 20px; border-radius: 6px; font-weight: bold; border: none; cursor: pointer; width: 100%; font-size: 1.05rem;">
               📥 Descargar mi Cuadernillo Pro (PDF)
             </button>
+            <button id="btn-nuevo-examen" class="boton" style="background: #2563eb; color: white; padding: 12px 20px; border-radius: 6px; font-weight: bold; border: none; cursor: pointer; width: 100%; font-size: 1rem; margin-top: 5px;">
+              🔄 Presentar Otro Examen (Nuevo Intento)
+            </button>
             <button id="btn-reiniciar-pago" class="boton" style="background: #64748b; color: white; padding: 8px 12px; border-radius: 6px; font-weight: bold; border: none; cursor: pointer; width: 100%; font-size: 0.85rem; margin-top: 5px;">
               🔄 Volver a pantalla de pago (Pruebas)
             </button>
@@ -466,6 +471,10 @@ function mostrarResultadosFinalesGlobal(st) {
             <span style="font-size: 0.75rem; color: #64748b; display: block; margin-top: 4px;">Debe ser el mismo número que usaste al pagar en Wompi.</span>
           </div>
 
+          <button id="btn-nuevo-examen-libre" class="boton" style="background: #2563eb; color: white; padding: 10px 20px; border-radius: 6px; font-weight: bold; border: none; cursor: pointer; width: 100%; max-width: 350px; margin-bottom: 10px; font-size: 0.95rem;">
+            🔄 Presentar Otro Examen (Nuevo Intento)
+          </button>
+
           <a class="boton" href="index.html" style="background: #1e3a8a; color: white; text-decoration: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; width: 100%; max-width: 350px; box-sizing: border-box; text-align: center; display: inline-block;">
             Volver al Menú Principal
           </a>
@@ -484,6 +493,22 @@ function mostrarResultadosFinalesGlobal(st) {
     if (btnPdf) {
       btnPdf.onclick = () => {
         generarPDFInformePersonalizado(aciertos, totalPreguntas, porcentaje, nivelDesempeno, erroresPorTema);
+      };
+    }
+
+    const btnNuevoExamen = document.getElementById("btn-nuevo-examen");
+    if (btnNuevoExamen) {
+      btnNuevoExamen.onclick = () => {
+        sessionStorage.removeItem("mundo_matematico_pagado_pro");
+        window.location.href = "prueba.html?todas=1";
+      };
+    }
+
+    const btnNuevoExamenLibre = document.getElementById("btn-nuevo-examen-libre");
+    if (btnNuevoExamenLibre) {
+      btnNuevoExamenLibre.onclick = () => {
+        sessionStorage.removeItem("mundo_matematico_pagado_pro");
+        window.location.href = "prueba.html?todas=1";
       };
     }
 
@@ -510,109 +535,110 @@ function mostrarResultadosFinalesGlobal(st) {
     }
   }, 100);
 }
+
 /**
- * ==========================================================================
- * SECCIÓN 6: PRÁCTICAS FOCALIZADAS (MÓDULOS INDIVIDUALES)
- * ==========================================================================
- */
+ * ==========================================================================
+ * SECCIÓN 6: PRÁCTICAS FOCALIZADAS (MÓDULOS INDIVIDUALES)
+ * ==========================================================================
+ */
 function mostrarResultadosFinales(st, tema) {
-  if (st.intervaloTimer) clearInterval(st.intervaloTimer);
-  let aciertos = 0;
-  let totalPreguntas = st.seleccion.length;
+  if (st.intervaloTimer) clearInterval(st.intervaloTimer);
+  let aciertos = 0;
+  let totalPreguntas = st.seleccion.length;
 
-  st.seleccion.forEach((archivo, index) => {
-    const respuestaCorrecta = (tema.respuestas || {})[archivo];
-    const respuestaUsuario = st.respuestas[index];
+  st.seleccion.forEach((archivo, index) => {
+    const respuestaCorrecta = (tema.respuestas || {})[archivo];
+    const respuestaUsuario = st.respuestas[index];
 
-    if (typeof respuestaCorrecta === "object") {
-      let todasCorrectas = true;
-      for (const subKey in respuestaCorrecta) {
-        if (respuestaUsuario?.[subKey] !== respuestaCorrecta[subKey]) {
-          todasCorrectas = false;
-        }
-      }
-      if (todasCorrectas) aciertos++;
-    } else {
-      if (respuestaUsuario === respuestaCorrecta) {
-        aciertos++;
-      }
-    }
-  });
+    if (typeof respuestaCorrecta === "object") {
+      let todasCorrectas = true;
+      for (const subKey in respuestaCorrecta) {
+        if (respuestaUsuario?.[subKey] !== respuestaCorrecta[subKey]) {
+          todasCorrectas = false;
+        }
+      }
+      if (todasCorrectas) aciertos++;
+    } else {
+      if (respuestaUsuario === respuestaCorrecta) {
+        aciertos++;
+      }
+    }
+  });
 
-  const porcentaje = Math.round((aciertos / totalPreguntas) * 100);
-  const root = obtenerContenedor();
+  const porcentaje = Math.round((aciertos / totalPreguntas) * 100);
+  const root = obtenerContenedor();
 
-  let mensajeDesempeno = "";
-  let alertaColor = "var(--rojo)";
-  let fondoCaja = "#fff5f5";
+  let mensajeDesempeno = "";
+  let alertaColor = "var(--rojo)";
+  let fondoCaja = "#fff5f5";
 
-  if (porcentaje >= 80) {
-    alertaColor = "#16a34a";
-    fondoCaja = "#f0fdf4";
-    mensajeDesempeno = `¡Excelente nivel en <strong>${tema.titulo}</strong>! Tienes bases muy sólidas. Sigue manteniendo este gran ritmo de estudio para asegurar puntaje sobresaliente en el ICFES.`;
-  } else if (porcentaje >= 50) {
-    alertaColor = "#d97706";
-    fondoCaja = "#fffbeb";
-    mensajeDesempeno = `Tienes bases regulares en <strong>${tema.titulo}</strong>, pero hay vacíos conceptuales en preguntas clave que el ICFES suele evaluar con trampa. ¡Un repaso a tiempo marca la diferencia!`;
-  } else {
-    alertaColor = "var(--rojo)";
-    fondoCaja = "#fff5f5";
-    mensajeDesempeno = `Identificamos oportunidades de mejora críticas en <strong>${tema.titulo}</strong>. Te sugerimos reforzar urgentemente este módulo con asesoría especializada antes de la prueba real.`;
-  }
+  if (porcentaje >= 80) {
+    alertaColor = "#16a34a";
+    fondoCaja = "#f0fdf4";
+    mensajeDesempeno = `¡Excelente nivel en <strong>${tema.titulo}</strong>! Tienes bases muy sólidas. Sigue manteniendo este gran ritmo de estudio para asegurar puntaje sobresaliente en el ICFES.`;
+  } else if (porcentaje >= 50) {
+    alertaColor = "#d97706";
+    fondoCaja = "#fffbeb";
+    mensajeDesempeno = `Tienes bases regulares en <strong>${tema.titulo}</strong>, pero hay vacíos conceptuales en preguntas clave que el ICFES suele evaluar con trampa. ¡Un repaso a tiempo marca la diferencia!`;
+  } else {
+    alertaColor = "var(--rojo)";
+    fondoCaja = "#fff5f5";
+    mensajeDesempeno = `Identificamos oportunidades de mejora críticas en <strong>${tema.titulo}</strong>. Te sugerimos reforzar urgentemente este módulo con asesoría especializada antes de la prueba real.`;
+  }
 
-  const linkSimulacroGlobal = "prueba.html?todas=1";
-  const numeroWhatsApp = "573115574410"; 
-  const mensajeWp = encodeURIComponent(`Hola, acabo de hacer la práctica focalizada de ${tema.titulo} en Mundo Matemático y saqué ${aciertos}/${totalPreguntas}. Me gustaría recibir más información sobre tutorías.`);
+  const linkSimulacroGlobal = "prueba.html?todas=1";
+  const numeroWhatsApp = "573115574410"; 
+  const mensajeWp = encodeURIComponent(`Hola, acabo de hacer la práctica focalizada de ${tema.titulo} en Mundo Matemático y saqué ${aciertos}/${totalPreguntas}. Me gustaría recibir más información sobre tutorías.`);
 
-  root.innerHTML = `
-    <section class="panel" style="text-align: center; padding: 30px;">
-      <h2 style="color: var(--azul);">Práctica Focalizada: ${tema.titulo}</h2>
-      <p class="lead" style="margin: 0 auto 20px auto;">Reporte de resultados del módulo de entrenamiento.</p>
-      
-      <div class="puntaje" style="margin: 20px 0;">
-        <span class="num">${aciertos} / ${totalPreguntas}</span>
-        <p style="margin: 5px 0; font-weight: 600; color: #555;">Aciertos logrados (${porcentaje}%)</p>
-      </div>
+  root.innerHTML = `
+    <section class="panel" style="text-align: center; padding: 30px;">
+      <h2 style="color: var(--azul);">Práctica Focalizada: ${tema.titulo}</h2>
+      <p class="lead" style="margin: 0 auto 20px auto;">Reporte de resultados del módulo de entrenamiento.</p>
+      
+      <div class="puntaje" style="margin: 20px 0;">
+        <span class="num">${aciertos} / ${totalPreguntas}</span>
+        <p style="margin: 5px 0; font-weight: 600; color: #555;">Aciertos logrados (${porcentaje}%)</p>
+      </div>
 
-      <div style="background: ${fondoCaja}; border: 1px solid ${alertaColor}; padding: 20px; margin: 20px 0; border-radius: 6px; text-align: left;">
-        <h3 style="color: ${alertaColor}; margin-top: 0;">Análisis personalizado:</h3>
-        <p style="margin: 0; line-height: 1.6; color: #334155;">${mensajeDesempeno}</p>
-      </div>
+      <div style="background: ${fondoCaja}; border: 1px solid ${alertaColor}; padding: 20px; margin: 20px 0; border-radius: 6px; text-align: left;">
+        <h3 style="color: ${alertaColor}; margin-top: 0;">Análisis personalizado:</h3>
+        <p style="margin: 0; line-height: 1.6; color: #334155;">${mensajeDesempeno}</p>
+      </div>
 
-      <div style="border: 2px solid var(--azul); padding: 25px; margin-top: 25px; border-radius: 8px; background: #eff6ff;">
-        <span style="background: var(--azul); color: white; padding: 4px 12px; border-radius: 4px; font-size: 0.85rem; font-weight: bold;">ASESORÍA Y PREPARACIÓN MUNDO MATEMÁTICO</span>
-        <h3 style="color: var(--azul); margin-top: 10px; font-size: 1.3rem;">¿Quieres dominar este tema y subir tu puntaje ICFES?</h3>
-        <p style="margin-bottom: 20px; color: #334155; font-size: 0.95rem;">
-          Fortalece tu talento con nuestras clases personalizadas, simulacros globales y material exclusivo de preuniversitario.
-        </p>
-        
-        <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; flex-direction: column; align-items: center; max-width: 400px; margin: 0 auto;">
-          <a class="boton" href="https://wa.me/${numeroWhatsApp}?text=${mensajeWp}" target="_blank" style="background: #16a34a; color: white; text-decoration: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; font-size: 1rem; width: 100%; box-sizing: border-box; text-align: center;">
-            💬 Pedir Tutoría o Refuerzo por WhatsApp
-          </a>
+      <div style="border: 2px solid var(--azul); padding: 25px; margin-top: 25px; border-radius: 8px; background: #eff6ff;">
+        <span style="background: var(--azul); color: white; padding: 4px 12px; border-radius: 4px; font-size: 0.85rem; font-weight: bold;">ASESORÍA Y PREPARACIÓN MUNDO MATEMÁTICO</span>
+        <h3 style="color: var(--azul); margin-top: 10px; font-size: 1.3rem;">¿Quieres dominar este tema y subir tu puntaje ICFES?</h3>
+        <p style="margin-bottom: 20px; color: #334155; font-size: 0.95rem;">
+          Fortalece tu talento con nuestras clases personalizadas, simulacros globales y material exclusivo de preuniversitario.
+        </p>
+        
+        <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; flex-direction: column; align-items: center; max-width: 400px; margin: 0 auto;">
+          <a class="boton" href="https://wa.me/${numeroWhatsApp}?text=${mensajeWp}" target="_blank" style="background: #16a34a; color: white; text-decoration: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; font-size: 1rem; width: 100%; box-sizing: border-box; text-align: center;">
+            💬 Pedir Tutoría o Refuerzo por WhatsApp
+          </a>
 
-          <a class="boton" href="${linkSimulacroGlobal}" style="background: var(--azul); color: white; text-decoration: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; font-size: 1rem; width: 100%; box-sizing: border-box; text-align: center;">
-            🚀 Presentar Simulacro Global Completo (40 Preguntas)
-          </a>
+          <a class="boton" href="${linkSimulacroGlobal}" style="background: var(--azul); color: white; text-decoration: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; font-size: 1rem; width: 100%; box-sizing: border-box; text-align: center;">
+            🚀 Presentar Simulacro Global Completo (40 Preguntas)
+          </a>
 
-          <a class="boton" href="index.html" style="background: #64748b; color: white; text-decoration: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; font-size: 1rem; width: 100%; box-sizing: border-box; text-align: center;">
-            🏠 Volver al Menú Principal / Sitio Web
-          </a>
-        </div>
-      </div>
+          <a class="boton" href="index.html" style="background: #64748b; color: white; text-decoration: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; font-size: 1rem; width: 100%; box-sizing: border-box; text-align: center;">
+            🏠 Volver al Menú Principal / Sitio Web
+          </a>
+        </div>
+      </div>
 
-      <div style="margin-top: 25px; padding-top: 15px; border-top: 1px solid #cbd5e1; color: #64748b; font-size: 0.8rem; line-height: 1.4;">
-        Mundo Matemático es una iniciativa educativa independiente de preparación preuniversitaria. No está afiliada, vinculada ni patrocinada oficialmente por el ICFES.
-      </div>
-    </section>
-  `;
+      <div style="margin-top: 25px; padding-top: 15px; border-top: 1px solid #cbd5e1; color: #64748b; font-size: 0.8rem; line-height: 1.4;">
+        Mundo Matemático es una iniciativa educativa independiente de preparación preuniversitaria. Não está afiliada, vinculada ni patrocinada oficialmente por el ICFES.
+      </div>
+    </section>
+  `;
 }
 
 init();
 
 /**
  * ==========================================================================
- * SECCIÓN 7: GENERACIÓN DE PDF NATIVO (CUADERNILLO PRO 100% PERSONALIZADO Y PRO)
+ * SECCIÓN 7: GENERACIÓN DE PDF NATIVO (CUADERNILLO PRO 100% PERSONALIZADO)
  * ==========================================================================
  */
 function generarPDFInformePersonalizado(aciertos, totalPreguntas, porcentaje, nivelDesempeno, erroresPorTema) {
@@ -623,13 +649,11 @@ function generarPDFInformePersonalizado(aciertos, totalPreguntas, porcentaje, ni
     return;
   }
 
-  // Ordenamos los temas que el estudiante más falló
   const temasFallados = Object.keys(erroresPorTema).sort((a, b) => erroresPorTema[b] - erroresPorTema[a]);
   
   const temaCritico1 = temasFallados[0] || 'Razonamiento Cuantitativo General';
   const temaCritico2 = temasFallados[1] || 'Pensamiento Espacial y Métrico';
 
-  // Redacción analítica profunda y robusta (nada pobre, con enfoque profesional TRI)
   const analisisCompetencias = `
     Bajo el modelo de estimación de parámetros TRI (Teoría de Respuesta al Ítem) aplicado en este simulacro global, el patrón de respuestas del aspirante evidencia una sólida comprensión en conceptos aritméticos básicos, pero revela <strong>vulnerabilidades conceptuales críticas en el componente de ${temaCritico1}</strong>. Esta deficiencia genera un impacto directo en la probabilidad de acierto en preguntas de complejidad media y alta del ICFES Saber 11, limitando la consolidación hacia niveles superiores de desempeño analítico.
   `;
