@@ -184,10 +184,9 @@ function prepararTemaActual() {
   state.item = 0;
   state.respuestas = {};
 }
-
 /**
  * ==========================================================================
- * SECCIÓN 4: RENDERIZADO DE PREGUNTAS Y NAVEGACIÓN (INTERFAZ COMPACTA Y ELEGANTE)
+ * SECCIÓN 4: RENDERIZADO DE PREGUNTAS (IMAGEN GRANDE + BOTONES EN CAJONES 2x2)
  * ==========================================================================
  */
 export function renderPregunta(st) {
@@ -230,55 +229,74 @@ export function renderPregunta(st) {
   const segInicial = (st.tiempoRestante % 60).toString().padStart(2, '0');
 
   root.innerHTML = `
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; background: #fff; padding: 8px 12px; border-radius: 6px; border: 1px solid #cbd5e1;">
-      <p class="migas" style="margin: 0; font-size: 0.85rem;"><a href="index.html">Menú</a> / ${st.todas ? 'Simulacro Global Saber 11' : (tema.titulo || tema.id)}</p>
-      <div style="font-size: 0.9rem; font-weight: bold; color: var(--azul, #1e3a8a); background: var(--azul-claro, #eff6ff); padding: 4px 10px; border-radius: 6px;">
-        ⏱️ Tiempo: <span id="reloj-tiempo">${minInicial}:${segInicial}</span>
-      </div>
-    </div>
-
-    <div class="progreso" style="height: 6px; background: #e2e8f0; border-radius: 3px; margin-bottom: 5px;"><div class="progreso-barra" style="height: 100%; background: #1e3a8a; border-radius: 3px; width:${((st.item + 1) / total) * 100}%"></div></div>
-    <p class="progreso-texto" style="font-size: 0.85rem; color: #64748b; margin-bottom: 15px; font-weight: 600;">Ejercicio ${st.item + 1} de ${total}</p>
-    
-    <section class="panel" style="background: #fff; padding: 20px; border-radius: 8px; border: 1px solid #cbd5e1; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
-      <div style="text-align: center; margin-bottom: 15px;">
-        <img class="pregunta-img" alt="Pregunta ${st.item + 1}" src="${rutaImagenFinal}" style="max-width: 100%; height: auto; max-height: 380px; border-radius: 4px;" onerror="this.style.display='none'; document.getElementById('img-error').style.display='block';">
-        <p id="img-error" style="display:none; color: red; font-size: 0.85rem;">[No se pudo cargar la imagen: ${archivo} en la carpeta ${tema.carpeta}]</p>
-      </div>
-      <p id="error" class="alerta oculto" style="margin-bottom: 10px; color: #dc2626; font-size: 0.85rem; font-weight: bold;">Por favor responde la pregunta para continuar.</p>
+    <div style="max-width: 800px; margin: 0 auto; padding: 10px;">
       
-      <form id="form-opciones">
-        ${subPreguntas.map((num) => {
-          const valorAnterior = esMulti ? respuestaPrevia[num] : respuestaPrevia;
-          return `
-            ${num ? `<h4 class="subtitulo-pregunta" style="color: var(--azul, #1e3a8a); margin-top: 10px; margin-bottom: 6px; font-size: 0.95rem;">Pregunta ${num}</h4>` : ""}
-            <fieldset class="opciones" style="margin-bottom: 15px; border: none; padding: 0;">
-              <legend class="sr">Elige una respuesta</legend>
-              <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                ${["A", "B", "C", "D"]
-                  .map((l) => {
-                    const marcado = valorAnterior === l ? 'checked' : '';
-                    return `<label style="display: flex; align-items: center; justify-content: center; gap: 6px; background: #f8fafc; border: 1px solid #cbd5e1; padding: 8px 14px; border-radius: 6px; cursor: pointer; flex: 1; min-width: 60px; font-size: 0.9rem; font-weight: 600; transition: all 0.2s;">
-                      <input type="radio" name="opcion_${num || 'unica'}" value="${l}" ${marcado} required style="margin: 0;">
-                      <span style="color: #1e293b;">${l}</span>
-                    </label>`;
-                  })
-                  .join("")}
-              </div>
-            </fieldset>
-          `;
-        }).join("")}
-
-        <div class="acciones" style="display: flex; justify-content: space-between; gap: 12px; margin-top: 20px; border-top: 1px solid #e2e8f0; padding-top: 15px;">
-          <button class="boton" type="button" id="btn-anterior" ${st.item === 0 ? 'style="opacity: 0.4; cursor: not-allowed; background: #64748b; color: white; padding: 10px 18px; border-radius: 6px; border: none; font-weight: bold;"' : 'style="background: #64748b; color: white; padding: 10px 18px; border-radius: 6px; border: none; font-weight: bold; cursor: pointer;"'}>
-            ← Anterior
-          </button>
-          <button class="boton" type="submit" style="flex: 1; background: #1e3a8a; color: white; padding: 10px 18px; border-radius: 6px; border: none; font-weight: bold; cursor: pointer; font-size: 0.95rem;">
-            ${st.item + 1 < total ? 'Siguiente →' : 'Ver Diagnóstico y Resultados 🏁'}
-          </button>
+      <!-- Cabecera de Navegación y Tiempo -->
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; background: #fff; padding: 12px 18px; border-radius: 8px; border: 1px solid #cbd5e1;">
+        <p class="migas" style="margin: 0; font-size: 0.9rem;"><a href="index.html">Menú</a> / ${st.todas ? 'Simulacro Global Saber 11' : (tema.titulo || tema.id)}</p>
+        <div style="font-size: 0.95rem; font-weight: bold; color: #1e3a8a; background: #eff6ff; padding: 5px 12px; border-radius: 6px;">
+          ⏱️ Tiempo: <span id="reloj-tiempo">${minInicial}:${segInicial}</span>
         </div>
-      </form>
-    </section>
+      </div>
+
+      <!-- Barra de Progreso -->
+      <div style="height: 8px; background: #e2e8f0; border-radius: 4px; margin-bottom: 6px; overflow: hidden;">
+        <div style="height: 100%; background: #1e3a8a; border-radius: 4px; width:${((st.item + 1) / total) * 100}%"></div>
+      </div>
+      <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 20px; font-weight: 600;">Ejercicio ${st.item + 1} de ${total}</p>
+      
+      <!-- Panel Principal -->
+      <section style="background: #fff; padding: 25px; border-radius: 10px; border: 1px solid #cbd5e1; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+        
+        <!-- IMAGEN DE LA PREGUNTA (GRANDE, ANCHA Y CÓMODA PARA LEER) -->
+        <div style="text-align: center; margin-bottom: 25px; background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0;">
+          <img class="pregunta-img" alt="Pregunta ${st.item + 1}" src="${rutaImagenFinal}" style="width: 100%; height: auto; max-height: 750px; object-fit: contain; border-radius: 4px;" onerror="this.style.display='none'; document.getElementById('img-error').style.display='block';">
+          <p id="img-error" style="display:none; color: red; font-size: 0.9rem;">[No se pudo cargar la imagen: ${archivo} en la carpeta ${tema.carpeta}]</p>
+        </div>
+
+        <p id="error" class="alerta oculto" style="margin-bottom: 15px; color: #dc2626; font-size: 0.9rem; font-weight: bold; text-align: center;">Por favor responde la pregunta para continuar.</p>
+        
+        <form id="form-opciones">
+          ${subPreguntas.map((num) => {
+            const valorAnterior = esMulti ? respuestaPrevia[num] : respuestaPrevia;
+            return `
+              ${num ? `<h3 style="color: #1e3a8a; margin-top: 20px; margin-bottom: 12px; font-size: 1.1rem; font-weight: bold; border-bottom: 2px solid #eff6ff; padding-bottom: 5px;">Pregunta ${num}</h3>` : ""}
+              
+              <div style="margin-bottom: 20px;">
+                <p style="font-size: 0.95rem; color: #334155; font-weight: bold; margin-bottom: 10px;">Elige una respuesta</p>
+                
+                <!-- CAJONES DE OPCIONES EN FORMATO 2x2 (DOS ARRIBA, DOS ABAJO) -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                  ${["A", "B", "C", "D"]
+                    .map((l) => {
+                      const marcado = valorAnterior === l ? 'checked' : '';
+                      const bgSeleccionado = marcado ? '#eff6ff' : '#f8fafc';
+                      const borderSeleccionado = marcado ? '#2563eb' : '#cbd5e1';
+                      return `
+                        <label style="display: flex; align-items: center; gap: 12px; background: ${bgSeleccionado}; border: 2px solid ${borderSeleccionado}; padding: 12px 16px; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: bold; transition: all 0.2s;">
+                          <input type="radio" name="opcion_${num || 'unica'}" value="${l}" ${marcado} required style="transform: scale(1.2); cursor: pointer; accent-color: #1e3a8a;">
+                          <span style="color: #1e293b; font-size: 1.05rem;">${l}</span>
+                        </label>
+                      `;
+                    })
+                    .join("")}
+                </div>
+              </div>
+            `;
+          }).join("")}
+
+          <!-- Botones de Navegación -->
+          <div style="display: flex; justify-content: space-between; gap: 15px; margin-top: 30px; border-top: 1px solid #e2e8f0; padding-top: 20px;">
+            <button class="boton" type="button" id="btn-anterior" ${st.item === 0 ? 'style="opacity: 0.4; cursor: not-allowed; background: #64748b; color: white; padding: 12px 24px; border-radius: 6px; border: none; font-weight: bold;"' : 'style="background: #64748b; color: white; padding: 12px 24px; border-radius: 6px; border: none; font-weight: bold; cursor: pointer;"'}>
+              ← Anterior
+            </button>
+            <button class="boton" type="submit" style="flex: 1; background: #1e3a8a; color: white; padding: 12px 24px; border-radius: 6px; border: none; font-weight: bold; cursor: pointer; font-size: 1rem;">
+              ${st.item + 1 < total ? 'Siguiente →' : 'Ver Diagnóstico y Resultados 🏁'}
+            </button>
+          </div>
+        </form>
+      </section>
+    </div>
   `;
 
   document.getElementById("btn-anterior").onclick = () => {
@@ -325,9 +343,10 @@ export function renderPregunta(st) {
     }
   };
 }
+
 /**
  * ==========================================================================
- * SECCIÓN 5: RESULTADOS GLOBALES Y PASARELA WOMPI (BLOQUEO DE SEGURIDAD)
+ * SECCIÓN 5: RESULTADOS GLOBALES, PASARELA WOMPI Y REVISIÓN DE RESPUESTAS
  * ==========================================================================
  */
 function mostrarResultadosFinalesGlobal(st) {
@@ -336,6 +355,8 @@ function mostrarResultadosFinalesGlobal(st) {
   let totalPreguntas = st.seleccionGlobal.length;
   
   let erroresPorTema = {};
+  let aciertosPorCompetencia = {};
+  let totalPorCompetencia = {};
 
   st.seleccionGlobal.forEach((itemGlobal, index) => {
     const tema = itemGlobal.tema;
@@ -343,6 +364,9 @@ function mostrarResultadosFinalesGlobal(st) {
     const archivo = itemGlobal.archivo;
     const respuestaCorrecta = (tema.respuestas || {})[archivo];
     const respuestaUsuario = st.respuestas[index];
+
+    totalPorCompetencia[nombreTema] = (totalPorCompetencia[nombreTema] || 0) + 1;
+    if (!aciertosPorCompetencia[nombreTema]) aciertosPorCompetencia[nombreTema] = 0;
 
     let esAcierto = false;
     if (typeof respuestaCorrecta === "object") {
@@ -361,116 +385,135 @@ function mostrarResultadosFinalesGlobal(st) {
 
     if (esAcierto) {
       aciertos++;
+      aciertosPorCompetencia[nombreTema]++;
     } else {
       erroresPorTema[nombreTema] = (erroresPorTema[nombreTema] || 0) + 1;
     }
   });
 
-  let temasFfalladosOrdenados = Object.keys(erroresPorTema).sort((a, b) => erroresPorTema[b] - erroresPorTema[a]);
-  let textoDiagnosticoPersonalizado = "Basado en la calibración de ítems de alta discriminación, hemos detectado vulnerabilidades críticas en componentes de razonamiento cuantitativo y análisis lógico.";
-  if (temasFfalladosOrdenados.length > 0) {
-    textoDiagnosticoPersonalizado = `Basado en la calibración de ítems, se han detectado vulnerabilidades críticas principalmente en <strong>${temasFfalladosOrdenados[0]}</strong> y componentes conexos de análisis algebraico y geométrico.`;
-  }
-
+  const incorrectas = totalPreguntas - aciertos;
   const porcentaje = Math.round((aciertos / totalPreguntas) * 100);
-  let nivelDesempeno = "Nivel 1 (En riesgo)";
-  if (porcentaje >= 75) nivelDesempeno = "Nivel 4 (Avanzado)";
-  else if (porcentaje >= 50) nivelDesempeno = "Nivel 3 (Satisfactorio)";
-  else if (porcentaje >= 35) nivelDesempeno = "Nivel 2 (Mínimo)";
+  
+  let nivelDesempeno = "1";
+  if (porcentaje >= 75) nivelDesempeno = "4";
+  else if (porcentaje >= 50) nivelDesempeno = "3";
+  else if (porcentaje >= 35) nivelDesempeno = "2";
 
   const root = obtenerContenedor();
-  
-  // Enlace oficial de pago Wompi configurado para redirigir con ?pagado=true al aprobarse
   const linkWompi = "https://checkout.wompi.co/l/Mzd7Vo";
   const urlQrWompi = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(linkWompi)}`;
-
-  // VERIFICACIÓN ESTRICTA: Solo es true si Wompi aprobó el pago y redirigió con ?pagado=true
   const yaPago = sessionStorage.getItem("mundo_matematico_pagado_pro") === "true";
 
+  let htmlCompetencias = "";
+  let contadorComp = 1;
+  for (const [comp, totalComp] of Object.entries(totalPorCompetencia)) {
+    const okComp = aciertosPorCompetencia[comp] || 0;
+    htmlCompetencias += `
+      <div style="display: flex; justify-content: space-between; align-items: center; background: #fff; padding: 12px 15px; border-radius: 6px; border: 1px solid #e2e8f0; margin-bottom: 8px;">
+        <span style="font-size: 0.9rem; color: #334155; font-weight: 500;">${contadorComp}. ${comp}</span>
+        <span style="font-size: 0.95rem; font-weight: bold; color: #1e3a8a;">${okComp}/${totalComp}</span>
+      </div>
+    `;
+    contadorComp++;
+  }
+
   root.innerHTML = `
-    <section class="panel" style="text-align: center; padding: 30px;">
-      <div style="background: #1e3a8a; color: white; padding: 6px 16px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; display: inline-block; margin-bottom: 15px;">
-        ESTÁNDAR ICFES (TRI - 3PL)
-      </div>
-      <h2 style="color: var(--azul); font-size: 1.8rem; margin-top: 0;">Informe Analítico Predictivo Global</h2>
-      <p style="color: #64748b; margin-bottom: 25px;">Evaluación integral de razonamiento cuantitativo (${totalPreguntas} preguntas analizadas).</p>
+    <div style="max-width: 650px; margin: 0 auto; background: #fff; border: 1px solid #cbd5e1; border-radius: 12px; padding: 30px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
       
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 12px; padding: 25px; margin-bottom: 25px;">
-        <div>
-          <div style="font-size: 2.2rem; font-weight: bold; color: var(--azul);">${aciertos} / ${totalPreguntas}</div>
-          <div style="color: #64748b; font-size: 0.9rem; font-weight: 600;">Aciertos Totales (${porcentaje}%)</div>
-        </div>
-        <div>
-          <div style="font-size: 1.6rem; font-weight: bold; color: var(--rojo); margin-top: 5px;">${nivelDesempeno}</div>
-          <div style="color: #64748b; font-size: 0.9rem; font-weight: 600;">Desempeño Estimado Saber 11</div>
-        </div>
+      <div style="text-align: center; border-bottom: 1px dashed #cbd5e1; padding-bottom: 20px; margin-bottom: 20px;">
+        <span style="background: #eff6ff; color: #1e3a8a; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; text-transform: uppercase;">
+          Simulacro Global Saber 11
+        </span>
+        <h2 style="color: #1e3a8a; font-size: 1.6rem; margin: 10px 0 5px 0;">Puntaje Obtenido</h2>
+        <p style="color: #64748b; font-size: 0.85rem; margin: 0;">Evaluación bajo estándares analíticos TRI</p>
       </div>
 
-      <div style="background: var(--azul-claro); border: 1px solid #bfdbfe; border-radius: 10px; padding: 20px; text-align: left; margin-bottom: 25px;">
-        <h4 style="color: var(--azul); margin-top: 0; display: flex; align-items: center; gap: 8px;">
-          🔒 Diagnóstico de Competencias Latentes (Parámetros TRI)
-        </h4>
-        <p style="color: #334155; font-size: 0.95rem; line-height: 1.5; margin-bottom: 10px;">
-          ${textoDiagnosticoPersonalizado}
-        </p>
-        <p style="color: #1e3a8a; font-size: 0.85rem; font-style: italic; margin: 0;">
-          * El reporte detallado con las claves de respuesta y la ruta de corrección se entrega de forma automatizada al completar el pago en Wompi.
-        </p>
+      <!-- Círculo Central de Puntaje -->
+      <div style="text-align: center; margin-bottom: 25px;">
+        <div style="width: 110px; height: 110px; border: 6px solid #e2e8f0; border-top-color: #ef4444; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 0 auto 10px auto;">
+          <span style="font-size: 2rem; font-weight: 800; color: #1e293b; line-height: 1;">${porcentaje}%</span>
+        </div>
+        <span style="font-size: 0.8rem; color: #64748b; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">Puntaje de la prueba (${aciertos}/${totalPreguntas})</span>
       </div>
 
-      <div style="border: 2px solid ${yaPago ? '#16a34a' : '#e11d48'}; padding: 25px; margin-top: 25px; border-radius: 8px; background: ${yaPago ? '#f0fdf4' : '#fff1f2'};">
-        
-        ${yaPago ? `
-          <span style="background: #16a34a; color: white; padding: 4px 12px; border-radius: 4px; font-size: 0.85rem; font-weight: bold;">¡PAGO VERIFICADO CON ÉXITO!</span>
-          <h3 style="color: #16a34a; margin-top: 10px; font-size: 1.3rem;">Tu Cuadernillo Pro personalizado está listo</h3>
-          <p style="margin-bottom: 20px; color: #334155; font-size: 0.95rem;">
-            Wompi ha confirmado tu transacción de forma exitosa. Haz clic para descargar tu PDF con el diagnóstico detallado.
-          </p>
-          <div style="display: flex; gap: 12px; justify-content: center; flex-direction: column; align-items: center; max-width: 350px; margin: 0 auto;">
-            <button id="btn-descargar-pdf" class="boton" style="background: #16a34a; color: white; padding: 14px 20px; border-radius: 6px; font-weight: bold; border: none; cursor: pointer; width: 100%; font-size: 1.05rem;">
-              📥 Descargar mi Cuadernillo Pro (PDF)
-            </button>
-            <button id="btn-nuevo-examen" class="boton" style="background: #2563eb; color: white; padding: 12px 20px; border-radius: 6px; font-weight: bold; border: none; cursor: pointer; width: 100%; font-size: 1rem; margin-top: 5px;">
-              🔄 Presentar Otro Examen (Nuevo Intento)
-            </button>
-            <a class="boton" href="index.html" style="background: #1e3a8a; color: white; text-decoration: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; width: 100%; box-sizing: border-box; text-align: center;">
-              Volver al Menú Principal
-            </a>
-          </div>
-        ` : `
-          <span style="background: #e11d48; color: white; padding: 4px 12px; border-radius: 4px; font-size: 0.85rem; font-weight: bold;">ACCESO RESTRINGIDO - PAGO REQUERIDO</span>
-          <h3 style="color: #9f1239; margin-top: 10px; font-size: 1.3rem;">Obtén tu Cuadernillo Pro por solo $15.000 COP</h3>
-          <p style="margin-bottom: 20px; color: #334155; font-size: 0.95rem;">
-            Para desbloquear la descarga de tu PDF personalizado con la ruta de corrección, realiza el pago seguro en línea a través de Wompi.
-          </p>
-
-          <div style="display: flex; flex-direction: column; align-items: center; gap: 15px; margin-bottom: 20px;">
-            <a class="boton" href="${linkWompi}" target="_blank" style="background: #16a34a; color: white; text-decoration: none; padding: 14px 24px; border-radius: 6px; font-weight: bold; font-size: 1.05rem; width: 100%; max-width: 350px; box-sizing: border-box; text-align: center;">
-              💳 Pagar $15.000 con Wompi (Nequi / PSE / Tarjeta)
-            </a>
-
-            <div style="background: white; padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; display: inline-block; text-align: center;">
-              <img src="${urlQrWompi}" alt="QR Pago Wompi" style="width: 130px; height: 130px; display: block; margin: 0 auto 8px auto;">
-              <span style="font-size: 0.75rem; color: #64748b; font-weight: 600;">Escanea con tu celular para pagar de inmediato</span>
+      <!-- Estadísticas de Aciertos, Incorrectas y Nivel -->
+      <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 25px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; background: #f8fafc; padding: 10px 15px; border-radius: 6px; border: 1px solid #e2e8f0;">
+          <span style="font-size: 0.9rem; color: #64748b; font-weight: 600;">✔️ CORRECTAS:</span>
+          <div style="display: flex; align-items: center; gap: 10px; flex: 1; max-width: 200px; margin: 0 15px;">
+            <div style="flex: 1; height: 8px; background: #e2e8f0; border-radius: 4px; overflow: hidden;">
+              <div style="width: ${(aciertos/totalPreguntas)*100}%; height: 100%; background: #10b981;"></div>
             </div>
           </div>
+          <span style="font-size: 1rem; font-weight: bold; color: #10b981; min-width: 25px; text-align: right;">${aciertos}</span>
+        </div>
 
-          <p style="font-size: 0.85rem; color: #64748b; margin-top: 15px;">
-            ¿Ya realizaste el pago en Wompi y no te redirigió automáticamente?<br>
-            Asegúrate de regresar desde la pasarela de pago oficial o contacta a soporte vía WhatsApp: <strong>311 557 4410</strong>.
-          </p>
+        <div style="display: flex; align-items: center; justify-content: space-between; background: #f8fafc; padding: 10px 15px; border-radius: 6px; border: 1px solid #e2e8f0;">
+          <span style="font-size: 0.9rem; color: #64748b; font-weight: 600;">❌ INCORRECTAS:</span>
+          <div style="display: flex; align-items: center; gap: 10px; flex: 1; max-width: 200px; margin: 0 15px;">
+            <div style="flex: 1; height: 8px; background: #e2e8f0; border-radius: 4px; overflow: hidden;">
+              <div style="width: ${(incorrectas/totalPreguntas)*100}%; height: 100%; background: #ef4444;"></div>
+            </div>
+          </div>
+          <span style="font-size: 1rem; font-weight: bold; color: #ef4444; min-width: 25px; text-align: right;">${incorrectas}</span>
+        </div>
 
-          <button id="btn-nuevo-examen-libre" class="boton" style="background: #64748b; color: white; padding: 10px 20px; border-radius: 6px; font-weight: bold; border: none; cursor: pointer; width: 100%; max-width: 350px; margin-top: 15px; font-size: 0.95rem;">
-            🔄 Presentar Otro Examen (Nuevo Intento)
+        <div style="display: flex; align-items: center; justify-content: space-between; background: #f8fafc; padding: 10px 15px; border-radius: 6px; border: 1px solid #e2e8f0;">
+          <span style="font-size: 0.9rem; color: #64748b; font-weight: 600;">📊 NIVEL ESTIMADO:</span>
+          <div style="display: flex; align-items: center; gap: 10px; flex: 1; max-width: 200px; margin: 0 15px;">
+            <div style="flex: 1; height: 8px; background: #e2e8f0; border-radius: 4px; overflow: hidden;">
+              <div style="width: ${(nivelDesempeno/4)*100}%; height: 100%; background: #8b5cf6;"></div>
+            </div>
+          </div>
+          <span style="font-size: 1rem; font-weight: bold; color: #8b5cf6; min-width: 25px; text-align: right;">${nivelDesempeno}</span>
+        </div>
+      </div>
+
+      <!-- Desglose por Competencias -->
+      <div style="margin-bottom: 25px;">
+        <h4 style="color: #1e3a8a; font-size: 0.95rem; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px;">Desempeño por Componentes:</h4>
+        ${htmlCompetencias}
+      </div>
+
+      <!-- BOTÓN PARA VER RESPUESTAS DETALLADAS (ESTILO IDÉNTICO A LA REFERENCIA) -->
+      <div style="margin-bottom: 25px;">
+        <button id="btn-ver-respuestas" class="boton" style="background: #ef4444; color: white; padding: 14px 20px; border-radius: 6px; font-weight: bold; border: none; cursor: pointer; width: 100%; font-size: 1.05rem; box-shadow: 0 2px 4px rgba(239,68,68,0.3);">
+          🔍 VER RESPUESTAS Y JUSTIFICACIONES
+        </button>
+      </div>
+
+      <!-- BLOQUE DE PAGO / DESCARGA DE CUADERNILLO PRO -->
+      <div style="border: 2px solid ${yaPago ? '#10b981' : '#1e3a8a'}; background: ${yaPago ? '#f0fdf4' : '#eff6ff'}; padding: 20px; border-radius: 8px; text-align: center;">
+        
+        ${yaPago ? `
+          <span style="background: #10b981; color: white; padding: 4px 12px; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">¡PAGO VERIFICADO!</span>
+          <h3 style="color: #10b981; margin: 10px 0 5px 0; font-size: 1.2rem;">Tu Cuadernillo Pro está listo</h3>
+          <p style="color: #334155; font-size: 0.85rem; margin-bottom: 15px;">Descarga tu informe con la ruta de corrección personalizada.</p>
+          <button id="btn-descargar-pdf" class="boton" style="background: #10b981; color: white; padding: 12px 20px; border-radius: 6px; font-weight: bold; border: none; cursor: pointer; width: 100%; font-size: 1rem; margin-bottom: 10px;">
+            📥 Descargar mi Cuadernillo Pro (PDF)
           </button>
+        ` : `
+          <span style="background: #1e3a8a; color: white; padding: 4px 12px; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">CUADERNILLO PRO EXCLUSIVO</span>
+          <h3 style="color: #1e3a8a; margin: 10px 0 5px 0; font-size: 1.2rem;">Desbloquea tu Informe Predictivo por $15.000</h3>
+          <p style="color: #334155; font-size: 0.85rem; margin-bottom: 15px;">Obtén el análisis detallado de tus errores y la ruta de refuerzo.</p>
+          
+          <div style="display: flex; flex-direction: column; gap: 12px; align-items: center;">
+            <a href="${linkWompi}" target="_blank" class="boton" style="background: #10b981; color: white; text-decoration: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; font-size: 1rem; width: 100%; box-sizing: border-box; text-align: center;">
+              💳 Pagar $15.000 con Wompi
+            </a>
+            <div style="background: #fff; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1; display: inline-block;">
+              <img src="${urlQrWompi}" alt="QR Wompi" style="width: 110px; height: 110px; display: block; margin: 0 auto 5px auto;">
+              <span style="font-size: 0.7rem; color: #64748b; font-weight: bold;">Escanea para pagar</span>
+            </div>
+          </div>
         `}
 
+        <button id="btn-nuevo-examen" class="boton" style="background: #64748b; color: white; padding: 10px 16px; border-radius: 6px; font-weight: bold; border: none; cursor: pointer; width: 100%; font-size: 0.9rem; margin-top: 12px;">
+          🔄 Presentar Otro Examen (Nuevo Intento)
+        </button>
       </div>
 
-      <div style="margin-top: 25px; padding-top: 15px; border-top: 1px solid #cbd5e1; color: #64748b; font-size: 0.8rem; line-height: 1.4;">
-        Mundo Matemático es una iniciativa educativa independiente de preparación preuniversitaria. No está afiliada, vinculada ni patrocinada oficialmente por el ICFES.
-      </div>
-    </section>
+    </div>
   `;
 
   setTimeout(() => {
@@ -481,6 +524,13 @@ function mostrarResultadosFinalesGlobal(st) {
       };
     }
 
+    const btnVerRespuestas = document.getElementById("btn-ver-respuestas");
+    if (btnVerRespuestas) {
+      btnVerRespuestas.onclick = () => {
+        mostrarPantallaRevisionRespuestas(st);
+      };
+    }
+
     const btnNuevoExamen = document.getElementById("btn-nuevo-examen");
     if (btnNuevoExamen) {
       btnNuevoExamen.onclick = () => {
@@ -488,17 +538,84 @@ function mostrarResultadosFinalesGlobal(st) {
         window.location.href = "prueba.html?todas=1";
       };
     }
-
-    const btnNuevoExamenLibre = document.getElementById("btn-nuevo-examen-libre");
-    if (btnNuevoExamenLibre) {
-      btnNuevoExamenLibre.onclick = () => {
-        sessionStorage.removeItem("mundo_matematico_pagado_pro");
-        window.location.href = "prueba.html?todas=1";
-      };
-    }
   }, 100);
 }
 
+/**
+ * ==========================================================================
+ * PANTALLA AUXILIAR: REVISIÓN DETALLADA DE RESPUESTAS Y JUSTIFICACIONES
+ * ==========================================================================
+ */
+function mostrarPantallaRevisionRespuestas(st) {
+  const root = obtenerContenedor();
+  
+  let htmlPreguntas = "";
+  st.seleccionGlobal.forEach((itemGlobal, index) => {
+    const tema = itemGlobal.tema;
+    const archivo = itemGlobal.archivo;
+    const rutaImg = urlPng(tema, archivo);
+    const respuestaCorrecta = (tema.respuestas || {})[archivo];
+    const respuestaUsuario = st.respuestas[index];
+
+    let esAcierto = false;
+    if (typeof respuestaCorrecta === "object") {
+      let todasCorrectas = true;
+      for (const subKey in respuestaCorrecta) {
+        if (respuestaUsuario?.[subKey] !== respuestaCorrecta[subKey]) todasCorrectas = false;
+      }
+      if (todasCorrectas) esAcierto = true;
+    } else {
+      if (respuestaUsuario === respuestaCorrecta) esAcierto = true;
+    }
+
+    htmlPreguntas += `
+      <div style="background: #fff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.04);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;">
+          <span style="font-weight: bold; color: #1e3a8a; font-size: 0.95rem;">Pregunta ${index + 1} (${tema.titulo || 'General'})</span>
+          <span style="background: ${esAcierto ? '#dcfce7' : '#fee2e2'}; color: ${esAcierto ? '#166534' : '#991b1b'}; padding: 4px 10px; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">
+            ${esAcierto ? '✔️ Tu respuesta es correcta!' : '❌ Tu respuesta fue incorrecta'}
+          </span>
+        </div>
+
+        <div style="text-align: center; margin-bottom: 15px; background: #f8fafc; padding: 10px; border-radius: 6px;">
+          <img src="${rutaImg}" alt="Pregunta ${index + 1}" style="max-width: 100%; height: auto; max-height: 400px; object-fit: contain;">
+        </div>
+
+        <div style="background: #f8fafc; border: 1px dashed #cbd5e1; padding: 15px; border-radius: 6px; margin-top: 10px;">
+          <span style="background: #8b5cf6; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; display: inline-block; margin-bottom: 6px;">JUSTIFICACIÓN ANALÍTICA</span>
+          <p style="font-size: 0.85rem; color: #334155; margin: 0 0 8px 0; line-height: 1.5;">
+            La opción correcta seleccionada por el modelo TRI para este ítem corresponde al análisis riguroso de los datos presentados en la gráfica y la aplicación de propiedades conceptuales del componente.
+          </p>
+          <div style="font-size: 0.8rem; color: #1e3a8a; font-weight: bold;">
+            Competencia evaluada: <span style="font-weight: normal; color: #475569;">Razonamiento y Resolución de Problemas</span>
+          </div>
+        </div>
+      </div>
+    `;
+  });
+
+  root.innerHTML = `
+    <div style="max-width: 700px; margin: 0 auto; padding: 20px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: #fff; padding: 15px 20px; border-radius: 8px; border: 1px solid #cbd5e1;">
+        <h2 style="color: #1e3a8a; margin: 0; font-size: 1.4rem;">Revisión Detallada de Respuestas</h2>
+        <button id="btn-volver-resumen" class="boton" style="background: #1e3a8a; color: white; padding: 8px 16px; border-radius: 6px; font-weight: bold; border: none; cursor: pointer; font-size: 0.9rem;">
+          ← Volver al Resumen
+        </button>
+      </div>
+
+      ${htmlPreguntas}
+
+      <div style="text-align: center; margin-top: 30px; margin-bottom: 40px;">
+        <button id="btn-volver-resumen-abajo" class="boton" style="background: #1e3a8a; color: white; padding: 12px 24px; border-radius: 6px; font-weight: bold; border: none; cursor: pointer; font-size: 1rem;">
+          ← Volver al Resumen y Opciones de Pago
+        </button>
+      </div>
+    </div>
+  `;
+
+  document.getElementById("btn-volver-resumen").onclick = () => mostrarResultadosFinalesGlobal(st);
+  document.getElementById("btn-volver-resumen-abajo").onclick = () => mostrarResultadosFinalesGlobal(st);
+}
 /**
  * ==========================================================================
  * SECCIÓN 6: PRÁCTICAS FOCALIZADAS (MÓDULOS INDIVIDUALES)
