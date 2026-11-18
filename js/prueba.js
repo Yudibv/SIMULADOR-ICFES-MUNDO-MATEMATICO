@@ -182,9 +182,10 @@ function prepararTemaActual() {
   state.item = 0;
   state.respuestas = {};
 }
+
 /**
  * ==========================================================================
- * SECCIÓN 4: RENDERIZADO DE PREGUNTAS (IMAGEN PROTAGONISTA + CAJONES COMPACTOS)
+ * SECCIÓN 4: RENDERIZADO DE PREGUNTAS (OPTIMIZADO PARA MÓVILES - 2x2 COMPACTO)
  * ==========================================================================
  */
 export function renderPregunta(st) {
@@ -227,52 +228,52 @@ export function renderPregunta(st) {
   const segInicial = (st.tiempoRestante % 60).toString().padStart(2, '0');
 
   root.innerHTML = `
-    <div style="max-width: 850px; margin: 0 auto; padding: 10px;">
+    <div style="max-width: 850px; margin: 0 auto; padding: 5px;">
       
       <!-- Cabecera de Navegación y Tiempo -->
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; background: #fff; padding: 10px 15px; border-radius: 8px; border: 1px solid #cbd5e1;">
-        <p class="migas" style="margin: 0; font-size: 0.85rem;"><a href="index.html">Menú</a> / ${st.todas ? 'Simulacro Global Saber 11' : (tema.titulo || tema.id)}</p>
-        <div style="font-size: 0.9rem; font-weight: bold; color: #1e3a8a; background: #eff6ff; padding: 4px 10px; border-radius: 6px;">
-          ⏱️ Tiempo: <span id="reloj-tiempo">${minInicial}:${segInicial}</span>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; background: #fff; padding: 8px 12px; border-radius: 6px; border: 1px solid #cbd5e1;">
+        <p class="migas" style="margin: 0; font-size: 0.8rem;"><a href="index.html">Menú</a> / ${st.todas ? 'Simulacro Global' : (tema.titulo || tema.id)}</p>
+        <div style="font-size: 0.85rem; font-weight: bold; color: #1e3a8a; background: #eff6ff; padding: 3px 8px; border-radius: 4px;">
+          ⏱️ <span id="reloj-tiempo">${minInicial}:${segInicial}</span>
         </div>
       </div>
 
       <!-- Barra de Progreso -->
-      <div style="height: 6px; background: #e2e8f0; border-radius: 3px; margin-bottom: 5px; overflow: hidden;">
+      <div style="height: 5px; background: #e2e8f0; border-radius: 3px; margin-bottom: 4px; overflow: hidden;">
         <div style="height: 100%; background: #1e3a8a; border-radius: 3px; width:${((st.item + 1) / total) * 100}%"></div>
       </div>
-      <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 15px; font-weight: 600;">Ejercicio ${st.item + 1} de ${total}</p>
+      <p style="font-size: 0.8rem; color: #64748b; margin-bottom: 12px; font-weight: 600;">Ejercicio ${st.item + 1} de ${total}</p>
       
       <!-- Panel Principal -->
-      <section style="background: #fff; padding: 20px; border-radius: 10px; border: 1px solid #cbd5e1; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+      <section style="background: #fff; padding: 15px; border-radius: 8px; border: 1px solid #cbd5e1; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
         
-        <!-- IMAGEN DE LA PREGUNTA (MUCHO MÁS GRANDE Y CON BUEN ESPACIO) -->
-        <div style="text-align: center; margin-bottom: 20px;">
-          <img class="pregunta-img" alt="Pregunta ${st.item + 1}" src="${rutaImagenFinal}" style="width: 100%; height: auto; max-height: none; display: block; margin: 0 auto; border-radius: 6px;" onerror="this.style.display='none'; document.getElementById('img-error').style.display='block';">
-          <p id="img-error" style="display:none; color: red; font-size: 0.85rem;">[No se pudo cargar la imagen: ${archivo} en la carpeta ${tema.carpeta}]</p>
+        <!-- IMAGEN DE LA PREGUNTA (PROTAGONISTA ABSOLUTA Y GRANDE) -->
+        <div style="text-align: center; margin-bottom: 15px;">
+          <img class="pregunta-img" alt="Pregunta ${st.item + 1}" src="${rutaImagenFinal}" style="width: 100%; height: auto; max-height: none; display: block; margin: 0 auto; border-radius: 4px;" onerror="this.style.display='none'; document.getElementById('img-error').style.display='block';">
+          <p id="img-error" style="display:none; color: red; font-size: 0.8rem;">[No se pudo cargar la imagen: ${archivo}]</p>
         </div>
 
-        <p id="error" class="alerta oculto" style="margin-bottom: 12px; color: #dc2626; font-size: 0.85rem; font-weight: bold; text-align: center;">Por favor responde la pregunta para continuar.</p>
+        <p id="error" class="alerta oculto" style="margin-bottom: 10px; color: #dc2626; font-size: 0.8rem; font-weight: bold; text-align: center;">Por favor responde la pregunta para continuar.</p>
         
         <form id="form-opciones">
           ${subPreguntas.map((num) => {
             const valorAnterior = esMulti ? respuestaPrevia[num] : respuestaPrevia;
             return `
-              ${num ? `<h3 style="color: #1e3a8a; margin-top: 15px; margin-bottom: 8px; font-size: 1rem; font-weight: bold; border-bottom: 2px solid #eff6ff; padding-bottom: 4px;">Pregunta ${num}</h3>` : ""}
+              ${num ? `<h3 style="color: #1e3a8a; margin-top: 10px; margin-bottom: 6px; font-size: 0.95rem; font-weight: bold; border-bottom: 1px solid #eff6ff; padding-bottom: 3px;">Pregunta ${num}</h3>` : ""}
               
-              <div style="margin-bottom: 15px;">
-                <p style="font-size: 0.85rem; color: #64748b; font-weight: bold; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Elige una respuesta:</p>
+              <div style="margin-bottom: 12px;">
+                <p style="font-size: 0.8rem; color: #64748b; font-weight: bold; margin-bottom: 4px; text-transform: uppercase;">Elige una respuesta:</p>
                 
-                <!-- CAJONES DE OPCIONES 2x2 MÁS COMPACTOS Y ELEGANTES -->
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <!-- CAJONES DE OPCIONES 2x2 ULTRA COMPACTOS PARA CELULAR -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
                   ${["A", "B", "C", "D"]
                     .map((l) => {
                       const marcado = valorAnterior === l ? 'checked' : '';
                       const bgSeleccionado = marcado ? '#eff6ff' : '#f8fafc';
                       const borderSeleccionado = marcado ? '#2563eb' : '#cbd5e1';
                       return `
-                        <label style="display: flex; align-items: center; gap: 10px; background: ${bgSeleccionado}; border: 1.5px solid ${borderSeleccionado}; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 0.95rem; font-weight: bold; transition: all 0.2s;">
-                          <input type="radio" name="opcion_${num || 'unica'}" value="${l}" ${marcado} required style="transform: scale(1.1); cursor: pointer; accent-color: #1e3a8a; margin: 0;">
+                        <label style="display: flex; align-items: center; justify-content: center; gap: 8px; background: ${bgSeleccionado}; border: 1.5px solid ${borderSeleccionado}; padding: 8px 10px; border-radius: 6px; cursor: pointer; font-size: 0.9rem; font-weight: bold; transition: all 0.1s;">
+                          <input type="radio" name="opcion_${num || 'unica'}" value="${l}" ${marcado} required style="cursor: pointer; accent-color: #1e3a8a; margin: 0;">
                           <span style="color: #1e293b; font-size: 0.95rem;">${l}</span>
                         </label>
                       `;
@@ -284,12 +285,12 @@ export function renderPregunta(st) {
           }).join("")}
 
           <!-- Botones de Navegación -->
-          <div style="display: flex; justify-content: space-between; gap: 12px; margin-top: 20px; border-top: 1px solid #e2e8f0; padding-top: 15px;">
-            <button class="boton" type="button" id="btn-anterior" ${st.item === 0 ? 'style="opacity: 0.4; cursor: not-allowed; background: #64748b; color: white; padding: 10px 18px; border-radius: 6px; border: none; font-weight: bold; font-size: 0.9rem;"' : 'style="background: #64748b; color: white; padding: 10px 18px; border-radius: 6px; border: none; font-weight: bold; cursor: pointer; font-size: 0.9rem;"'}>
+          <div style="display: flex; justify-content: space-between; gap: 10px; margin-top: 15px; border-top: 1px solid #e2e8f0; padding-top: 12px;">
+            <button class="boton" type="button" id="btn-anterior" ${st.item === 0 ? 'style="opacity: 0.4; cursor: not-allowed; background: #64748b; color: white; padding: 8px 14px; border-radius: 6px; border: none; font-weight: bold; font-size: 0.85rem;"' : 'style="background: #64748b; color: white; padding: 8px 14px; border-radius: 6px; border: none; font-weight: bold; cursor: pointer; font-size: 0.85rem;"'}>
               ← Anterior
             </button>
-            <button class="boton" type="submit" style="flex: 1; background: #1e3a8a; color: white; padding: 10px 18px; border-radius: 6px; border: none; font-weight: bold; cursor: pointer; font-size: 0.95rem;">
-              ${st.item + 1 < total ? 'Siguiente →' : 'Ver Diagnóstico y Resultados 🏁'}
+            <button class="boton" type="submit" style="flex: 1; background: #1e3a8a; color: white; padding: 8px 14px; border-radius: 6px; border: none; font-weight: bold; cursor: pointer; font-size: 0.9rem;">
+              ${st.item + 1 < total ? 'Siguiente →' : 'Ver Resultados 🏁'}
             </button>
           </div>
         </form>
@@ -341,6 +342,10 @@ export function renderPregunta(st) {
     }
   };
 }
+
+
+
+
 
 /**
  * ==========================================================================
