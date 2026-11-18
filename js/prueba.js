@@ -42,12 +42,10 @@ function obtenerContenedor() {
 async function init() {
   const params = new URLSearchParams(window.location.search);
   
-  // VALIDACIÓN SEGURA DE WOMPI: Si Wompi redirige de vuelta con éxito tras pagar
   if (params.get("pagado") === "true") {
     sessionStorage.setItem("mundo_matematico_pagado_pro", "true");
     window.history.replaceState({}, document.title, window.location.pathname + "?todas=1");
   } else {
-    // Si entra por primera vez al simulacro, nos aseguramos de que NO esté pagado
     if (params.get("todas") === "1" && !window.location.search.includes("pagado=true")) {
       sessionStorage.removeItem("mundo_matematico_pagado_pro");
     }
@@ -184,92 +182,7 @@ function prepararTemaActual() {
   state.item = 0;
   state.respuestas = {};
 }
-reloj-tiempo">${minInicial}:${segInicial}</span>
-        </div>
-      </div>
 
-      <!-- Barra de Progreso -->
-      <div style="height: 8px; background: #e2e8f0; border-radius: 4px; margin-bottom: 6px; overflow: hidden;">
-        <div style="height: 100%; background: #1e3a8a; border-radius: 4px; width:${((st.item + 1) / total) * 100}%"></div>
-      </div>
-      <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 20px; font-weight: 600;">Ejercicio ${st.item + 1} de ${total}</p>
-      
-      <!-- Panel Principal -->
-      <section style="background: #fff; padding: 25px; border-radius: 10px; border: 1px solid #cbd5e1; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
-        
-        <!-- IMAGEN DE LA PREGUNTA (GRANDE, ANCHA Y CÓMODA PARA LEER) -->
-        <div style="text-align: center; margin-bottom: 25px; background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0;">
-          <img class="pregunta-img" alt="Pregunta ${st.item + 1}" src="${rutaImagenFinal}" style="width: 100%; height: auto; max-height: 750px; object-fit: contain; border-radius: 4px;" onerror="this.style.display='none'; document.getElementById('img-error').style.display='block';">
-          <p id="img-error" style="display:none; color: red; font-size: 0.9rem;">[No se pudo cargar la imagen: ${archivo} en la carpeta ${tema.carpeta}]</p>
-        </div>
-
-        <p id="error" class="alerta oculto" style="margin-bottom: 15px; color: #dc2626; font-size: 0.9rem; font-weight: bold; text-align: center;">Por favor responde la pregunta para continuar.</p>
-        
-        <form id="form-opciones">
-          ${subPreguntas.map((num) => {
-            const valorAnterior = esMulti ? respuestaPrevia[num] : respuestaPrevia;
-            return `
-              ${num ? `<h3 style="color: #1e3a8a; margin-top: 20px; margin-bottom: 12px; font-size: 1.1rem; font-weight: bold; border-bottom: 2px solid #eff6ff; padding-bottom: 5px;">Pregunta ${num}</h3>` : ""}
-              
-              <div style="margin-bottom: 20px;">
-                <p style="font-size: 0.95rem; color: #334155; font-weight: bold; margin-bottom: 10px;">Elige una respuesta</p>
-                
-                <!-- CAJONES DE OPCIONES EN FORMATO 2x2 (DOS ARRIBA, DOS ABAJO) -->
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-                  ${["A", "B", "C", "D"]
-                    .map((l) => {
-                      const marcado = valorAnterior === l ? 'checked' : '';
-                      const bgSeleccionado = marcado ? '#eff6ff' : '#f8fafc';
-                      const borderSeleccionado = marcado ? '#2563eb' : '#cbd5e1';
-                      return `
-                        <label style="display: flex; align-items: center; gap: 12px; background: ${bgSeleccionado}; border: 2px solid ${borderSeleccionado}; padding: 12px 16px; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: bold; transition: all 0.2s;">
-                          <input type="radio" name="opcion_${num || 'unica'}" value="${l}" ${marcado} required style="transform: scale(1.2); cursor: pointer; accent-color: #1e3a8a;">
-                          <span style="color: #1e293b; font-size: 1.05rem;">${l}</span>
-                        </label>
-                      `;
-                    })
-                    .join("")}
-                </div>
-              </div>
-            `;
-          }).join("")}
-
-          <!-- Botones de Navegación -->
-          <div style="display: flex; justify-content: space-between; gap: 15px; margin-top: 30px; border-top: 1px solid #e2e8f0; padding-top: 20px;">
-            <button class="boton" type="button" id="btn-anterior" ${st.item === 0 ? 'style="opacity: 0.4; cursor: not-allowed; background: #64748b; color: white; padding: 12px 24px; border-radius: 6px; border: none; font-weight: bold;"' : 'style="background: #64748b; color: white; padding: 12px 24px; border-radius: 6px; border: none; font-weight: bold; cursor: pointer;"'}>
-              ← Anterior
-            </button>
-            <button class="boton" type="submit" style="flex: 1; background: #1e3a8a; color: white; padding: 12px 24px; border-radius: 6px; border: none; font-weight: bold; cursor: pointer; font-size: 1rem;">
-              ${st.item + 1 < total ? 'Siguiente →' : 'Ver Diagnóstico y Resultados 🏁'}
-            </button>
-          </div>
-        </form>
-      </section>
-    </div>
-  `;
-
-  document.getElementById("btn-anterior").onclick = () => {
-    if (st.item > 0) {
-      st.item -= 1;
-      renderPregunta(st);
-    }
-  };
-
-  document.getElementById("form-opciones").onsubmit = (ev) => {
-    ev.preventDefault();
-    const formData = new FormData(ev.target);
-    
-    if (esMulti) {
-      const respuestasObj = {};
-      for (const num of subPreguntas) {
-        const marcada = formData.get(`opcion_${num}`);
-        if (!marcada) {
-          document.getElementById("error").classList.remove("oculto");
-          return;
-        }
-        respuestasObj[num] = marcada;
-      }
-      
 /**
  * ==========================================================================
  * SECCIÓN 4: RENDERIZADO DE PREGUNTAS (IMAGEN GRANDE A FULL ANCHO + CAJONES 2x2)
@@ -334,9 +247,9 @@ export function renderPregunta(st) {
       <!-- Panel Principal -->
       <section style="background: #fff; padding: 25px; border-radius: 10px; border: 1px solid #cbd5e1; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
         
-        <!-- IMAGEN DE LA PREGUNTA (GRANDE A FULL ANCHO, SIN BORDES MOLESTOS) -->
+        <!-- IMAGEN DE LA PREGUNTA (GRANDE A FULL ANCHO, NÍTIDA) -->
         <div style="text-align: center; margin-bottom: 25px;">
-          <img class="pregunta-img" alt="Pregunta ${st.item + 1}" src="${rutaImagenFinal}" style="width: 100%; height: auto; max-height: none; display: block; margin: 0 auto; border-radius: 6px;" onerror="this.style.display='none'; document.getElementById('img-error').style.display='block';">
+          <img class="pregunta-img" alt="Pregunta ${st.item + 1}" src="${rutaImagenFinal}" style="width: 100%; height: auto; display: block; margin: 0 auto; border-radius: 6px;" onerror="this.style.display='none'; document.getElementById('img-error').style.display='block';">
           <p id="img-error" style="display:none; color: red; font-size: 0.9rem;">[No se pudo cargar la imagen: ${archivo} en la carpeta ${tema.carpeta}]</p>
         </div>
 
@@ -428,7 +341,7 @@ export function renderPregunta(st) {
       }
     }
   };
-                    
+}
 
 /**
  * ==========================================================================
@@ -561,7 +474,7 @@ function mostrarResultadosFinalesGlobal(st) {
         ${htmlCompetencias}
       </div>
 
-      <!-- BOTÓN PARA VER RESPUESTAS DETALLADAS (ESTILO IDÉNTICO A LA REFERENCIA) -->
+      <!-- BOTÓN PARA VER RESPUESTAS DETALLADAS -->
       <div style="margin-bottom: 25px;">
         <button id="btn-ver-respuestas" class="boton" style="background: #ef4444; color: white; padding: 14px 20px; border-radius: 6px; font-weight: bold; border: none; cursor: pointer; width: 100%; font-size: 1.05rem; box-shadow: 0 2px 4px rgba(239,68,68,0.3);">
           🔍 VER RESPUESTAS Y JUSTIFICACIONES
@@ -664,7 +577,7 @@ function mostrarPantallaRevisionRespuestas(st) {
         </div>
 
         <div style="text-align: center; margin-bottom: 15px; background: #f8fafc; padding: 10px; border-radius: 6px;">
-          <img src="${rutaImg}" alt="Pregunta ${index + 1}" style="max-width: 100%; height: auto; max-height: 400px; object-fit: contain;">
+          <img src="${rutaImg}" alt="Pregunta ${index + 1}" style="max-width: 100%; height: auto; object-fit: contain;">
         </div>
 
         <div style="background: #f8fafc; border: 1px dashed #cbd5e1; padding: 15px; border-radius: 6px; margin-top: 10px;">
@@ -701,103 +614,6 @@ function mostrarPantallaRevisionRespuestas(st) {
 
   document.getElementById("btn-volver-resumen").onclick = () => mostrarResultadosFinalesGlobal(st);
   document.getElementById("btn-volver-resumen-abajo").onclick = () => mostrarResultadosFinalesGlobal(st);
-}
-/**
- * ==========================================================================
- * SECCIÓN 6: PRÁCTICAS FOCALIZADAS (MÓDULOS INDIVIDUALES)
- * ==========================================================================
- */
-function mostrarResultadosFinales(st, tema) {
-  if (st.intervaloTimer) clearInterval(st.intervaloTimer);
-  let aciertos = 0;
-  let totalPreguntas = st.seleccion.length;
-
-  st.seleccion.forEach((archivo, index) => {
-    const respuestaCorrecta = (tema.respuestas || {})[archivo];
-    const respuestaUsuario = st.respuestas[index];
-
-    if (typeof respuestaCorrecta === "object") {
-      let todasCorrectas = true;
-      for (const subKey in respuestaCorrecta) {
-        if (respuestaUsuario?.[subKey] !== respuestaCorrecta[subKey]) {
-          todasCorrectas = false;
-        }
-      }
-      if (todasCorrectas) aciertos++;
-    } else {
-      if (respuestaUsuario === respuestaCorrecta) {
-        aciertos++;
-      }
-    }
-  });
-
-  const porcentaje = Math.round((aciertos / totalPreguntas) * 100);
-  const root = obtenerContenedor();
-
-  let mensajeDesempeno = "";
-  let alertaColor = "var(--rojo)";
-  let fondoCaja = "#fff5f5";
-
-  if (porcentaje >= 80) {
-    alertaColor = "#16a34a";
-    fondoCaja = "#f0fdf4";
-    mensajeDesempeno = `¡Excelente nivel en <strong>${tema.titulo}</strong>! Tienes bases muy sólidas. Sigue manteniendo este gran ritmo de estudio para asegurar puntaje sobresaliente en el ICFES.`;
-  } else if (porcentaje >= 50) {
-    alertaColor = "#d97706";
-    fondoCaja = "#fffbeb";
-    mensajeDesempeno = `Tienes bases regulares en <strong>${tema.titulo}</strong>, pero hay vacíos conceptuales en preguntas clave que el ICFES suele evaluar con trampa. ¡Un repaso a tiempo marca la diferencia!`;
-  } else {
-    alertaColor = "var(--rojo)";
-    fondoCaja = "#fff5f5";
-    mensajeDesempeno = `Identificamos oportunidades de mejora críticas en <strong>${tema.titulo}</strong>. Te sugerimos reforzar urgentemente este módulo con asesoría especializada antes de la prueba real.`;
-  }
-
-  const linkSimulacroGlobal = "prueba.html?todas=1";
-  const numeroWhatsApp = "573115574410"; 
-  const mensajeWp = encodeURIComponent(`Hola, acabo de hacer la práctica focalizada de ${tema.titulo} en Mundo Matemático y saqué ${aciertos}/${totalPreguntas}. Me gustaría recibir más información sobre tutorías.`);
-
-  root.innerHTML = `
-    <section class="panel" style="text-align: center; padding: 30px;">
-      <h2 style="color: var(--azul);">Práctica Focalizada: ${tema.titulo}</h2>
-      <p class="lead" style="margin: 0 auto 20px auto;">Reporte de resultados del módulo de entrenamiento.</p>
-      
-      <div class="puntaje" style="margin: 20px 0;">
-        <span class="num">${aciertos} / ${totalPreguntas}</span>
-        <p style="margin: 5px 0; font-weight: 600; color: #555;">Aciertos logrados (${porcentaje}%)</p>
-      </div>
-
-      <div style="background: ${fondoCaja}; border: 1px solid ${alertaColor}; padding: 20px; margin: 20px 0; border-radius: 6px; text-align: left;">
-        <h3 style="color: ${alertaColor}; margin-top: 0;">Análisis personalizado:</h3>
-        <p style="margin: 0; line-height: 1.6; color: #334155;">${mensajeDesempeno}</p>
-      </div>
-
-      <div style="border: 2px solid var(--azul); padding: 25px; margin-top: 25px; border-radius: 8px; background: #eff6ff;">
-        <span style="background: var(--azul); color: white; padding: 4px 12px; border-radius: 4px; font-size: 0.85rem; font-weight: bold;">ASESORÍA Y PREPARACIÓN MUNDO MATEMÁTICO</span>
-        <h3 style="color: var(--azul); margin-top: 10px; font-size: 1.3rem;">¿Quieres dominar este tema y subir tu puntaje ICFES?</h3>
-        <p style="margin-bottom: 20px; color: #334155; font-size: 0.95rem;">
-          Fortalece tu talento con nuestras clases personalizadas, simulacros globales y material exclusivo de preuniversitario.
-        </p>
-        
-        <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; flex-direction: column; align-items: center; max-width: 400px; margin: 0 auto;">
-          <a class="boton" href="https://wa.me/${numeroWhatsApp}?text=${mensajeWp}" target="_blank" style="background: #16a34a; color: white; text-decoration: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; font-size: 1rem; width: 100%; box-sizing: border-box; text-align: center;">
-            💬 Pedir Tutoría o Refuerzo por WhatsApp
-          </a>
-
-          <a class="boton" href="${linkSimulacroGlobal}" style="background: var(--azul); color: white; text-decoration: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; font-size: 1rem; width: 100%; box-sizing: border-box; text-align: center;">
-            🚀 Presentar Simulacro Global Completo (40 Preguntas)
-          </a>
-
-          <a class="boton" href="index.html" style="background: #64748b; color: white; text-decoration: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; font-size: 1rem; width: 100%; box-sizing: border-box; text-align: center;">
-            🏠 Volver al Menú Principal / Sitio Web
-          </a>
-        </div>
-      </div>
-
-      <div style="margin-top: 25px; padding-top: 15px; border-top: 1px solid #cbd5e1; color: #64748b; font-size: 0.8rem; line-height: 1.4;">
-        Mundo Matemático es una iniciativa educativa independiente de preparación preuniversitaria. No está afiliada, vinculada ni patrocinada oficialmente por el ICFES.
-      </div>
-    </section>
-  `;
 }
 
 init();
