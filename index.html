@@ -8,103 +8,92 @@
 </head>
 <body>
 
+  <!-- CABECERA SUPERIOR -->
   <header class="header-principal">
     <div class="logo-contenedor">
-      <img
-        src="img/logo.png"
-        alt="Logo Mundo Matemático"
-        onerror="this.style.display='none';"
-      />
+      <img src="logo.jpg" alt="Logo Mundo Matemático" />
       <div>
         <h1 class="titulo-sitio">Mundo Matemático</h1>
-        <span class="sub-saber">Saber 11</span>
+        <span class="sub-saber">Saber 11 · Matemáticas</span>
       </div>
     </div>
 
     <nav>
-      <a href="prueba.html?todas=1" class="link-nav">Simulacro Global</a>
+      <a href="prueba.html?todas=1" class="boton boton-rojo">Presentar Simulacro Global</a>
     </nav>
   </header>
 
   <main id="vista" class="contenedor-principal">
 
-    <!-- TARJETA PRINCIPAL DE PRESENTACIÓN Y BENEFICIOS -->
+    <!-- BLOQUE PRINCIPAL DEL SIMULACRO GLOBAL ARRIBA -->
+    <section class="bloque-simulacro-destacado">
+      <span class="badge-rojo">SIMULACRO GLOBAL</span>
+      <h2>Evalúa tu nivel completo tipo Saber 11</h2>
+      <p>
+        Practica con cronómetro, diagnóstico por componentes y revisión al finalizar.
+      </p>
+      <a href="prueba.html?todas=1" class="boton boton-rojo">Presentar Simulacro Global</a>
+    </section>
+
+    <!-- PRESENTACIÓN CORTA Y 6 BENEFICIOS RESUMIDOS -->
     <section class="presentacion-bienvenida">
-      <p class="seccion-subtitulo">SABER 11 · PRÁCTICA</p>
+      <p class="seccion-subtitulo">MUNDO MATEMÁTICO</p>
       <h1>Simulador de Matemáticas</h1>
       <p>
-        <strong>Mundo Matemático</strong> siempre piensa en mejorar la calidad de la educación; por eso, ha creado este simulador como una herramienta de apoyo académico independiente para fortalecer el razonamiento cuantitativo.
+        Entrena tu razonamiento cuantitativo por temas o con evaluación global.
       </p>
 
       <hr class="divisor-interno" />
 
-      <h2 class="subtitulo-beneficios">Beneficios de un buen puntaje en el Saber 11</h2>
-      <p class="descripcion-beneficios">
-        Un resultado destacado amplía las oportunidades de ingreso, distinción y financiación en la educación superior.
-      </p>
+      <h2 class="subtitulo-beneficios">Beneficios de un buen puntaje</h2>
 
+      <!-- 6 casillas dos a dos con texto breve -->
       <div class="rejilla-beneficios">
         <div class="cuadro-beneficio">
           <h3>Universidades públicas</h3>
-          <p>Instituciones como la UIS, Unimagdalena, UPTC y Unillanos emplean el puntaje Saber 11 como criterio principal o exclusivo de admisión.</p>
+          <p>Admisión directa o prioritaria en instituciones públicas.</p>
         </div>
 
         <div class="cuadro-beneficio">
-          <h3>Becas en universidades privadas</h3>
-          <p>Universidades como Los Andes, Javeriana, Rosario, EAFIT y del Norte ofrecen apoyos entre el 50% y el 100% de la matrícula según rendimiento.</p>
+          <h3>Becas en privadas</h3>
+          <p>Apoyos en matrícula según mérito académico.</p>
         </div>
 
         <div class="cuadro-beneficio">
           <h3>Bachilleres Ecopetrol</h3>
-          <p>Convocatoria con cobertura integral de matrícula y auxilio semestral de sostenimiento para bachilleres destacados de zonas rurales.</p>
+          <p>Cobertura de matrícula y sostenimiento para zonas rurales.</p>
         </div>
 
         <div class="cuadro-beneficio">
           <h3>Créditos condonables e ICETEX</h3>
-          <p>Acceso a líneas con tasas subsidiadas y fondos de condonación por mérito y condiciones socioeconómicas.</p>
+          <p>Financiación y fondos condonables para educación superior.</p>
         </div>
 
         <div class="cuadro-beneficio">
           <h3>Premio Andrés Bello</h3>
-          <p>Distinción nacional otorgada a los estudiantes con los mejores resultados en las pruebas de Estado, respaldando su trayectoria académica.</p>
+          <p>Reconocimiento nacional a los mejores puntajes.</p>
         </div>
 
         <div class="cuadro-beneficio">
-          <h3>Fondos y apoyos territoriales</h3>
-          <p>Programas regionales y entidades de crédito educativo que facilitan matrícula y sostenimiento para ingresar a educación superior.</p>
+          <h3>Fondos territoriales</h3>
+          <p>Programas regionales de apoyo a estudiantes.</p>
         </div>
       </div>
 
       <div class="caja-aviso-azul">
-        <h3>Preparación focalizada y evaluación global</h3>
-        <p>
-          Practica por temas en cada módulo o presenta el Simulacro Global Saber 11 para revisar tu desempeño general.
-        </p>
-        <p>
-          Al finalizar el simulacro global puedes consultar tus respuestas y, si lo deseas, acceder a tu informe y cuadernillo pro.
-        </p>
+        <h3>Al finalizar el Simulacro Global</h3>
+        <p>Consulta tus respuestas o accede a tu informe y cuadernillo pro.</p>
       </div>
     </section>
 
-    <!-- CARPETAS / MÓDULOS POR TEMA -->
+    <!-- MÓDULOS POR TEMA -->
     <h2 class="titulo-modulos">Práctica por temas</h2>
     <div id="rejilla"></div>
-
-    <!-- BLOQUE DEL SIMULACRO GLOBAL -->
-    <section class="tarjeta" style="margin-top: 24px;">
-      <span class="badge">EVALUACIÓN COMPLETA</span>
-      <h2>Simulacro Global Saber 11</h2>
-      <p class="subtitulo">Diagnóstico integral</p>
-      <p>
-        Presenta una evaluación completa con preguntas de distintas áreas, cronómetro y resumen de resultados.
-      </p>
-      <a href="prueba.html?todas=1" class="boton">Iniciar Simulacro Global</a>
-    </section>
 
   </main>
 
   <footer class="footer-principal">
-    Mundo Matemático es una iniciativa educativa independiente de preparación preuniversitaria. No está afiliada, vinculada ni patrocinada oficialmente por el ICFES.
+    Mundo Matemático es una iniciativa educativa independiente. No está afiliada ni patrocinada por el ICFES.
   </footer>
 
   <script type="module">
@@ -117,7 +106,7 @@
       try {
         const temas = await cargarTemas();
         if (!Array.isArray(temas) || !temas.length) {
-          rejilla.innerHTML = `<div class="tarjeta"><p>No se encontraron módulos disponibles.</p></div>`;
+          rejilla.innerHTML = `<div class="tarjeta"><p>No hay módulos disponibles.</p></div>`;
           return;
         }
 
@@ -128,16 +117,15 @@
 
           return `
             <article class="tarjeta">
-              <span class="badge">MÓDULO DE PRÁCTICA</span>
+              <span class="badge">TEMA</span>
               <h2>${titulo}</h2>
-              <p class="subtitulo">${totalPreguntas > 0 ? `${totalPreguntas} preguntas disponibles` : "Práctica focalizada"}</p>
-              <p>Entrena este componente con ejercicios tipo Saber 11 y revisa tu resultado al finalizar.</p>
+              <p class="subtitulo">${totalPreguntas > 0 ? `${totalPreguntas} preguntas` : "Práctica focalizada"}</p>
               <a href="prueba.html?tema=${idTema}" class="boton">Practicar tema</a>
             </article>
           `;
         }).join("");
       } catch (err) {
-        rejilla.innerHTML = `<div class="tarjeta"><p>No se pudieron cargar los temas desde <code>indice.json</code>.</p></div>`;
+        rejilla.innerHTML = `<div class="tarjeta"><p>Error al cargar <code>indice.json</code>.</p></div>`;
       }
     }
 
