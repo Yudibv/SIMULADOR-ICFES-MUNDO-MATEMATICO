@@ -159,7 +159,7 @@
     import { cargarTemas } from "./js/temas.js";
 
     // Genera un gráfico geométrico o matemático limpio según el tema (sin imágenes externas ni aspecto de IA)
-   function graficoPorTema(titulo = "", indice = 0) {
+    function graficoPorTema(titulo = "", indice = 0) {
       const nombre = String(titulo).toLowerCase();
       const esRojo = indice % 2 === 0;
       const trazo = esRojo ? "#dc2626" : "#1e3a8a";
@@ -265,6 +265,38 @@
           <text x="70" y="42" text-anchor="middle" fill="${trazo}" font-size="18" font-weight="800" font-family="system-ui, sans-serif">Σ · Δ</text>
         </svg>
       `;
+    }
+
+    async function iniciarMenu() {
+      const rejilla = document.getElementById("rejilla");
+      if (!rejilla) return;
+
+      try {
+        const temas = await cargarTemas();
+        if (!Array.isArray(temas) || !temas.length) {
+          rejilla.innerHTML = `<div class="tarjeta"><p>No hay módulos disponibles.</p></div>`;
+          return;
+        }
+
+        rejilla.innerHTML = temas.map((t, i) => {
+          const idTema = encodeURIComponent(t.id || t.carpeta);
+          const titulo = t.titulo || t.carpeta || "Módulo";
+          const totalPreguntas = Array.isArray(t.preguntas) ? t.preguntas.length : 0;
+          const ilustracionTema = graficoPorTema(titulo, i);
+
+          return `
+            <article class="tarjeta">
+              ${ilustracionTema}
+              <span class="badge">TEMA</span>
+              <h2>${titulo}</h2>
+              <p class="subtitulo">${totalPreguntas > 0 ? `${totalPreguntas} preguntas` : "Práctica focalizada"}</p>
+              <a href="prueba.html?tema=${idTema}" class="boton">Practicar tema</a>
+            </article>
+          `;
+        }).join("");
+      } catch (err) {
+        rejilla.innerHTML = `<div class="tarjeta"><p>Error al cargar <code>indice.json</code>.</p></div>`;
+      }
     }
 
     iniciarMenu();
