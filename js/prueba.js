@@ -75,7 +75,7 @@ async function init() {
   }
 
   const temaId = params.get("tema");
-  const esTodas = params.get("todas") === "1";
+  const esMinisimulacro = params.get("demo") === "1" || params.get("mini") === "1";
 
   state.temas = aliasTemas(await cargarTemas());
   const root = obtenerContenedor();
@@ -98,10 +98,13 @@ async function init() {
     const preguntasGlobales = [];
     const rutasYaAgregadas = new Set();
 
+    // 1 pregunta aleatoria por cada carpeta/tema en modo demo/minisimulacro; hasta 5 en global normal
+    const maxPorTema = esMinisimulacro ? 1 : 5;
+
     state.temas.forEach((t) => {
       if (Array.isArray(t.preguntas) && t.preguntas.length > 0) {
         const preguntasMezcladas = [...t.preguntas].sort(() => Math.random() - 0.5);
-        const cantidadASeleccionar = Math.min(5, preguntasMezcladas.length);
+        const cantidadASeleccionar = Math.min(maxPorTema, preguntasMezcladas.length);
         let seleccionadasTema = 0;
 
         for (const archivo of preguntasMezcladas) {
@@ -115,8 +118,16 @@ async function init() {
           }
         }
       }
-    });
+    );
 
+    // Mezcla el orden general de las preguntas seleccionadas para que no salgan siempre igual
+    state.seleccionGlobal = preguntasGlobales.sort(() => Math.random() - 0.5);
+    state.seleccion = state.seleccionGlobal.map((x) => x.archivo);
+
+    // 10 minutos para la demo de sustentación; 90 minutos para el Simulacro Global completo
+    state.tiempoRestante = esMinisimulacro ? 10 * 60 : 90 * 60;
+  }
+   
     state.seleccionGlobal = preguntasGlobales.sort(() => Math.random() - 0.5);
     state.seleccion = state.seleccionGlobal.map((x) => x.archivo);
     state.tiempoRestante = 90 * 60;
