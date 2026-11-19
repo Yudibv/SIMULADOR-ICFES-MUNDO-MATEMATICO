@@ -520,11 +520,13 @@ function mostrarResultadosFinalesGlobal(st) {
         ${htmlCompetencias}
       </div>
 
-      <div style="margin-bottom: 25px;">
-        <button id="btn-ver-respuestas" class="boton boton-rojo" style="padding: 14px 20px; border-radius: 10px; font-weight: bold; cursor: pointer; width: 100%; font-size: 1.05rem;">
-          VER RESPUESTAS Y JUSTIFICACIONES
-        </button>
-      </div>
+      ${yaPago ? `
+        <div style="margin-bottom: 25px;">
+          <button id="btn-ver-respuestas" class="boton boton-rojo" style="padding: 14px 20px; border-radius: 10px; font-weight: bold; cursor: pointer; width: 100%; font-size: 1.05rem;">
+            VER RESPUESTAS Y JUSTIFICACIONES
+          </button>
+        </div>
+      ` : ""}
 
       <div style="border: 2px solid ${yaPago ? "#10b981" : "#1e3a8a"}; background: ${yaPago ? "#f0fdf4" : "#eff6ff"}; padding: 20px; border-radius: 12px; text-align: center;">
         ${yaPago ? `
