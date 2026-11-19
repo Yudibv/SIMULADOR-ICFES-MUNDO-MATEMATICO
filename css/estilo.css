@@ -1,31 +1,50 @@
 /* ==============================================================================
-   ESTILOS GENERALES Y MARCA DE AGUA EN MODO TAPIZ - MUNDO MATEMÁTICO
+   MUNDO MATEMÁTICO — HOJA DE ESTILOS PRINCIPAL (css/estilo.css)
+   ==============================================================================
+   Secciones incluidas:
+   1. Variables de color corporativas y base del documento
+   2. Marca de agua matemática en modo tapiz
+   3. Cabecera institucional y logo
+   4. Contenedores centrados y tarjeta de bienvenida
+   5. Rejilla de beneficios (ajustable a 2x2 o 3 columnas)
+   6. Bloques de Simulacro Global, tarjetas de temas y botones
+   7. Pie de página institucional y reglas responsivas
    ============================================================================== */
 
-/* Variables de color corporativas de Mundo Matemático */
+/* ------------------------------------------------------------------------------
+   1. VARIABLES Y BASE GENERAL
+   ------------------------------------------------------------------------------ */
 :root {
-  --azul: #1e3a8a;
-  --azul-claro: #eff6ff;
-  --rojo: #dc2626;
-  --borde: #cbd5e1;
-  --fondo: #f8fafc;
+  --azul: #1e3a8a;         /* Azul corporativo principal */
+  --azul-oscuro: #172554;  /* Azul profundo para hover o énfasis */
+  --azul-claro: #eff6ff;   /* Fondo azul suave para avisos y badges */
+  --rojo: #dc2626;         /* Rojo corporativo para acciones clave y alertas */
+  --rojo-oscuro: #b91c1c;  /* Rojo más oscuro al pasar el cursor */
+  --rojo-claro: #fef2f2;   /* Fondo rojo suave para destacados */
+  --verde: #15803d;        /* Verde de apoyo para WhatsApp / logros */
+  --borde: #cbd5e1;        /* Borde estándar */
+  --borde-suave: #e2e8f0;  /* Borde sutil para tarjetas */
+  --fondo: #f8fafc;        /* Fondo general claro */
+  --texto: #1e293b;        /* Color principal de lectura */
+  --texto-suave: #475569;  /* Color secundario para descripciones */
 }
 
-/* Estructura base de la página con pie fijo abajo y sin desborde horizontal */
-body {
+html, body {
   margin: 0;
   padding: 0;
+  width: 100%;
+  min-height: 100vh;
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   background-color: var(--fondo);
-  position: relative;
-  min-height: 100vh;
-  color: #1e293b;
+  color: var(--texto);
   display: flex;
   flex-direction: column;
-  overflow-x: hidden;
+  overflow-x: hidden; /* Evita desplazamiento horizontal accidental */
 }
 
-/* Marca de agua matemática repetida de fondo sin bloquear clics */
+/* ------------------------------------------------------------------------------
+   2. MARCA DE AGUA EN MODO TAPIZ
+   ------------------------------------------------------------------------------ */
 body::before {
   content: "MUNDO MATEMÁTICO     Δ     π     e     ϕ     θ     \A     ∫     ∑     ∞     √     MUNDO MATEMÁTICO     \A     Δ     e     π     θ     ϕ     \A     ∫     ∑     ∞     √     MUNDO MATEMÁTICO     Δ     π     \A     Δ     π     e     ϕ     θ     MUNDO MATEMÁTICO     ∫     ∑     ∞     √";
   position: fixed;
@@ -47,151 +66,160 @@ body::before {
   transform: rotate(-15deg);
 }
 
-/* ==============================================================================
-   CABECERA INSTITUCIONAL Y LOGO
-   ============================================================================== */
-
-/* Barra superior con logo a la izquierda y navegación a la derecha */
+/* ------------------------------------------------------------------------------
+   3. CABECERA INSTITUCIONAL Y LOGO
+   ------------------------------------------------------------------------------ */
 .header-principal {
+  width: 100%;
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 15px 30px;
-  background: white;
-  border-bottom: 1px solid var(--borde);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  padding: 14px 30px;
+  background: #ffffff;
+  border-bottom: 3px solid var(--azul); /* Línea corporativa superior */
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.05);
 }
 
-/* Contenedor del logo y nombre del sitio */
 .logo-contenedor {
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
-/* Control de altura y proporción del logo para evitar deformaciones o excesos */
+/* Tamaño controlado del logo (logo.jpg en la raíz del proyecto) */
 .logo-contenedor img {
-  height: 42px !important;
-  width: auto !important;
-  max-width: 140px !important;
-  object-fit: contain !important;
-  display: block !important;
+  height: 44px;
+  width: auto;
+  max-width: 130px;
+  object-fit: contain;
+  display: block;
+  border-radius: 6px;
 }
 
-/* Título principal en la cabecera */
 .titulo-sitio {
   font-size: 1.25rem;
   color: var(--azul);
   margin: 0;
   font-weight: 800;
-  letter-spacing: -0.5px;
+  letter-spacing: -0.4px;
 }
 
-/* Etiqueta secundaria Saber 11 */
 .sub-saber {
   font-size: 0.8rem;
-  font-weight: 500;
-  color: #64748b;
+  font-weight: 600;
+  color: var(--rojo);
+  display: block;
 }
 
-/* Enlaces de navegación superiores */
 .link-nav {
   text-decoration: none;
   color: var(--azul);
-  font-weight: 600;
-  font-size: 0.95rem;
-}
-
-/* ==============================================================================
-   CONTENEDOR PRINCIPAL Y PRESENTACIÓN
-   ============================================================================== */
-
-/* Ancho máximo y centrado general de vistas y tarjetas */
-.contenedor-principal,
-.panel-pregunta,
-.card {
-  max-width: 950px;
-  width: 90%;
-  margin: 30px auto;
-  box-sizing: border-box;
-}
-
-/* Antetítulo en rojo corporativo */
-.seccion-subtitulo {
-  font-size: 0.85rem;
   font-weight: 700;
+  font-size: 0.92rem;
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: 1px solid var(--borde);
+  background: var(--azul-claro);
+  transition: all 0.2s ease;
+}
+
+.link-nav:hover {
+  background: var(--azul);
+  color: #ffffff;
+  border-color: var(--azul);
+}
+
+/* ------------------------------------------------------------------------------
+   4. CONTENEDOR PRINCIPAL CENTRADO Y TARJETA DE PRESENTACIÓN
+   ------------------------------------------------------------------------------ */
+.contenedor-principal {
+  max-width: 960px;
+  width: 92%;
+  margin: 28px auto; /* Centrado horizontal garantizado */
+  box-sizing: border-box;
+  flex: 1 0 auto;
+}
+
+.seccion-subtitulo {
+  font-size: 0.82rem;
+  font-weight: 800;
   color: var(--rojo);
   text-transform: uppercase;
-  margin-bottom: 5px;
-  letter-spacing: 0.5px;
+  margin: 0 0 6px 0;
+  letter-spacing: 0.6px;
 }
 
-/* Tarjeta principal de bienvenida en el inicio */
 .presentacion-bienvenida {
-  background: white;
-  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  border: 1px solid var(--borde-suave);
+  border-left: 5px solid var(--azul);
   border-radius: 12px;
-  padding: 25px;
-  margin-bottom: 30px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04);
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.04);
+  box-sizing: border-box;
 }
 
 .presentacion-bienvenida h1 {
   color: var(--azul);
-  margin-top: 0;
+  margin: 0 0 10px 0;
   font-size: 1.7rem;
-  margin-bottom: 12px;
 }
 
 .presentacion-bienvenida p {
-  color: #475569;
+  color: var(--texto-suave);
   line-height: 1.6;
-  margin-bottom: 20px;
+  margin: 0 0 16px 0;
 }
 
-/* ==============================================================================
-   SECCIÓN DE 6 BENEFICIOS INTEGRADA EN LA PRESENTACIÓN
-   ============================================================================== */
-
-/* Línea divisoria interna dentro de la tarjeta principal */
+/* ------------------------------------------------------------------------------
+   5. BENEFICIOS Y CASILLAS (CONFIGURADAS DOS A DOS POR DEFECTO)
+   ------------------------------------------------------------------------------ */
 .divisor-interno {
   border: 0;
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid var(--borde-suave);
   margin: 20px 0;
 }
 
-/* Encabezado y descripción del bloque de beneficios */
 .subtitulo-beneficios {
   color: var(--azul);
   font-size: 1.15rem;
   margin: 0 0 6px 0;
-  font-weight: 700;
+  font-weight: 800;
 }
 
 .descripcion-beneficios {
-  color: #64748b;
+  color: var(--texto-suave);
   font-size: 0.92rem;
   margin: 0 0 16px 0;
   line-height: 1.5;
 }
 
-/* Cuadrícula de 3 columnas en escritorio para acomodar los 6 cuadritos */
-.rejilla-beneficios {
+/* Casillas acomodadas dos a dos (2 columnas) en escritorio y tablet */
+.rejilla-beneficios,
+.rejilla-dos-a-dos {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 14px;
-  margin-bottom: 16px;
+  margin-bottom: 18px;
 }
 
-/* Cada cuadrito de beneficio con estética sobria y alineada */
 .cuadro-beneficio {
   background: var(--fondo);
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--borde-suave);
+  border-top: 3px solid var(--azul);
   border-radius: 10px;
-  padding: 14px 16px;
+  padding: 15px 16px;
   display: flex;
   flex-direction: column;
   gap: 6px;
+  box-sizing: border-box;
+}
+
+/* Alterna sutilmente el borde superior en casillas pares para dar variedad visual */
+.cuadro-beneficio:nth-child(even) {
+  border-top-color: var(--rojo);
 }
 
 .cuadro-beneficio h3 {
@@ -202,65 +230,71 @@ body::before {
 }
 
 .cuadro-beneficio p {
-  color: #475569;
-  font-size: 0.87rem;
+  color: var(--texto-suave);
+  font-size: 0.88rem;
   line-height: 1.45;
   margin: 0;
 }
 
-/* ==============================================================================
-   AVISOS, MÓDULOS Y TARJETAS DEL MENÚ
-   ============================================================================== */
-
-/* Caja informativa azul clara dentro de la presentación */
+/* ------------------------------------------------------------------------------
+   6. SIMULACRO GLOBAL ARRIBA, MÓDULOS Y BOTONES CON COLORES CORPORATIVOS
+   ------------------------------------------------------------------------------ */
 .caja-aviso-azul {
   background: var(--azul-claro);
   border: 1px solid #bfdbfe;
-  border-radius: 8px;
+  border-radius: 10px;
   padding: 18px 20px;
-  margin-top: 15px;
+  margin-top: 14px;
 }
 
 .caja-aviso-azul h3 {
   color: var(--azul);
-  margin-top: 0;
-  font-size: 1rem;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 8px;
-}
-
-.caja-aviso-azul p {
-  color: #334155;
-  font-size: 0.93rem;
   margin: 0 0 8px 0;
-  line-height: 1.4;
-}
-
-/* Título de la sección de carpetas o temas */
-.titulo-modulos {
-  color: var(--azul);
-  font-size: 1.25rem;
-  margin-bottom: 20px;
+  font-size: 1rem;
   font-weight: 800;
 }
 
-/* Rejilla adaptable para las tarjetas de temas/módulos */
-#rejilla {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 20px;
-  width: 100%;
+.caja-aviso-azul p {
+  color: var(--texto);
+  font-size: 0.92rem;
+  margin: 0 0 8px 0;
+  line-height: 1.45;
 }
 
-/* Tarjeta base para módulos, simulacro global y paneles */
+/* Bloque destacado del Simulacro Global colocado arriba antes de los temas */
+.bloque-simulacro-destacado {
+  background: #ffffff;
+  border: 1px solid var(--borde-suave);
+  border-left: 5px solid var(--rojo);
+  border-radius: 12px;
+  padding: 22px;
+  margin-bottom: 28px;
+  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.05);
+  box-sizing: border-box;
+}
+
+.titulo-modulos {
+  color: var(--azul);
+  font-size: 1.25rem;
+  margin: 0 0 18px 0;
+  font-weight: 800;
+}
+
+/* Rejilla de módulos por tema */
+#rejilla {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
 .tarjeta,
 .panel-pregunta {
-  background: white;
-  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  border: 1px solid var(--borde-suave);
   border-radius: 12px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 4px 8px rgba(15, 23, 42, 0.04);
   padding: 22px;
   display: flex;
   flex-direction: column;
@@ -268,143 +302,145 @@ body::before {
 }
 
 .tarjeta:hover {
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 10px 18px rgba(15, 23, 42, 0.08);
 }
 
-/* Etiqueta tipo píldora en las tarjetas */
 .badge {
   background: var(--azul-claro);
   color: var(--azul);
   padding: 4px 10px;
   border-radius: 6px;
-  font-weight: bold;
-  font-size: 0.85rem;
+  font-weight: 700;
+  font-size: 0.82rem;
   width: fit-content;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
-.tarjeta h2 {
-  font-size: 1.15rem;
+.badge-rojo {
+  background: var(--rojo-claro);
+  color: var(--rojo);
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-weight: 800;
+  font-size: 0.82rem;
+  width: fit-content;
+  margin-bottom: 10px;
+}
+
+.tarjeta h2,
+.bloque-simulacro-destacado h2 {
+  font-size: 1.18rem;
   color: var(--azul);
   margin: 0 0 8px 0;
 }
 
-.tarjeta .subtitulo {
+.tarjeta .subtitulo,
+.bloque-simulacro-destacado .subtitulo {
   color: var(--rojo);
-  font-weight: 600;
+  font-weight: 700;
   font-size: 0.88rem;
   margin: 0 0 10px 0;
 }
 
-.tarjeta p {
-  color: #475569;
-  font-size: 0.88rem;
-  margin: 0 0 15px 0;
-  line-height: 1.4;
+.tarjeta p,
+.bloque-simulacro-destacado p {
+  color: var(--texto-suave);
+  font-size: 0.9rem;
+  margin: 0 0 16px 0;
+  line-height: 1.5;
 }
 
-/* ==============================================================================
-   IMÁGENES DE PREGUNTAS, OPCIONES Y BOTONES
-   ============================================================================== */
-
-/* Imágenes de ejercicios centradas y adaptables al ancho disponible */
+/* Imágenes de preguntas centradas y adaptables */
 img,
 .pregunta-img {
   max-width: 100%;
   height: auto;
   display: block;
-  margin: 15px auto;
+  margin: 14px auto;
   border-radius: 8px;
 }
 
-/* Contenedor de opciones de respuesta */
-.opciones {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin: 20px 0;
-}
-
-/* Opción individual interactiva */
-.opcion {
-  background: #ffffff;
-  border: 1px solid #cbd5e1;
-  border-radius: 8px;
-  padding: 14px 18px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.opcion:hover {
-  background: var(--azul-claro);
-  border-color: var(--azul);
-}
-
-.opcion input[type="radio"] {
-  accent-color: var(--azul);
-  transform: scale(1.2);
-}
-
-/* Botones principales y de acción */
+/* Botones base y variantes de color corporativo */
 .boton,
 button,
 .btn {
   background: var(--azul);
-  color: white;
+  color: #ffffff;
   border: none;
-  padding: 10px 20px;
-  border-radius: 6px;
-  font-weight: bold;
+  padding: 11px 18px;
+  border-radius: 8px;
+  font-weight: 700;
   cursor: pointer;
   text-decoration: none;
   display: inline-block;
   text-align: center;
-  transition: background 0.2s;
+  transition: background 0.2s ease;
   margin-top: auto;
+  box-sizing: border-box;
 }
 
 .boton:hover,
 button:hover {
-  background: #1e40af;
+  background: var(--azul-oscuro);
 }
 
-/* ==============================================================================
-   PIE DE PÁGINA, UTILIDADES Y RESPONSIVIDAD
-   ============================================================================== */
+/* Botón rojo para "Presentar Simulacro Global" */
+.boton-rojo {
+  background: var(--rojo) !important;
+  color: #ffffff !important;
+}
 
-/* Pie de página institucional */
+.boton-rojo:hover {
+  background: var(--rojo-oscuro) !important;
+}
+
+/* Botón verde para WhatsApp */
+.boton-verde {
+  background: var(--verde) !important;
+  color: #ffffff !important;
+}
+
+/* Botón gris neutro para acciones secundarias como Volver al Menú */
+.boton-gris {
+  background: #64748b !important;
+  color: #ffffff !important;
+}
+
+/* ------------------------------------------------------------------------------
+   7. PIE DE PÁGINA CENTRADO Y RESPONSIVIDAD
+   ------------------------------------------------------------------------------ */
 .footer-principal {
+  width: 100%;
+  box-sizing: border-box;
   text-align: center;
-  padding: 20px;
-  color: #64748b;
-  font-size: 0.85rem;
-  border-top: 1px solid var(--borde);
-  background: rgba(255, 255, 255, 0.7);
-  margin-top: auto;
+  padding: 18px 24px;
+  color: var(--texto-suave);
+  font-size: 0.86rem;
+  border-top: 2px solid var(--azul);
+  background: #ffffff;
+  margin-top: auto; /* Empuja el pie al final de la pantalla */
 }
 
-/* Clase utilitaria para ocultar elementos */
 .oculto {
   display: none !important;
 }
 
-/* 2 columnas para los 6 cuadritos en tablets y pantallas intermedias */
-@media (max-width: 820px) {
-  .rejilla-beneficios {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-/* 1 columna y cabecera compacta en celulares */
-@media (max-width: 540px) {
-  .rejilla-beneficios {
+/* En celulares: pasa de 2 columnas a 1 columna para que sea cómodo leer */
+@media (max-width: 640px) {
+  .rejilla-beneficios,
+  .rejilla-dos-a-dos,
+  #rejilla {
     grid-template-columns: 1fr;
   }
 
   .header-principal {
     padding: 12px 16px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .contenedor-principal {
+    width: 94%;
+    margin: 18px auto;
   }
 }
