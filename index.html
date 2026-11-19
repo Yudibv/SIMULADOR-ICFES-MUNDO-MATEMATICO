@@ -1,4 +1,161 @@
-<script type="module">
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mundo Matemático — Simulador Saber 11</title>
+  <!-- Hoja de estilos principal ubicada en css/estilo.css -->
+  <link rel="stylesheet" href="css/estilo.css" />
+</head>
+<body>
+
+  <!-- ======================================================================
+       CABECERA SUPERIOR CON LOGO Y ACCESO RÁPIDO AL SIMULACRO GLOBAL
+       ====================================================================== -->
+  <header class="header-principal">
+    <div class="logo-contenedor">
+      <!-- Logo ubicado en la raíz del repositorio -->
+      <img src="logo.jpg" alt="Logo Mundo Matemático" />
+      <div>
+        <span class="titulo-sitio">Mundo Matemático</span>
+        <span class="sub-saber">Saber 11 · Matemáticas</span>
+      </div>
+    </div>
+
+    <nav>
+      <a href="prueba.html?todas=1" class="boton boton-rojo">Presentar Simulacro Global</a>
+    </nav>
+  </header>
+
+  <!-- ======================================================================
+       CONTENEDOR PRINCIPAL DE LA PORTADA
+       ====================================================================== -->
+  <main id="vista" class="contenedor-principal">
+
+    <!-- 1. APERTURA: COMPROMISO CON LA EDUCACIÓN DEL PAÍS -->
+    <section class="presentacion-bienvenida">
+      <p class="seccion-subtitulo">COMPROMISO CON LA EDUCACIÓN DEL PAÍS</p>
+      <h1>Mundo Matemático se preocupa por la educación del país</h1>
+      <p>
+        Creamos este simulador independiente de Saber 11 para acompañar a los estudiantes y fortalecer su razonamiento cuantitativo con práctica clara y guiada.
+      </p>
+
+      <hr class="divisor-interno" />
+
+      <!-- 2. BLOQUE SUPERIOR UNIDO: SIMULACRO GLOBAL + SESIÓN DE 30 MIN ($15) Y DESCUENTO -->
+      <div class="bloque-simulacro-destacado">
+        <span class="badge-rojo">SIMULACRO GLOBAL</span>
+        <h2>Evalúa tu nivel completo tipo Saber 11</h2>
+        <p>
+          Practica con cronómetro, diagnóstico por componentes y revisión de respuestas al finalizar.
+        </p>
+        <a href="prueba.html?todas=1" class="boton boton-rojo">Presentar Simulacro Global</a>
+
+        <!-- Aviso integrado junto al Simulacro Global: sesión de 30 min ($15) + descuento en clases personalizadas -->
+        <div class="caja-aviso-azul" style="margin-top: 20px;">
+          <h3>Sesión de revisión de 30 minutos ($15) y descuento en clases personalizadas</h3>
+          <p>
+            Los $15 abarcan una sesión de 30 minutos para analizar tus resultados, resolver dudas clave y recibir un descuento especial para tus clases personalizadas de Mundo Matemático.
+          </p>
+        </div>
+      </div>
+
+      <hr class="divisor-interno" />
+
+      <!-- 3. BENEFICIOS DE UN BUEN PUNTAJE COMPACTOS EN FILA PARALELA -->
+      <h2 class="subtitulo-beneficios">Beneficios de un buen puntaje</h2>
+
+      <div class="lista-beneficios-compacta">
+        <div class="item-beneficio-compacto">
+          <div class="circulo-icono">U</div>
+          <div>
+            <strong>Universidades públicas</strong>
+            <span>Admisión directa o prioritaria.</span>
+          </div>
+        </div>
+
+        <div class="item-beneficio-compacto">
+          <div class="circulo-icono">%</div>
+          <div>
+            <strong>Becas en privadas</strong>
+            <span>Apoyos en matrícula por mérito.</span>
+          </div>
+        </div>
+
+        <div class="item-beneficio-compacto">
+          <div class="circulo-icono">E</div>
+          <div>
+            <strong>Bachilleres Ecopetrol</strong>
+            <span>Matrícula y sostenimiento rural.</span>
+          </div>
+        </div>
+
+        <div class="item-beneficio-compacto">
+          <div class="circulo-icono">$</div>
+          <div>
+            <strong>Créditos e ICETEX</strong>
+            <span>Financiación y fondos condonables.</span>
+          </div>
+        </div>
+
+        <div class="item-beneficio-compacto">
+          <div class="circulo-icono">★</div>
+          <div>
+            <strong>Premio Andrés Bello</strong>
+            <span>Reconocimiento nacional al mérito.</span>
+          </div>
+        </div>
+
+        <div class="item-beneficio-compacto">
+          <div class="circulo-icono">◈</div>
+          <div>
+            <strong>Fondos territoriales</strong>
+            <span>Programas regionales de apoyo.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. PRÁCTICA POR TEMAS / COMPETENCIAS (INVITACIÓN A ENTRENAR GRATIS) -->
+    <div class="cabecera-competencias">
+      <h2 class="titulo-modulos" style="margin-bottom: 0;">Práctica por temas (Competencias)</h2>
+      <p>
+        Entrénate <strong>gratuitamente</strong> en cada competencia y tema para fortalecer tu base paso a paso antes o después del simulacro.
+      </p>
+    </div>
+    <div id="rejilla"></div>
+
+    <!-- 5. LLAMADO A LA ACCIÓN CON WHATSAPP Y DOMINIO -->
+    <section class="bloque-cta-final">
+      <div>
+        <h3>¿Listo para dar el siguiente paso en tu preparación?</h3>
+        <p>
+          Resuelve tus dudas, agenda tu sesión de revisión de 30 minutos ($15) con descuento en clases personalizadas o consulta directamente en <strong>mimundomatematico.com</strong>.
+        </p>
+      </div>
+      <a
+        href="https://wa.me/573115574410?text=Hola%20Mundo%20Matem%C3%A1tico%2C%20vengo%20desde%20mimundomatematico.com%20y%20quiero%20informaci%C3%B3n%20sobre%20la%20sesi%C3%B3n%20de%2030%20minutos%20(%2415)%20y%20clases%20personalizadas."
+        target="_blank"
+        class="boton boton-verde"
+        style="margin-top: 0; white-space: nowrap;"
+      >
+        Escribir por WhatsApp
+      </a>
+    </section>
+
+  </main>
+
+  <!-- ======================================================================
+       PIE DE PÁGINA CENTRADO
+       ====================================================================== -->
+  <footer class="footer-principal">
+    Mundo Matemático es una iniciativa educativa independiente de preparación preuniversitaria. No está afiliada, vinculada ni patrocinada oficialmente por el ICFES.
+  </footer>
+
+  <!-- ======================================================================
+       CARGA DE MÓDULOS POR TEMA CON GRÁFICOS VECTORIALES
+       ====================================================================== -->
+  <script type="module">
     import { cargarTemas } from "./js/temas.js";
 
     // Genera un gráfico geométrico o matemático limpio según el tema (sin imágenes externas ni aspecto de IA)
@@ -91,3 +248,5 @@
 
     iniciarMenu();
   </script>
+</body>
+</html>
