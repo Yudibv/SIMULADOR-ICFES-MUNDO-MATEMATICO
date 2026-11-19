@@ -731,19 +731,31 @@ function bloqueBeneficiosYClasesHTML() {
     </div>
   `;
 }
-
-function mostrarResultadosFinales(st, tema) {
+function mostrarResultadosFinalesGlobal(st) {
   if (st.intervaloTimer) clearInterval(st.intervaloTimer);
 
-  const temaActual = tema || temaPorId(st.cola?.[st.indiceTema || 0]);
-  const preguntasTema = Array.isArray(st.seleccion) ? st.seleccion : [];
-  const totalPreguntas = preguntasTema.length;
-  let aciertos = 0;
+  const paramsActuales = new URLSearchParams(window.location.search);
+  const esDemoActual = paramsActuales.get("demo") === "1" || paramsActuales.get("mini") === "1";
 
-  preguntasTema.forEach((archivo, index) => {
-    const respuestaCorrecta = (temaActual?.respuestas || {})[archivo];
+  let aciertos = 0;
+  const preguntasGlobales = Array.isArray(st.seleccionGlobal) ? st.seleccionGlobal : [];
+  const totalPreguntas = preguntasGlobales.length;
+
+  const erroresPorTema = {};
+  const aciertosPorCompetencia = {};
+  const totalPorCompetencia = {};
+
+  preguntasGlobales.forEach((itemGlobal, index) => {
+    const tema = itemGlobal.tema || {};
+    const nombreTema = tema.titulo || tema.carpeta || "General";
+    const archivo = itemGlobal.archivo;
+    const respuestaCorrecta = (tema.respuestas || {})[archivo];
     const respuestaUsuario = st.respuestas?.[index];
 
+    totalPorCompetencia[nombreTema] = (totalPorCompetencia[nombreTema] || 0) + 1;
+    if (!aciertosPorCompetencia[nombreTema]) aciertosPorCompetencia[nombreTema] = 0;
+
+    let esAcierto = false;
     if (respuestaCorrecta && typeof respuestaCorrecta === "object") {
       let todasCorrectas = true;
       for (const subKey in respuestaCorrecta) {
@@ -751,95 +763,257 @@ function mostrarResultadosFinales(st, tema) {
           todasCorrectas = false;
         }
       }
-      if (todasCorrectas) aciertos++;
+      if (todasCorrectas) esAcierto = true;
     } else if (respuestaCorrecta !== undefined) {
       if (respuestaUsuario === respuestaCorrecta) {
-        aciertos++;
+        esAcierto = true;
       }
+    }
+
+    if (esAcierto) {
+      aciertos++;
+      aciertosPorCompetencia[nombreTema]++;
+    } else {
+      erroresPorTema[nombreTema] = (erroresPorTema[nombreTema] || 0) + 1;
     }
   });
 
-  const porcentaje = totalPreguntas > 0 ? Math.round((aciertos / totalPreguntas) * 100) : 0;
   const incorrectas = Math.max(0, totalPreguntas - aciertos);
+  const porcentaje = totalPreguntas > 0 ? Math.round((aciertos / totalPreguntas) * 100) : 0;
+
+  let nivelDesempeno = "1";
+  if (porcentaje >= 75) nivelDesempeno = "4";
+  else if (porcentaje >= 50) nivelDesempeno = "3";
+  else if (porcentaje >= 35) nivelDesempeno = "2";
+
   const root = obtenerContenedor();
-
-  let mensajeDesempeno = "";
-  let alertaColor = "#dc2626";
-  let fondoCaja = "#fff5f5";
-
-  if (porcentaje >= 80) {
-    alertaColor = "#16a34a";
-    fondoCaja = "#f0fdf4";
-    mensajeDesempeno = `Excelente nivel en <strong>${temaActual?.titulo || temaActual?.id || "este módulo"}</strong>. Mantén este ritmo de práctica para consolidar tu desempeño en el Saber 11.`;
-  } else if (porcentaje >= 50) {
-    alertaColor = "#d97706";
-    fondoCaja = "#fffbeb";
-    mensajeDesempeno = `Nivel intermedio en <strong>${temaActual?.titulo || temaActual?.id || "este módulo"}</strong>. Revisar los distractores y las condiciones del enunciado te ayudará a subir tu puntaje.`;
-  } else {
-    alertaColor = "#dc2626";
-    fondoCaja = "#fff5f5";
-    mensajeDesempeno = `Se detectaron oportunidades de mejora en <strong>${temaActual?.titulo || temaActual?.id || "este módulo"}</strong>. Conviene repasar los conceptos clave y practicar de nuevo.`;
-  }
-
-  const tituloModulo = temaActual?.titulo || temaActual?.id || "Módulo";
-  const linkSimulacroGlobal = "prueba.html?todas=1";
-  const numeroWhatsApp = "573115574410";
-  const mensajeWhatsApp = encodeURIComponent(
-    `Hola Mundo Matemático, terminé la práctica de ${tituloModulo} y quiero agendar una clase personalizada`
+  const linkWompi = "https://checkout.wompi.co/l/Mzd7Vo";
+  const urlQrWompi = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(linkWompi)}`;
+  const datosPago = obtenerDatosPagoIntento(st.idIntento);
+  const yaPago = Boolean(datosPago && datosPago.verificado && datosPago.celular);
+  const pdfDescargado = Boolean(datosPago && datosPago.pdfDescargado);
+  const celularGuardado = datosPago?.celular || "";
+  const textoAgendaWhatsApp = encodeURIComponent(
+    `Hola Mundo Matemático, ya realicé el pago del Simulacro Global (${porcentaje}%), verifiqué mi celular (${celularGuardado}) y quiero agendar mi sesión de análisis de 20 minutos ($15.000).`
   );
 
+  let htmlCompetencias = "";
+  let contadorComp = 1;
+  for (const [comp, totalComp] of Object.entries(totalPorCompetencia)) {
+    const okComp = aciertosPorCompetencia[comp] || 0;
+    htmlCompetencias += `
+      <div style="display: flex; justify-content: space-between; align-items: center; background: #fff; padding: 12px 15px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 8px;">
+        <span style="font-size: 0.9rem; color: #334155; font-weight: 500;">${contadorComp}. ${comp}</span>
+        <span style="font-size: 0.95rem; font-weight: bold; color: #1e3a8a;">${okComp}/${totalComp}</span>
+      </div>
+    `;
+    contadorComp++;
+  }
+
   root.innerHTML = `
-    <div style="max-width: 820px; width: 100%; margin: 0 auto; background: #fff; border: 1px solid #cbd5e1; border-radius: 16px; padding: 28px; box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06); box-sizing: border-box;">
-      <div style="text-align: center; border-bottom: 1px dashed #cbd5e1; padding-bottom: 18px; margin-bottom: 20px;">
+    <div style="max-width: 820px; width: 100%; margin: 0 auto; background: #fff; border: 1px solid #cbd5e1; border-radius: 16px; padding: 30px; box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06); box-sizing: border-box;">
+      
+      <div style="text-align: center; border-bottom: 1px dashed #cbd5e1; padding-bottom: 20px; margin-bottom: 20px;">
         <span style="background: #eff6ff; color: #1e3a8a; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; text-transform: uppercase;">
-          Práctica Focalizada
+          ${esDemoActual ? "Demo de Sustentación · Simulacro Global Saber 11" : "Simulacro Global Saber 11"}
         </span>
-        <h2 style="color: #1e3a8a; font-size: 1.5rem; margin: 10px 0 5px 0;">${tituloModulo}</h2>
-        <p style="color: #64748b; font-size: 0.85rem; margin: 0;">Resumen de desempeño del módulo</p>
+        <h2 style="color: #1e3a8a; font-size: 1.6rem; margin: 10px 0 5px 0;">Puntaje Obtenido</h2>
+        <p style="color: #64748b; font-size: 0.85rem; margin: 0;">Evaluación bajo estándares analíticos TRI</p>
       </div>
 
-      <div style="text-align: center; margin-bottom: 22px;">
-        <div style="width: 105px; height: 105px; border: 6px solid #e2e8f0; border-top-color: ${alertaColor}; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px auto;">
-          <span style="font-size: 1.8rem; font-weight: 800; color: #1e293b;">${porcentaje}%</span>
+      ${esDemoActual ? `
+        <div style="background: #fefce8; border: 1px solid #eab308; color: #854d0e; padding: 10px 14px; border-radius: 10px; font-size: 0.82rem; margin-bottom: 18px; text-align: left;">
+          <strong>Modo demostración:</strong> Esta vista permite probar el flujo de pago, confirmación y generación del PDF sin consulta en tiempo real a Wompi (la conciliación automática de pagos requiere integración de backend/webhook).
         </div>
-        <span style="font-size: 0.85rem; color: #64748b; font-weight: 700;">${aciertos} correctas de ${totalPreguntas} ejercicios (${incorrectas} por reforzar)</span>
+      ` : ""}
+
+      <div style="text-align: center; margin-bottom: 25px;">
+        <div style="width: 110px; height: 110px; border: 6px solid #e2e8f0; border-top-color: #ef4444; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 0 auto 10px auto;">
+          <span style="font-size: 2rem; font-weight: 800; color: #1e293b; line-height: 1;">${porcentaje}%</span>
+        </div>
+        <span style="font-size: 0.8rem; color: #64748b; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">Puntaje de la prueba (${aciertos}/${totalPreguntas})</span>
       </div>
 
-      <div style="background: ${fondoCaja}; border: 1px solid ${alertaColor}; padding: 18px; margin-bottom: 18px; border-radius: 10px; text-align: left;">
-        <h3 style="color: ${alertaColor}; margin: 0 0 8px 0; font-size: 1rem;">Diagnóstico del módulo</h3>
-        <p style="margin: 0; line-height: 1.55; color: #334155; font-size: 0.92rem;">${mensajeDesempeno}</p>
+      <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 22px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; background: #f8fafc; padding: 10px 15px; border-radius: 8px; border: 1px solid #e2e8f0;">
+          <span style="font-size: 0.9rem; color: #64748b; font-weight: 600;">CORRECTAS:</span>
+          <div style="display: flex; align-items: center; gap: 10px; flex: 1; max-width: 200px; margin: 0 15px;">
+            <div style="flex: 1; height: 8px; background: #e2e8f0; border-radius: 4px; overflow: hidden;">
+              <div style="width: ${totalPreguntas > 0 ? (aciertos / totalPreguntas) * 100 : 0}%; height: 100%; background: #10b981;"></div>
+            </div>
+          </div>
+          <span style="font-size: 1rem; font-weight: bold; color: #10b981; min-width: 25px; text-align: right;">${aciertos}</span>
+        </div>
+
+        <div style="display: flex; align-items: center; justify-content: space-between; background: #f8fafc; padding: 10px 15px; border-radius: 8px; border: 1px solid #e2e8f0;">
+          <span style="font-size: 0.9rem; color: #64748b; font-weight: 600;">INCORRECTAS:</span>
+          <div style="display: flex; align-items: center; gap: 10px; flex: 1; max-width: 200px; margin: 0 15px;">
+            <div style="flex: 1; height: 8px; background: #e2e8f0; border-radius: 4px; overflow: hidden;">
+              <div style="width: ${totalPreguntas > 0 ? (incorrectas / totalPreguntas) * 100 : 0}%; height: 100%; background: #ef4444;"></div>
+            </div>
+          </div>
+          <span style="font-size: 1rem; font-weight: bold; color: #ef4444; min-width: 25px; text-align: right;">${incorrectas}</span>
+        </div>
+
+        <div style="display: flex; align-items: center; justify-content: space-between; background: #f8fafc; padding: 10px 15px; border-radius: 8px; border: 1px solid #e2e8f0;">
+          <span style="font-size: 0.9rem; color: #64748b; font-weight: 600;">NIVEL ESTIMADO:</span>
+          <div style="display: flex; align-items: center; gap: 10px; flex: 1; max-width: 200px; margin: 0 15px;">
+            <div style="flex: 1; height: 8px; background: #e2e8f0; border-radius: 4px; overflow: hidden;">
+              <div style="width: ${(nivelDesempeno / 4) * 100}%; height: 100%; background: #8b5cf6;"></div>
+            </div>
+          </div>
+          <span style="font-size: 1rem; font-weight: bold; color: #8b5cf6; min-width: 25px; text-align: right;">${nivelDesempeno}</span>
+        </div>
       </div>
 
-      ${bloqueBeneficiosYClasesHTML()}
+      ${bloqueSesionYDescuentoHTML()}
 
-      <!-- Cuatro botones en cajoncitos paralelos dos a dos -->
-      <div class="rejilla-dos-a-dos" style="margin-bottom: 0;">
-        <button id="btn-repetir-tema" class="boton" style="margin-top: 0; width: 100%;">
-          Repetir este Módulo
+      <div style="margin-bottom: 25px;">
+        <h4 style="color: #1e3a8a; font-size: 0.95rem; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px;">Desempeño por Componentes:</h4>
+        ${htmlCompetencias}
+      </div>
+
+      <div id="bloque-pago-pro" style="border: 2px solid ${yaPago ? "#10b981" : "#1e3a8a"}; background: ${yaPago ? "#f0fdf4" : "#eff6ff"}; padding: 20px; border-radius: 12px; text-align: center;">
+        ${yaPago ? `
+          <span style="background: #10b981; color: white; padding: 4px 12px; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">PAGO Y CELULAR VERIFICADOS (${celularGuardado})</span>
+          <h3 style="color: #10b981; margin: 10px 0 5px 0; font-size: 1.2rem;">Tu Informe Analítico PDF está listo</h3>
+          <p style="color: #334155; font-size: 0.85rem; margin-bottom: 12px;">
+            ${pdfDescargado
+              ? "El informe analítico en PDF correspondiente a este simulacro ya fue generado. Si deseas presentar otro simulacro con un nuevo informe, inicia un nuevo intento."
+              : "Descarga tu informe analítico completo en PDF con gráfica por componente, matriz diagnóstica y ruta de estudio, y agenda tu sesión de 20 minutos ($15.000)."}
+          </p>
+          <button id="btn-descargar-pdf" class="boton boton-verde" style="padding: 12px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; font-size: 1rem; margin-bottom: 10px;">
+            ${pdfDescargado ? "Volver a abrir el PDF Analítico de este Simulacro" : "Descargar Informe Analítico (PDF)"}
+          </button>
+          <a
+            href="https://wa.me/573115574410?text=${textoAgendaWhatsApp}"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="boton"
+            style="padding: 12px 20px; border-radius: 8px; font-weight: bold; width: 100%; font-size: 0.95rem; margin-top: 0; box-sizing: border-box; text-align: center;"
+          >
+            Agendar Sesión de Análisis (20 min · WhatsApp)
+          </a>
+        ` : `
+          <span style="background: #1e3a8a; color: white; padding: 4px 12px; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">SESIÓN DE 20 MIN · $15.000</span>
+          <h3 style="color: #1e3a8a; margin: 10px 0 5px 0; font-size: 1.2rem;">Informe Analítico PDF + Sesión de 20 minutos ($15.000)</h3>
+          <p style="color: #334155; font-size: 0.85rem; margin-bottom: 12px;">Los $15.000 abarcan tu informe analítico en PDF, una sesión de 20 minutos para revisar tus resultados y acceso a un descuento en clases personalizadas.</p>
+
+          <div style="background: #fffbeb; border: 1px solid #f59e0b; color: #92400e; padding: 10px 12px; border-radius: 8px; font-size: 0.82rem; margin-bottom: 14px; text-align: left;">
+            <strong>Importante:</strong> Realiza el pago en Wompi y luego ingresa aquí el <strong>mismo número de celular</strong> con el que pagaste para registrar la verificación de tu intento.
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 12px; align-items: center;">
+            <a href="${linkWompi}" target="_blank" rel="noopener noreferrer" class="boton boton-verde" style="padding: 12px 20px; border-radius: 8px; font-weight: bold; font-size: 1rem; width: 100%; box-sizing: border-box; text-align: center;">
+              Pagar $15.000 con Wompi
+            </a>
+            <div style="background: #fff; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; display: inline-block;">
+              <img src="${urlQrWompi}" alt="QR Wompi" style="width: 110px; height: 110px; display: block; margin: 0 auto 5px auto;" />
+              <span style="font-size: 0.7rem; color: #64748b; font-weight: bold;">Escanea para pagar</span>
+            </div>
+
+            <div style="width: 100%; max-width: 420px; background: #fff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 14px; text-align: left; box-sizing: border-box;">
+              <label for="input-celular-pago" style="display: block; font-size: 0.82rem; font-weight: bold; color: #1e3a8a; margin-bottom: 6px;">
+                Verifica tu pago con el número de celular:
+              </label>
+              <input
+                id="input-celular-pago"
+                type="tel"
+                inputmode="numeric"
+                placeholder="Ej: 3115574410"
+                style="width: 100%; padding: 10px 12px; border: 1px solid #94a3b8; border-radius: 8px; font-size: 0.95rem; box-sizing: border-box; margin-bottom: 10px;"
+              />
+              <label style="display: flex; align-items: flex-start; gap: 8px; font-size: 0.8rem; color: #334155; margin-bottom: 10px; cursor: pointer;">
+                <input id="check-confirmo-pago" type="checkbox" style="margin-top: 2px; cursor: pointer;" />
+                <span>Confirmo que realicé el pago en Wompi o estoy probando el flujo de verificación en la demo.</span>
+              </label>
+              <p id="error-celular-pago" style="display: none; color: #dc2626; font-size: 0.78rem; font-weight: bold; margin: 0 0 8px 0;">
+                Ingresa un número de celular válido de 10 dígitos (ej. 3115574410) y marca la casilla de confirmación.
+              </p>
+              <button
+                id="btn-verificar-celular-pago"
+                type="button"
+                class="boton"
+                style="padding: 10px 16px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; font-size: 0.9rem; margin-top: 0;"
+              >
+                Verificar Pago y Desbloquear PDF Analítico
+              </button>
+            </div>
+          </div>
+        `}
+
+        <button id="btn-nuevo-examen" class="boton boton-gris" style="padding: 10px 16px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; font-size: 0.9rem; margin-top: 12px;">
+          Presentar Otro Examen (Nuevo Intento)
         </button>
 
-        <a class="boton boton-rojo" href="${linkSimulacroGlobal}" style="margin-top: 0; width: 100%;">
-          Presentar Simulacro Global
-        </a>
-
-        <a class="boton boton-verde" href="https://wa.me/${numeroWhatsApp}?text=${mensajeWhatsApp}" target="_blank" rel="noopener noreferrer" style="margin-top: 0; width: 100%;">
-          Solicitar Tutoría por WhatsApp
-        </a>
-
-        <a class="boton boton-gris" href="index.html" style="margin-top: 0; width: 100%;">
-          Volver al Menú Principal
-        </a>
+        <div style="margin-top: 12px; text-align: center;">
+          <a href="prueba.html?todas=1&demo=1" class="boton boton-gris" style="width: 100%; margin-top: 0; box-sizing: border-box;">
+            Probar Mini-Simulacro Demo (Sustentación)
+          </a>
+        </div>
       </div>
     </div>
   `;
 
   setTimeout(() => {
-    const btnRepetir = document.getElementById("btn-repetir-tema");
-    if (btnRepetir) {
-      btnRepetir.onclick = () => {
-        prepararTemaActual();
-        iniciarTemporizador();
-        renderPregunta(state);
+    const btnVerificarCelular = document.getElementById("btn-verificar-celular-pago");
+    const inputCelular = document.getElementById("input-celular-pago");
+    const checkConfirmo = document.getElementById("check-confirmo-pago");
+    const errorCelular = document.getElementById("error-celular-pago");
+
+    if (btnVerificarCelular && inputCelular) {
+      btnVerificarCelular.onclick = () => {
+        const limpio = normalizarCelular(inputCelular.value);
+        const marcadoConfirmacion = checkConfirmo ? checkConfirmo.checked : true;
+
+        if (!/^3\d{9}$/.test(limpio) || !marcadoConfirmacion) {
+          if (errorCelular) {
+            errorCelular.textContent = !/^3\d{9}$/.test(limpio)
+              ? "Ingresa un número de celular válido de 10 dígitos (ej. 3115574410)."
+              : "Marca la casilla de confirmación antes de continuar.";
+            errorCelular.style.display = "block";
+          }
+          if (!/^3\d{9}$/.test(limpio)) inputCelular.focus();
+          return;
+        }
+        if (errorCelular) errorCelular.style.display = "none";
+        guardarDatosPagoIntento(st.idIntento, {
+          verificado: true,
+          celular: limpio,
+          pdfDescargado: false
+        });
+        mostrarResultadosFinalesGlobal(st);
+      };
+    }
+
+    const btnPdf = document.getElementById("btn-descargar-pdf");
+    if (btnPdf) {
+      btnPdf.onclick = () => {
+        const actual = obtenerDatosPagoIntento(st.idIntento) || { verificado: true, celular: celularGuardado };
+        guardarDatosPagoIntento(st.idIntento, {
+          ...actual,
+          pdfDescargado: true
+        });
+        generarPDFInformePersonalizado(
+          aciertos,
+          totalPreguntas,
+          porcentaje,
+          nivelDesempeno,
+          erroresPorTema,
+          st.idIntento,
+          aciertosPorCompetencia,
+          totalPorCompetencia,
+          actual.celular || celularGuardado
+        );
+        mostrarResultadosFinalesGlobal(st);
+      };
+    }
+
+    const btnNuevoExamen = document.getElementById("btn-nuevo-examen");
+    if (btnNuevoExamen) {
+      btnNuevoExamen.onclick = () => {
+        limpiarEstadoPagosAnteriores();
+        window.location.href = "prueba.html?todas=1";
       };
     }
   }, 50);
