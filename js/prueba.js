@@ -6,30 +6,43 @@
  * - Inicialización de simulacro global (?todas=1) o práctica por tema (?tema=...).
  * - Cronómetro visual y cierre automático al agotarse el tiempo.
  * - Renderizado de preguntas con imagen amplia y opciones en cuadrícula 2x2.
- * - Resultados globales (con pantalla de revisión y validación de pago Wompi).
- * - Resultados focalizados por carpeta/tema sin quedarse detenido.
+ * - Resultados globales (con pantalla de revisión, sesión de 30 min / 20% dto y Wompi).
+ * - Resultados focalizados por carpeta/tema con botones 2 a 2.
  */
 
 import { cargarTemas, urlPng, PREGUNTAS_POR_PRUEBA } from "./temas.js";
 
 // Estado global de la sesión de evaluación
 let state = {
-  temas: [],          // Lista completa de temas cargados desde temas.js / indice.json
-  cola: [],           // Cola de temas cuando se practica por carpeta individual
-  indiceTema: 0,      // Índice del tema activo dentro de la cola
-  seleccion: [],      // Arreglo de archivos de pregunta seleccionados para la prueba actual
-  item: 0,            // Índice de la pregunta actual (0 = primera pregunta)
-  respuestas: {},     // Respuestas marcadas por el estudiante según el índice de pregunta
-  todas: false,       // true = Simulacro Global | false = Práctica por tema
-  tiempoRestante: 0,  // Tiempo restante en segundos
+  temas: [],           // Lista completa de temas cargados desde temas.js / indice.json
+  cola: [],            // Cola de temas cuando se practica por carpeta individual
+  indiceTema: 0,       // Índice del tema activo dentro de la cola
+  seleccion: [],       // Arreglo de archivos de pregunta seleccionados para la prueba actual
+  seleccionGlobal: [], // Preguntas mezcladas para el Simulacro Global
+  item: 0,             // Índice de la pregunta actual (0 = primera pregunta)
+  respuestas: {},      // Respuestas marcadas por el estudiante según el índice de pregunta
+  todas: false,        // true = Simulacro Global | false = Práctica por tema
+  tiempoRestante: 0,   // Tiempo restante en segundos
   intervaloTimer: null // Referencia del setInterval del cronómetro
 };
+
+// Bloque HTML reutilizable para la oferta de sesión de 30 min ($15) + 20% dto en clases
+function bloqueSesionYDescuentoHTML() {
+  return `
+    <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px; padding: 14px 16px; margin-bottom: 18px; text-align: left;">
+      <p style="margin: 0; line-height: 1.55; color: #1e293b; font-size: 0.92rem;">
+        <strong style="color: #1e3a8a;">Sesión de revisión de 30 minutos ($15) y descuento en clases:</strong>
+        agenda una sesión de 30 minutos por $15 para analizar tus resultados, resolver dudas clave y recibir un
+        <strong style="color: #dc2626;">descuento del 20% en clases personalizadas online</strong> de Mundo Matemático.
+      </p>
+    </div>
+  `;
+}
 
 /**
  * ==========================================================================
  * SECCIÓN 1: GESTIÓN DE CONTENEDORES Y DOM
  * ==========================================================================
- * Busca el contenedor principal donde se pintará la interfaz en prueba.html.
  */
 function obtenerContenedor() {
   let root =
@@ -38,7 +51,6 @@ function obtenerContenedor() {
     document.getElementById("panel") ||
     document.querySelector("main");
 
-  // Si el HTML no tuviera un contenedor con esos IDs, crea uno de respaldo
   if (!root) {
     root = document.createElement("main");
     root.id = "vista";
@@ -51,19 +63,14 @@ function obtenerContenedor() {
  * ==========================================================================
  * SECCIÓN 2: INICIALIZACIÓN DEL SISTEMA Y PARÁMETROS
  * ==========================================================================
- * Lee los parámetros de la URL, gestiona el estado de pago de Wompi,
- * carga los temas y arma el banco de preguntas (global o por tema).
  */
 async function init() {
   const params = new URLSearchParams(window.location.search);
 
-  // Si regresa de Wompi con ?pagado=true, guarda el desbloqueo en sessionStorage
-  // y limpia la barra de direcciones manteniendo ?todas=1
   if (params.get("pagado") === "true") {
     sessionStorage.setItem("mundo_matematico_pagado_pro", "true");
     window.history.replaceState({}, document.title, window.location.pathname + "?todas=1");
   } else if (params.get("todas") === "1" && !window.location.search.includes("pagado=true")) {
-    // Al iniciar un simulacro global nuevo sin confirmación de pago, reinicia el estado
     sessionStorage.removeItem("mundo_matematico_pagado_pro");
   }
 
@@ -73,7 +80,6 @@ async function init() {
   state.temas = aliasTemas(await cargarTemas());
   const root = obtenerContenedor();
 
-  // Si no hay temas disponibles, avisa claramente en pantalla
   if (!Array.isArray(state.temas) || !state.temas.length) {
     root.innerHTML = `
       <div class="tarjeta">
@@ -88,7 +94,6 @@ async function init() {
   state.indiceTema = 0;
 
   if (esTodas) {
-    // Modo Simulacro Global: toma hasta 5 preguntas únicas por tema y las mezcla
     state.todas = true;
     const preguntasGlobales = [];
     const rutasYaAgregadas = new Set();
@@ -114,15 +119,13 @@ async function init() {
 
     state.seleccionGlobal = preguntasGlobales.sort(() => Math.random() - 0.5);
     state.seleccion = state.seleccionGlobal.map((x) => x.archivo);
-    state.tiempoRestante = 90 * 60; // 90 minutos para simulacro global
+    state.tiempoRestante = 90 * 60;
   } else if (temaId) {
-    // Modo Práctica por carpeta/tema solicitada en la URL
     state.todas = false;
     state.cola = [temaId];
     prepararTemaActual();
-    state.tiempoRestante = 20 * 60; // 20 minutos para práctica focalizada
+    state.tiempoRestante = 20 * 60;
   } else {
-    // Respaldo si se entra a prueba.html sin parámetros: toma el primer tema
     state.todas = false;
     state.cola = [state.temas[0].id];
     prepararTemaActual();
@@ -161,7 +164,6 @@ function iniciarTemporizador() {
   }, 1000);
 }
 
-// Actualiza el reloj en pantalla cada segundo y resalta en rojo con menos de 5 min
 function actualizarRelojVisual() {
   const elReloj = document.getElementById("reloj-tiempo");
   if (elReloj) {
@@ -175,7 +177,6 @@ function actualizarRelojVisual() {
   }
 }
 
-// Garantiza que cada tema tenga un identificador 'id' usable
 function aliasTemas(temas) {
   return (temas || []).map((t) => ({
     ...t,
@@ -183,12 +184,10 @@ function aliasTemas(temas) {
   }));
 }
 
-// Busca un tema por id o carpeta; si no lo encuentra, retorna el primero
 function temaPorId(id) {
   return state.temas.find((t) => t.id === id || t.carpeta === id) || state.temas[0];
 }
 
-// Selecciona preguntas únicas y aleatorias para el módulo o carpeta activa
 function prepararTemaActual() {
   const tema = temaPorId(state.cola[state.indiceTema]);
   const todasLasPreguntas = Array.isArray(tema?.preguntas) ? tema.preguntas : [];
@@ -221,8 +220,6 @@ function prepararTemaActual() {
  * ==========================================================================
  * SECCIÓN 4: RENDERIZADO DE PREGUNTAS (IMAGEN AMPLIA + CAJONES 2x2)
  * ==========================================================================
- * Dibuja la pregunta actual, conserva las respuestas ya elegidas al retroceder
- * y redirige a los resultados correspondientes al finalizar el último ítem.
  */
 export function renderPregunta(st) {
   let tema, archivo;
@@ -244,7 +241,6 @@ export function renderPregunta(st) {
   const total = st.todas ? (st.seleccionGlobal?.length || 0) : (st.seleccion?.length || 0);
   const root = obtenerContenedor();
 
-  // Si ya no hay más archivos por mostrar, pasa a la pantalla de resultados
   if (!archivo) {
     if (st.intervaloTimer) clearInterval(st.intervaloTimer);
     if (st.todas) {
@@ -267,7 +263,6 @@ export function renderPregunta(st) {
   root.innerHTML = `
     <div style="max-width: 850px; margin: 0 auto; padding: 5px;">
       
-      <!-- Barra superior con ruta del módulo y cronómetro -->
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; background: #fff; padding: 8px 12px; border-radius: 6px; border: 1px solid #cbd5e1;">
         <p class="migas" style="margin: 0; font-size: 0.8rem;"><a href="index.html">Menú</a> / ${st.todas ? "Simulacro Global" : (tema.titulo || tema.id)}</p>
         <div style="font-size: 0.85rem; font-weight: bold; color: #1e3a8a; background: #eff6ff; padding: 3px 8px; border-radius: 4px;">
@@ -275,16 +270,13 @@ export function renderPregunta(st) {
         </div>
       </div>
 
-      <!-- Barra de progreso del examen -->
       <div style="height: 5px; background: #e2e8f0; border-radius: 3px; margin-bottom: 4px; overflow: hidden;">
         <div style="height: 100%; background: #1e3a8a; border-radius: 3px; width: ${total > 0 ? ((st.item + 1) / total) * 100 : 0}%"></div>
       </div>
       <p style="font-size: 0.8rem; color: #64748b; margin-bottom: 12px; font-weight: 600;">Ejercicio ${st.item + 1} de ${total}</p>
       
-      <!-- Tarjeta principal de la pregunta -->
       <section class="panel-pregunta" style="margin: 0 auto; width: 100%; padding: 15px;">
         
-        <!-- Imagen de la pregunta a ancho completo -->
         <div style="text-align: center; margin-bottom: 15px;">
           <img
             class="pregunta-img"
@@ -309,7 +301,6 @@ export function renderPregunta(st) {
               <div style="margin-bottom: 12px;">
                 <p style="font-size: 0.8rem; color: #64748b; font-weight: bold; margin-bottom: 4px; text-transform: uppercase;">Elige una respuesta:</p>
                 
-                <!-- Opciones en cuadrícula 2x2 compacta -->
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
                   ${["A", "B", "C", "D"].map((l) => {
                     const marcado = valorAnterior === l ? "checked" : "";
@@ -327,7 +318,6 @@ export function renderPregunta(st) {
             `;
           }).join("")}
 
-          <!-- Botones de navegación entre preguntas -->
           <div style="display: flex; justify-content: space-between; gap: 10px; margin-top: 15px; border-top: 1px solid #e2e8f0; padding-top: 12px;">
             <button
               class="boton"
@@ -350,7 +340,6 @@ export function renderPregunta(st) {
     </div>
   `;
 
-  // Retroceder a la pregunta anterior
   const btnAnterior = document.getElementById("btn-anterior");
   if (btnAnterior) {
     btnAnterior.onclick = () => {
@@ -361,7 +350,6 @@ export function renderPregunta(st) {
     };
   }
 
-  // Validar selección y avanzar o mostrar resultados finales
   document.getElementById("form-opciones").onsubmit = (ev) => {
     ev.preventDefault();
     const formData = new FormData(ev.target);
@@ -399,14 +387,7 @@ export function renderPregunta(st) {
     }
   };
 }
-<!-- BLOQUE NUEVO: Sesión de 30 min por $15 + descuento en clases personalizadas -->
-<div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px; padding: 14px 16px; margin-bottom: 18px; text-align: left;">
-  <p style="margin: 0; line-height: 1.5; color: #1e293b; font-size: 0.92rem;">
-    <strong style="color: #1e3a8a;">Sesión de 30 minutos ($15):</strong>
-    revisamos tus resultados, resolvemos dudas clave y obtienes un
-    <strong style="color: #dc2626;">descuento especial</strong> en clases personalizadas de Mundo Matemático.
-  </p>
-</div>
+
 /**
  * ==========================================================================
  * SECCIÓN 5: RESULTADOS GLOBALES, REVISIÓN Y DESBLOQUEO WOMPI
@@ -483,7 +464,7 @@ function mostrarResultadosFinalesGlobal(st) {
   }
 
   root.innerHTML = `
-    <div style="max-width: 650px; margin: 0 auto; background: #fff; border: 1px solid #cbd5e1; border-radius: 12px; padding: 30px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+    <div style="max-width: 720px; width: 100%; margin: 0 auto; background: #fff; border: 1px solid #cbd5e1; border-radius: 16px; padding: 30px; box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06); box-sizing: border-box;">
       
       <div style="text-align: center; border-bottom: 1px dashed #cbd5e1; padding-bottom: 20px; margin-bottom: 20px;">
         <span style="background: #eff6ff; color: #1e3a8a; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; text-transform: uppercase;">
@@ -532,18 +513,20 @@ function mostrarResultadosFinalesGlobal(st) {
         </div>
       </div>
 
+      ${bloqueSesionYDescuentoHTML()}
+
       <div style="margin-bottom: 25px;">
         <h4 style="color: #1e3a8a; font-size: 0.95rem; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px;">Desempeño por Componentes:</h4>
         ${htmlCompetencias}
       </div>
 
       <div style="margin-bottom: 25px;">
-        <button id="btn-ver-respuestas" class="boton" style="background: #ef4444; color: white; padding: 14px 20px; border-radius: 6px; font-weight: bold; border: none; cursor: pointer; width: 100%; font-size: 1.05rem; box-shadow: 0 2px 4px rgba(239,68,68,0.3);">
+        <button id="btn-ver-respuestas" class="boton boton-rojo" style="padding: 14px 20px; border-radius: 8px; font-weight: bold; border: none; cursor: pointer; width: 100%; font-size: 1.05rem;">
           VER RESPUESTAS Y JUSTIFICACIONES
         </button>
       </div>
 
-      <div style="border: 2px solid ${yaPago ? "#10b981" : "#1e3a8a"}; background: ${yaPago ? "#f0fdf4" : "#eff6ff"}; padding: 20px; border-radius: 8px; text-align: center;">
+      <div style="border: 2px solid ${yaPago ? "#10b981" : "#1e3a8a"}; background: ${yaPago ? "#f0fdf4" : "#eff6ff"}; padding: 20px; border-radius: 10px; text-align: center;">
         ${yaPago ? `
           <span style="background: #10b981; color: white; padding: 4px 12px; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">PAGO VERIFICADO</span>
           <h3 style="color: #10b981; margin: 10px 0 5px 0; font-size: 1.2rem;">Tu Cuadernillo Pro está listo</h3>
@@ -552,13 +535,13 @@ function mostrarResultadosFinalesGlobal(st) {
             Descargar mi Cuadernillo Pro (PDF)
           </button>
         ` : `
-          <span style="background: #1e3a8a; color: white; padding: 4px 12px; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">CUADERNILLO PRO EXCLUSIVO</span>
-          <h3 style="color: #1e3a8a; margin: 10px 0 5px 0; font-size: 1.2rem;">Desbloquea tu Informe Predictivo por $15.000</h3>
-          <p style="color: #334155; font-size: 0.85rem; margin-bottom: 15px;">Obtén el análisis detallado de tus errores y la ruta de refuerzo.</p>
+          <span style="background: #1e3a8a; color: white; padding: 4px 12px; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">SESIÓN DE 30 MIN · $15</span>
+          <h3 style="color: #1e3a8a; margin: 10px 0 5px 0; font-size: 1.2rem;">Sesión de 30 min ($15) + 20% dto en clases personalizadas online</h3>
+          <p style="color: #334155; font-size: 0.85rem; margin-bottom: 15px;">Analizamos tus resultados en vivo, resolvemos dudas clave y obtienes un 20% de descuento en clases personalizadas online.</p>
           
           <div style="display: flex; flex-direction: column; gap: 12px; align-items: center;">
             <a href="${linkWompi}" target="_blank" class="boton" style="background: #10b981; color: white; text-decoration: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; font-size: 1rem; width: 100%; box-sizing: border-box; text-align: center;">
-              Pagar $15.000 con Wompi
+              Agendar / Pagar con Wompi
             </a>
             <div style="background: #fff; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1; display: inline-block;">
               <img src="${urlQrWompi}" alt="QR Wompi" style="width: 110px; height: 110px; display: block; margin: 0 auto 5px auto;" />
@@ -567,7 +550,7 @@ function mostrarResultadosFinalesGlobal(st) {
           </div>
         `}
 
-        <button id="btn-nuevo-examen" class="boton" style="background: #64748b; color: white; padding: 10px 16px; border-radius: 6px; font-weight: bold; border: none; cursor: pointer; width: 100%; font-size: 0.9rem; margin-top: 12px;">
+        <button id="btn-nuevo-examen" class="boton boton-gris" style="padding: 10px 16px; border-radius: 6px; font-weight: bold; border: none; cursor: pointer; width: 100%; font-size: 0.9rem; margin-top: 12px;">
           Presentar Otro Examen (Nuevo Intento)
         </button>
       </div>
@@ -653,7 +636,7 @@ function mostrarPantallaRevisionRespuestas(st) {
   }).join("");
 
   root.innerHTML = `
-    <div style="max-width: 700px; margin: 0 auto; padding: 20px;">
+    <div style="max-width: 720px; width: 100%; margin: 0 auto; padding: 20px; box-sizing: border-box;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: #fff; padding: 15px 20px; border-radius: 8px; border: 1px solid #cbd5e1;">
         <h2 style="color: #1e3a8a; margin: 0; font-size: 1.4rem;">Revisión Detallada de Respuestas</h2>
         <button id="btn-volver-resumen" class="boton" style="background: #1e3a8a; color: white; padding: 8px 16px; border-radius: 6px; font-weight: bold; border: none; cursor: pointer; font-size: 0.9rem;">
@@ -679,7 +662,6 @@ function mostrarPantallaRevisionRespuestas(st) {
  * ==========================================================================
  * SECCIÓN 6: PRÁCTICAS FOCALIZADAS (CARPETAS / MÓDULOS INDIVIDUALES)
  * ==========================================================================
- * Calcula y muestra los resultados al terminar una carpeta de tema específica.
  */
 function mostrarResultadosFinales(st, tema) {
   if (st.intervaloTimer) clearInterval(st.intervaloTimer);
@@ -733,13 +715,12 @@ function mostrarResultadosFinales(st, tema) {
   const tituloModulo = temaActual?.titulo || temaActual?.id || "Módulo";
   const linkSimulacroGlobal = "prueba.html?todas=1";
   const numeroWhatsApp = "573115574410";
-  // MENSAJE DE WHATSAPP: incluye la sesión de 30 min ($15) y el interés en clases personalizadas
-const mensajeWhatsApp = encodeURIComponent(
-  `Hola Mundo Matemático, terminé la práctica de ${tituloModulo} y quiero agendar la sesión de 30 minutos ($15) con descuento para clases personalizadas.`
-);
+  const mensajeWhatsApp = encodeURIComponent(
+    `Hola Mundo Matemático, terminé la práctica de ${tituloModulo} y quiero agendar la sesión de 30 minutos ($15) con 20% de descuento para clases personalizadas online.`
+  );
 
   root.innerHTML = `
-    <div style="max-width: 650px; margin: 0 auto; background: #fff; border: 1px solid #cbd5e1; border-radius: 12px; padding: 28px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+    <div style="max-width: 720px; width: 100%; margin: 0 auto; background: #fff; border: 1px solid #cbd5e1; border-radius: 16px; padding: 28px; box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06); box-sizing: border-box;">
       <div style="text-align: center; border-bottom: 1px dashed #cbd5e1; padding-bottom: 18px; margin-bottom: 20px;">
         <span style="background: #eff6ff; color: #1e3a8a; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; text-transform: uppercase;">
           Práctica Focalizada
@@ -755,25 +736,27 @@ const mensajeWhatsApp = encodeURIComponent(
         <span style="font-size: 0.85rem; color: #64748b; font-weight: 700;">${aciertos} correctas de ${totalPreguntas} ejercicios (${incorrectas} por reforzar)</span>
       </div>
 
-      <div style="background: ${fondoCaja}; border: 1px solid ${alertaColor}; padding: 18px; margin-bottom: 22px; border-radius: 8px; text-align: left;">
+      <div style="background: ${fondoCaja}; border: 1px solid ${alertaColor}; padding: 18px; margin-bottom: 18px; border-radius: 10px; text-align: left;">
         <h3 style="color: ${alertaColor}; margin: 0 0 8px 0; font-size: 1rem;">Diagnóstico del módulo</h3>
         <p style="margin: 0; line-height: 1.55; color: #334155; font-size: 0.92rem;">${mensajeDesempeno}</p>
       </div>
 
-      <div style="display: flex; flex-direction: column; gap: 10px;">
-        <button id="btn-repetir-tema" class="boton" style="background: #2563eb; color: white; padding: 12px 18px; border-radius: 6px; font-weight: bold; border: none; cursor: pointer; font-size: 0.95rem; width: 100%;">
+      ${bloqueSesionYDescuentoHTML()}
+
+      <div class="rejilla-dos-a-dos" style="margin-bottom: 0;">
+        <button id="btn-repetir-tema" class="boton" style="margin-top: 0; width: 100%;">
           Repetir este Módulo
         </button>
 
-        <a class="boton" href="${linkSimulacroGlobal}" style="background: #1e3a8a; color: white; text-decoration: none; padding: 12px 18px; border-radius: 6px; font-weight: bold; font-size: 0.95rem; width: 100%; box-sizing: border-box; text-align: center;">
-          Presentar Simulacro Global Completo
+        <a class="boton boton-rojo" href="${linkSimulacroGlobal}" style="margin-top: 0; width: 100%;">
+          Presentar Simulacro Global
         </a>
 
-        <a class="boton" href="https://wa.me/${numeroWhatsApp}?text=${mensajeWp}" target="_blank" style="background: #16a34a; color: white; text-decoration: none; padding: 12px 18px; border-radius: 6px; font-weight: bold; font-size: 0.95rem; width: 100%; box-sizing: border-box; text-align: center;">
+        <a class="boton boton-verde" href="https://wa.me/${numeroWhatsApp}?text=${mensajeWhatsApp}" target="_blank" style="margin-top: 0; width: 100%;">
           Solicitar Tutoría por WhatsApp
         </a>
 
-        <a class="boton" href="index.html" style="background: #64748b; color: white; text-decoration: none; padding: 11px 18px; border-radius: 6px; font-weight: bold; font-size: 0.9rem; width: 100%; box-sizing: border-box; text-align: center;">
+        <a class="boton boton-gris" href="index.html" style="margin-top: 0; width: 100%;">
           Volver al Menú Principal
         </a>
       </div>
@@ -796,7 +779,6 @@ const mensajeWhatsApp = encodeURIComponent(
  * ==========================================================================
  * SECCIÓN 7: GENERACIÓN DE PDF NATIVO (CUADERNILLO PRO PERSONALIZADO)
  * ==========================================================================
- * Abre una vista imprimible/exportable a PDF con métricas, análisis y ruta.
  */
 function generarPDFInformePersonalizado(aciertos, totalPreguntas, porcentaje, nivelDesempeno, erroresPorTema) {
   const ventanaImpresion = window.open("", "_blank");
@@ -815,9 +797,9 @@ function generarPDFInformePersonalizado(aciertos, totalPreguntas, porcentaje, ni
   `;
 
   const recomendacionTemas = `
-    1. <strong>Foco prioritario en ${temaCritico1}:</strong> Revisar conceptos clave, propiedades operativas y resolución de situaciones tipo viñeta donde este componente es evaluado.<br><br>
-    2. <strong>Refuerzo en ${temaCritico2}:</strong> Practicar ejercicios de interpretación de modelos y aplicación algorítmica para reducir errores recurrentes.<br><br>
-    3. <strong>Lectura y gestión del tiempo:</strong> Leer cuidadosamente los enunciados y verificar las condiciones del problema antes de elegir opción.
+1. <strong>Foco prioritario en ${temaCritico1}:</strong> Revisar conceptos clave, propiedades operativas y resolución de situaciones tipo viñeta donde este componente es evaluado.<br><br>
+2. <strong>Refuerzo en ${temaCritico2}:</strong> Practicar ejercicios de interpretación de modelos y aplicación algorítmica para reducir errores recurrentes.<br><br>
+3. <strong>Lectura y gestión del tiempo:</strong> Leer cuidadosamente los enunciados y verificar las condiciones del problema antes de elegir opción.
   `;
 
   ventanaImpresion.document.write(`
