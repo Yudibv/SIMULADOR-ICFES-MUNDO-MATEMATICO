@@ -3,35 +3,44 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mundo Matemático — Evaluación Saber 11</title>
-  <link rel="stylesheet" href="css/estilos.css" />
+  <title>Prueba — Mundo Matemático</title>
+  <!-- Enlaza la hoja de estilos principal en css/estilo.css -->
+  <link rel="stylesheet" href="css/estilo.css" />
 </head>
 <body>
 
+  <!-- ======================================================================
+       CABECERA SUPERIOR CON LOGO Y REGRESO AL MENÚ
+       ====================================================================== -->
   <header class="header-principal">
     <div class="logo-contenedor">
-      <img
-        src="img/logo.png"
-        alt="Logo Mundo Matemático"
-        onerror="this.style.display='none';"
-      />
+      <img src="logo.jpg" alt="Logo Mundo Matemático" />
       <div>
-        <h1 class="titulo-sitio">Mundo Matemático</h1>
-        <span class="sub-saber">Saber 11</span>
+        <span class="titulo-sitio">Mundo Matemático</span>
+        <span class="sub-saber">Saber 11 · Evaluación</span>
       </div>
     </div>
 
-    <nav style="display: flex; align-items: center; gap: 16px;">
-      <a href="index.html" class="link-nav">Volver al Menú</a>
+    <nav>
+      <a href="index.html" class="link-nav">← Volver al Menú</a>
     </nav>
   </header>
 
+  <!-- ======================================================================
+       CONTENEDOR PRINCIPAL DONDE RENDERIZA js/prueba.js
+       ====================================================================== -->
   <main id="vista" class="contenedor-principal"></main>
 
+  <!-- ======================================================================
+       PIE DE PÁGINA CENTRADO
+       ====================================================================== -->
   <footer class="footer-principal">
     Mundo Matemático es una iniciativa educativa independiente de preparación preuniversitaria. No está afiliada, vinculada ni patrocinada oficialmente por el ICFES.
   </footer>
 
+  <!-- ======================================================================
+       MOTOR DE PRUEBAS Y SIMULACROS
+       ====================================================================== -->
   <script type="module" src="js/prueba.js"></script>
 </body>
 </html>
