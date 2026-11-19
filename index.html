@@ -1,127 +1,61 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mundo Matemático — Simulador Saber 11</title>
-  <!-- Hoja de estilos principal ubicada en css/estilo.css -->
-  <link rel="stylesheet" href="css/estilo.css" />
-</head>
-<body>
-
-  <!-- ======================================================================
-       CABECERA SUPERIOR CON LOGO Y ACCESO RÁPIDO AL SIMULACRO GLOBAL
-       ====================================================================== -->
-  <header class="header-principal">
-    <div class="logo-contenedor">
-      <!-- Logo ubicado en la raíz del repositorio -->
-      <img src="logo.jpg" alt="Logo Mundo Matemático" />
-      <div>
-        <span class="titulo-sitio">Mundo Matemático</span>
-        <span class="sub-saber">Saber 11 · Matemáticas</span>
-      </div>
-    </div>
-
-    <nav>
-      <a href="prueba.html?todas=1" class="boton boton-rojo">Presentar Simulacro Global</a>
-    </nav>
-  </header>
-
-  <!-- ======================================================================
-       CONTENEDOR PRINCIPAL DE LA PORTADA
-       ====================================================================== -->
-  <main id="vista" class="contenedor-principal">
-
-    <!-- 1. APERTURA: COMPROMISO CON LA EDUCACIÓN DEL PAÍS -->
-    <section class="presentacion-bienvenida">
-      <p class="seccion-subtitulo">COMPROMISO CON LA EDUCACIÓN DEL PAÍS</p>
-      <h1>Mundo Matemático se preocupa por la educación del país</h1>
-      <p>
-        Creamos este simulador independiente de Saber 11 para acompañar a los estudiantes y fortalecer su razonamiento cuantitativo con práctica clara y guiada.
-      </p>
-
-      <hr class="divisor-interno" />
-
-      <!-- 2. BLOQUE SUPERIOR UNIDO: SIMULACRO GLOBAL + SESIÓN DE 30 MIN ($15.000) Y DESCUENTO -->
-      <div class="bloque-simulacro-destacado">
-        <span class="badge-rojo">SIMULACRO GLOBAL</span>
-        <h2>Evalúa tu nivel completo tipo Saber 11</h2>
-        <p>
-          Practica con cronómetro, diagnóstico por componentes y revisión de respuestas al finalizar.
-        </p>
-        <a href="prueba.html?todas=1" class="boton boton-rojo">Presentar Simulacro Global</a>
-
-        <!-- Aviso integrado junto al Simulacro Global: sesión de 30 min ($15.000) + descuento en clases personalizadas -->
-        <div class="caja-aviso-azul" style="margin-top: 20px;">
-          <h3>Sesión de revisión de 30 minutos ($15.000) y descuento en clases personalizadas</h3>
-          <p>
-            Los $15.000 abarcan una sesión de 30 minutos para analizar tus resultados, resolver dudas clave y recibir un descuento especial para tus clases personalizadas de Mundo Matemático.
-          </p>
-        </div>
-      </div>
-
-      <hr class="divisor-interno" />
-
-      <!-- 3. BENEFICIOS EN CAJONCITOS DOS A DOS (TEXTO BREVE) -->
-      <h2 class="subtitulo-beneficios">Beneficios de un buen puntaje</h2>
-
-      <div class="rejilla-beneficios">
-        <div class="cuadro-beneficio">
-          <div class="circulo-icono">U</div>
-          <h3>Universidades públicas</h3>
-          <p>Admisión directa o prioritaria en instituciones públicas.</p>
-        </div>
-
-        <div class="cuadro-beneficio">
-          <div class="circulo-icono">%</div>
-          <h3>Becas en privadas</h3>
-          <p>Apoyos en matrícula según mérito académico.</p>
-        </div>
-
-        <div class="cuadro-beneficio">
-          <div class="circulo-icono">E</div>
-          <h3>Bachilleres Ecopetrol</h3>
-          <p>Cobertura de matrícula y sostenimiento en zonas rurales.</p>
-        </div>
-
-        <div class="cuadro-beneficio">
-          <div class="circulo-icono">$</div>
-          <h3>Créditos condonables e ICETEX</h3>
-          <p>Financiación y fondos condonables para educación superior.</p>
-        </div>
-
-        <div class="cuadro-beneficio">
-          <div class="circulo-icono">★</div>
-          <h3>Premio Andrés Bello</h3>
-          <p>Reconocimiento nacional a los mejores puntajes.</p>
-        </div>
-
-        <div class="cuadro-beneficio">
-          <div class="circulo-icono">◈</div>
-          <h3>Fondos territoriales</h3>
-          <p>Programas regionales de apoyo a estudiantes.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- 4. MÓDULOS POR COMPETENCIAS MATEMÁTICAS(CARGADOS DINÁMICAMENTE DESDE js/temas.js) -->
-    <h2 class="titulo-modulos">Práctica por temas</h2>
-    <div id="rejilla"></div>
-
-  </main>
-
-  <!-- ======================================================================
-       PIE DE PÁGINA CENTRADO
-       ====================================================================== -->
-  <footer class="footer-principal">
-    Mundo Matemático es una iniciativa educativa independiente de preparación preuniversitaria. No está afiliada, vinculada ni patrocinada oficialmente por el ICFES.
-  </footer>
-
-  <!-- ======================================================================
-       CARGA DE MÓDULOS POR TEMA
-       ====================================================================== -->
-  <script type="module">
+<script type="module">
     import { cargarTemas } from "./js/temas.js";
+
+    // Genera un gráfico geométrico o matemático limpio según el tema (sin imágenes externas ni aspecto de IA)
+    function graficoPorTema(titulo = "", indice = 0) {
+      const nombre = String(titulo).toLowerCase();
+      const esRojo = indice % 2 === 0;
+      const trazo = esRojo ? "#dc2626" : "#1e3a8a";
+      const rellenoSuave = esRojo ? "#fef2f2" : "#eff6ff";
+
+      // Geometría / Figuras / Espacial
+      if (nombre.includes("geometr") || nombre.includes("espacial") || nombre.includes("triángul") || nombre.includes("figura")) {
+        return `
+          <svg viewBox="0 0 120 64" width="110" height="58" aria-hidden="true" style="margin-bottom: 6px;">
+            <rect x="6" y="4" width="108" height="56" rx="10" fill="${rellenoSuave}" stroke="${trazo}" stroke-width="1.5" />
+            <polygon points="34,48 56,14 78,48" fill="none" stroke="${trazo}" stroke-width="2.5" stroke-linejoin="round" />
+            <line x1="56" y1="14" x2="56" y2="48" stroke="${trazo}" stroke-width="1.5" stroke-dasharray="3,2" />
+            <circle cx="88" cy="24" r="9" fill="none" stroke="${trazo}" stroke-width="2" />
+          </svg>
+        `;
+      }
+
+      // Estadística / Probabilidad / Datos
+      if (nombre.includes("estad") || nombre.includes("probab") || nombre.includes("datos") || nombre.includes("gráfic")) {
+        return `
+          <svg viewBox="0 0 120 64" width="110" height="58" aria-hidden="true" style="margin-bottom: 6px;">
+            <rect x="6" y="4" width="108" height="56" rx="10" fill="${rellenoSuave}" stroke="${trazo}" stroke-width="1.5" />
+            <line x1="24" y1="48" x2="96" y2="48" stroke="${trazo}" stroke-width="2" />
+            <line x1="24" y1="16" x2="24" y2="48" stroke="${trazo}" stroke-width="2" />
+            <rect x="34" y="32" width="12" height="16" fill="${trazo}" opacity="0.75" />
+            <rect x="54" y="22" width="12" height="26" fill="${trazo}" opacity="0.9" />
+            <rect x="74" y="27" width="12" height="21" fill="${trazo}" opacity="0.6" />
+          </svg>
+        `;
+      }
+
+      // Funciones / Álgebra / Cálculo / Trigonometría
+      if (nombre.includes("func") || nombre.includes("álgebr") || nombre.includes("algebra") || nombre.includes("cálcul") || nombre.includes("calculo") || nombre.includes("trigon")) {
+        return `
+          <svg viewBox="0 0 120 64" width="110" height="58" aria-hidden="true" style="margin-bottom: 6px;">
+            <rect x="6" y="4" width="108" height="56" rx="10" fill="${rellenoSuave}" stroke="${trazo}" stroke-width="1.5" />
+            <line x1="20" y1="32" x2="100" y2="32" stroke="#94a3b8" stroke-width="1.5" />
+            <line x1="60" y1="12" x2="60" y2="52" stroke="#94a3b8" stroke-width="1.5" />
+            <path d="M 24,46 Q 60,8 96,46" fill="none" stroke="${trazo}" stroke-width="2.5" />
+          </svg>
+        `;
+      }
+
+      // Aritmética / Porcentajes / Razonamiento cuantitativo / General
+      return `
+        <svg viewBox="0 0 120 64" width="110" height="58" aria-hidden="true" style="margin-bottom: 6px;">
+          <rect x="6" y="4" width="108" height="56" rx="10" fill="${rellenoSuave}" stroke="${trazo}" stroke-width="1.5" />
+          <text x="60" y="39" text-anchor="middle" fill="${trazo}" font-size="22" font-weight="800" font-family="system-ui, sans-serif">
+            f(x) · %
+          </text>
+        </svg>
+      `;
+    }
 
     async function iniciarMenu() {
       const rejilla = document.getElementById("rejilla");
@@ -138,12 +72,12 @@
           const idTema = encodeURIComponent(t.id || t.carpeta);
           const titulo = t.titulo || t.carpeta || "Módulo";
           const totalPreguntas = Array.isArray(t.preguntas) ? t.preguntas.length : 0;
-          const simbolo = t.icono || (i + 1);
+          const ilustracionTema = graficoPorTema(titulo, i);
 
           return `
             <article class="tarjeta">
-              <div class="circulo-icono">${simbolo}</div>
-              <span class="badge">COMPETENCIA MATEMÁTICA</span>
+              ${ilustracionTema}
+              <span class="badge">TEMA</span>
               <h2>${titulo}</h2>
               <p class="subtitulo">${totalPreguntas > 0 ? `${totalPreguntas} preguntas` : "Práctica focalizada"}</p>
               <a href="prueba.html?tema=${idTema}" class="boton">Practicar tema</a>
@@ -157,5 +91,3 @@
 
     iniciarMenu();
   </script>
-</body>
-</html>
