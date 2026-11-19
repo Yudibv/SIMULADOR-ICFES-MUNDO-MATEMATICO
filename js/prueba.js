@@ -6,8 +6,8 @@
  * - Inicialización de simulacro global (?todas=1) o práctica por tema (?tema=...).
  * - Cronómetro visual y cierre automático al agotarse el tiempo.
  * - Renderizado de preguntas con imagen amplia y opciones en cuadrícula 2x2.
- * - Resultados globales (con pantalla de revisión, sesión de 30 min / 20% dto y Wompi).
- * - Resultados focalizados por carpeta/tema con botones 2 a 2.
+ * - Resultados globales (con pantalla de revisión, sesión de 30 min / $15 + descuento y Wompi).
+ * - Resultados focalizados por carpeta/tema con botones en cajoncitos dos a dos.
  */
 
 import { cargarTemas, urlPng, PREGUNTAS_POR_PRUEBA } from "./temas.js";
@@ -26,14 +26,14 @@ let state = {
   intervaloTimer: null // Referencia del setInterval del cronómetro
 };
 
-// Bloque HTML reutilizable para la oferta de sesión de 30 min ($15) + 20% dto en clases
+// Bloque HTML reutilizable: sesión de 30 minutos ($15) + descuento en clases personalizadas
 function bloqueSesionYDescuentoHTML() {
   return `
-    <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px; padding: 14px 16px; margin-bottom: 18px; text-align: left;">
+    <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px; padding: 14px 18px; margin-bottom: 18px; text-align: left;">
       <p style="margin: 0; line-height: 1.55; color: #1e293b; font-size: 0.92rem;">
-        <strong style="color: #1e3a8a;">Sesión de revisión de 30 minutos ($15) y descuento en clases:</strong>
-        agenda una sesión de 30 minutos por $15 para analizar tus resultados, resolver dudas clave y recibir un
-        <strong style="color: #dc2626;">descuento del 20% en clases personalizadas online</strong> de Mundo Matemático.
+        <strong style="color: #1e3a8a;">Sesión de revisión de 30 minutos ($15) y descuento en clases personalizadas:</strong>
+        los $15 abarcan una sesión de 30 minutos para analizar tus resultados, resolver dudas clave y ofrecerte un
+        <strong style="color: #dc2626;">descuento especial en clases personalizadas</strong> de Mundo Matemático.
       </p>
     </div>
   `;
@@ -261,10 +261,10 @@ export function renderPregunta(st) {
   const segInicial = (st.tiempoRestante % 60).toString().padStart(2, "0");
 
   root.innerHTML = `
-    <div style="max-width: 850px; margin: 0 auto; padding: 5px;">
+    <div style="max-width: 960px; width: 100%; margin: 0 auto; padding: 5px; box-sizing: border-box;">
       
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; background: #fff; padding: 8px 12px; border-radius: 6px; border: 1px solid #cbd5e1;">
-        <p class="migas" style="margin: 0; font-size: 0.8rem;"><a href="index.html">Menú</a> / ${st.todas ? "Simulacro Global" : (tema.titulo || tema.id)}</p>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; background: #fff; padding: 8px 12px; border-radius: 8px; border: 1px solid #cbd5e1;">
+        <p class="migas" style="margin: 0; font-size: 0.82rem;"><a href="index.html">Menú</a> / ${st.todas ? "Simulacro Global" : (tema.titulo || tema.id)}</p>
         <div style="font-size: 0.85rem; font-weight: bold; color: #1e3a8a; background: #eff6ff; padding: 3px 8px; border-radius: 4px;">
           Tiempo: <span id="reloj-tiempo">${minInicial}:${segInicial}</span>
         </div>
@@ -277,7 +277,7 @@ export function renderPregunta(st) {
       
       <section class="panel-pregunta" style="margin: 0 auto; width: 100%; padding: 15px;">
         
-        <div style="text-align: center; margin-bottom: 15px;">
+        <div style="text-align: center; margin-bottom: 15px; width: 100%;">
           <img
             class="pregunta-img"
             alt="Pregunta ${st.item + 1}"
@@ -292,7 +292,7 @@ export function renderPregunta(st) {
           Por favor responde la pregunta para continuar.
         </p>
         
-        <form id="form-opciones">
+        <form id="form-opciones" style="width: 100%;">
           ${subPreguntas.map((num) => {
             const valorAnterior = esMulti ? respuestaPrevia[num] : respuestaPrevia;
             return `
@@ -320,17 +320,17 @@ export function renderPregunta(st) {
 
           <div style="display: flex; justify-content: space-between; gap: 10px; margin-top: 15px; border-top: 1px solid #e2e8f0; padding-top: 12px;">
             <button
-              class="boton"
+              class="boton boton-gris"
               type="button"
               id="btn-anterior"
-              ${st.item === 0 ? 'disabled style="opacity: 0.4; cursor: not-allowed; background: #64748b; color: white; padding: 8px 14px; border-radius: 6px; border: none; font-weight: bold; font-size: 0.85rem;"' : 'style="background: #64748b; color: white; padding: 8px 14px; border-radius: 6px; border: none; font-weight: bold; cursor: pointer; font-size: 0.85rem;"'}
+              ${st.item === 0 ? 'disabled style="opacity: 0.4; cursor: not-allowed; padding: 8px 14px; border-radius: 6px; font-weight: bold; font-size: 0.85rem;"' : 'style="padding: 8px 14px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.85rem;"'}
             >
               ← Anterior
             </button>
             <button
               class="boton"
               type="submit"
-              style="flex: 1; background: #1e3a8a; color: white; padding: 8px 14px; border-radius: 6px; border: none; font-weight: bold; cursor: pointer; font-size: 0.9rem;"
+              style="flex: 1; padding: 8px 14px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.9rem;"
             >
               ${st.item + 1 < total ? "Siguiente →" : "Ver Resultados"}
             </button>
@@ -455,7 +455,7 @@ function mostrarResultadosFinalesGlobal(st) {
   for (const [comp, totalComp] of Object.entries(totalPorCompetencia)) {
     const okComp = aciertosPorCompetencia[comp] || 0;
     htmlCompetencias += `
-      <div style="display: flex; justify-content: space-between; align-items: center; background: #fff; padding: 12px 15px; border-radius: 6px; border: 1px solid #e2e8f0; margin-bottom: 8px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; background: #fff; padding: 12px 15px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 8px;">
         <span style="font-size: 0.9rem; color: #334155; font-weight: 500;">${contadorComp}. ${comp}</span>
         <span style="font-size: 0.95rem; font-weight: bold; color: #1e3a8a;">${okComp}/${totalComp}</span>
       </div>
@@ -464,7 +464,7 @@ function mostrarResultadosFinalesGlobal(st) {
   }
 
   root.innerHTML = `
-    <div style="max-width: 720px; width: 100%; margin: 0 auto; background: #fff; border: 1px solid #cbd5e1; border-radius: 16px; padding: 30px; box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06); box-sizing: border-box;">
+    <div style="max-width: 820px; width: 100%; margin: 0 auto; background: #fff; border: 1px solid #cbd5e1; border-radius: 16px; padding: 30px; box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06); box-sizing: border-box;">
       
       <div style="text-align: center; border-bottom: 1px dashed #cbd5e1; padding-bottom: 20px; margin-bottom: 20px;">
         <span style="background: #eff6ff; color: #1e3a8a; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; text-transform: uppercase;">
@@ -481,8 +481,8 @@ function mostrarResultadosFinalesGlobal(st) {
         <span style="font-size: 0.8rem; color: #64748b; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">Puntaje de la prueba (${aciertos}/${totalPreguntas})</span>
       </div>
 
-      <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 25px;">
-        <div style="display: flex; align-items: center; justify-content: space-between; background: #f8fafc; padding: 10px 15px; border-radius: 6px; border: 1px solid #e2e8f0;">
+      <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 22px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; background: #f8fafc; padding: 10px 15px; border-radius: 8px; border: 1px solid #e2e8f0;">
           <span style="font-size: 0.9rem; color: #64748b; font-weight: 600;">CORRECTAS:</span>
           <div style="display: flex; align-items: center; gap: 10px; flex: 1; max-width: 200px; margin: 0 15px;">
             <div style="flex: 1; height: 8px; background: #e2e8f0; border-radius: 4px; overflow: hidden;">
@@ -492,7 +492,7 @@ function mostrarResultadosFinalesGlobal(st) {
           <span style="font-size: 1rem; font-weight: bold; color: #10b981; min-width: 25px; text-align: right;">${aciertos}</span>
         </div>
 
-        <div style="display: flex; align-items: center; justify-content: space-between; background: #f8fafc; padding: 10px 15px; border-radius: 6px; border: 1px solid #e2e8f0;">
+        <div style="display: flex; align-items: center; justify-content: space-between; background: #f8fafc; padding: 10px 15px; border-radius: 8px; border: 1px solid #e2e8f0;">
           <span style="font-size: 0.9rem; color: #64748b; font-weight: 600;">INCORRECTAS:</span>
           <div style="display: flex; align-items: center; gap: 10px; flex: 1; max-width: 200px; margin: 0 15px;">
             <div style="flex: 1; height: 8px; background: #e2e8f0; border-radius: 4px; overflow: hidden;">
@@ -502,7 +502,7 @@ function mostrarResultadosFinalesGlobal(st) {
           <span style="font-size: 1rem; font-weight: bold; color: #ef4444; min-width: 25px; text-align: right;">${incorrectas}</span>
         </div>
 
-        <div style="display: flex; align-items: center; justify-content: space-between; background: #f8fafc; padding: 10px 15px; border-radius: 6px; border: 1px solid #e2e8f0;">
+        <div style="display: flex; align-items: center; justify-content: space-between; background: #f8fafc; padding: 10px 15px; border-radius: 8px; border: 1px solid #e2e8f0;">
           <span style="font-size: 0.9rem; color: #64748b; font-weight: 600;">NIVEL ESTIMADO:</span>
           <div style="display: flex; align-items: center; gap: 10px; flex: 1; max-width: 200px; margin: 0 15px;">
             <div style="flex: 1; height: 8px; background: #e2e8f0; border-radius: 4px; overflow: hidden;">
@@ -521,36 +521,36 @@ function mostrarResultadosFinalesGlobal(st) {
       </div>
 
       <div style="margin-bottom: 25px;">
-        <button id="btn-ver-respuestas" class="boton boton-rojo" style="padding: 14px 20px; border-radius: 8px; font-weight: bold; border: none; cursor: pointer; width: 100%; font-size: 1.05rem;">
+        <button id="btn-ver-respuestas" class="boton boton-rojo" style="padding: 14px 20px; border-radius: 10px; font-weight: bold; cursor: pointer; width: 100%; font-size: 1.05rem;">
           VER RESPUESTAS Y JUSTIFICACIONES
         </button>
       </div>
 
-      <div style="border: 2px solid ${yaPago ? "#10b981" : "#1e3a8a"}; background: ${yaPago ? "#f0fdf4" : "#eff6ff"}; padding: 20px; border-radius: 10px; text-align: center;">
+      <div style="border: 2px solid ${yaPago ? "#10b981" : "#1e3a8a"}; background: ${yaPago ? "#f0fdf4" : "#eff6ff"}; padding: 20px; border-radius: 12px; text-align: center;">
         ${yaPago ? `
           <span style="background: #10b981; color: white; padding: 4px 12px; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">PAGO VERIFICADO</span>
           <h3 style="color: #10b981; margin: 10px 0 5px 0; font-size: 1.2rem;">Tu Cuadernillo Pro está listo</h3>
           <p style="color: #334155; font-size: 0.85rem; margin-bottom: 15px;">Descarga tu informe con la ruta de corrección personalizada.</p>
-          <button id="btn-descargar-pdf" class="boton" style="background: #10b981; color: white; padding: 12px 20px; border-radius: 6px; font-weight: bold; border: none; cursor: pointer; width: 100%; font-size: 1rem; margin-bottom: 10px;">
+          <button id="btn-descargar-pdf" class="boton boton-verde" style="padding: 12px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; font-size: 1rem; margin-bottom: 10px;">
             Descargar mi Cuadernillo Pro (PDF)
           </button>
         ` : `
           <span style="background: #1e3a8a; color: white; padding: 4px 12px; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">SESIÓN DE 30 MIN · $15</span>
-          <h3 style="color: #1e3a8a; margin: 10px 0 5px 0; font-size: 1.2rem;">Sesión de 30 min ($15) + 20% dto en clases personalizadas online</h3>
-          <p style="color: #334155; font-size: 0.85rem; margin-bottom: 15px;">Analizamos tus resultados en vivo, resolvemos dudas clave y obtienes un 20% de descuento en clases personalizadas online.</p>
+          <h3 style="color: #1e3a8a; margin: 10px 0 5px 0; font-size: 1.2rem;">Sesión de 30 minutos ($15) + descuento en clases personalizadas</h3>
+          <p style="color: #334155; font-size: 0.85rem; margin-bottom: 15px;">Los $15 abarcan una sesión de 30 minutos para revisar tus resultados y acceder a un descuento en clases personalizadas.</p>
           
           <div style="display: flex; flex-direction: column; gap: 12px; align-items: center;">
-            <a href="${linkWompi}" target="_blank" class="boton" style="background: #10b981; color: white; text-decoration: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; font-size: 1rem; width: 100%; box-sizing: border-box; text-align: center;">
+            <a href="${linkWompi}" target="_blank" class="boton boton-verde" style="padding: 12px 20px; border-radius: 8px; font-weight: bold; font-size: 1rem; width: 100%; box-sizing: border-box; text-align: center;">
               Agendar / Pagar con Wompi
             </a>
-            <div style="background: #fff; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1; display: inline-block;">
+            <div style="background: #fff; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; display: inline-block;">
               <img src="${urlQrWompi}" alt="QR Wompi" style="width: 110px; height: 110px; display: block; margin: 0 auto 5px auto;" />
               <span style="font-size: 0.7rem; color: #64748b; font-weight: bold;">Escanea para pagar</span>
             </div>
           </div>
         `}
 
-        <button id="btn-nuevo-examen" class="boton boton-gris" style="padding: 10px 16px; border-radius: 6px; font-weight: bold; border: none; cursor: pointer; width: 100%; font-size: 0.9rem; margin-top: 12px;">
+        <button id="btn-nuevo-examen" class="boton boton-gris" style="padding: 10px 16px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; font-size: 0.9rem; margin-top: 12px;">
           Presentar Otro Examen (Nuevo Intento)
         </button>
       </div>
@@ -610,7 +610,7 @@ function mostrarPantallaRevisionRespuestas(st) {
     }
 
     return `
-      <div style="background: #fff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.04);">
+      <div style="background: #fff; border: 1px solid #cbd5e1; border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.04);">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;">
           <span style="font-weight: bold; color: #1e3a8a; font-size: 0.95rem;">Pregunta ${index + 1} (${tema.titulo || "General"})</span>
           <span style="background: ${esAcierto ? "#dcfce7" : "#fee2e2"}; color: ${esAcierto ? "#166534" : "#991b1b"}; padding: 4px 10px; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">
@@ -618,11 +618,11 @@ function mostrarPantallaRevisionRespuestas(st) {
           </span>
         </div>
 
-        <div style="text-align: center; margin-bottom: 15px; background: #f8fafc; padding: 10px; border-radius: 6px;">
+        <div style="text-align: center; margin-bottom: 15px; background: #f8fafc; padding: 10px; border-radius: 8px;">
           <img src="${rutaImg}" alt="Pregunta ${index + 1}" style="max-width: 100%; height: auto; object-fit: contain;" />
         </div>
 
-        <div style="background: #f8fafc; border: 1px dashed #cbd5e1; padding: 15px; border-radius: 6px; margin-top: 10px;">
+        <div style="background: #f8fafc; border: 1px dashed #cbd5e1; padding: 15px; border-radius: 8px; margin-top: 10px;">
           <span style="background: #8b5cf6; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; display: inline-block; margin-bottom: 6px;">JUSTIFICACIÓN ANALÍTICA</span>
           <p style="font-size: 0.85rem; color: #334155; margin: 0 0 8px 0; line-height: 1.5;">
             La opción correcta seleccionada por el modelo TRI para este ítem corresponde al análisis riguroso de los datos presentados en la gráfica y la aplicación de propiedades conceptuales del componente.
@@ -636,10 +636,10 @@ function mostrarPantallaRevisionRespuestas(st) {
   }).join("");
 
   root.innerHTML = `
-    <div style="max-width: 720px; width: 100%; margin: 0 auto; padding: 20px; box-sizing: border-box;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: #fff; padding: 15px 20px; border-radius: 8px; border: 1px solid #cbd5e1;">
+    <div style="max-width: 820px; width: 100%; margin: 0 auto; padding: 20px; box-sizing: border-box;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: #fff; padding: 15px 20px; border-radius: 10px; border: 1px solid #cbd5e1;">
         <h2 style="color: #1e3a8a; margin: 0; font-size: 1.4rem;">Revisión Detallada de Respuestas</h2>
-        <button id="btn-volver-resumen" class="boton" style="background: #1e3a8a; color: white; padding: 8px 16px; border-radius: 6px; font-weight: bold; border: none; cursor: pointer; font-size: 0.9rem;">
+        <button id="btn-volver-resumen" class="boton" style="padding: 8px 16px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 0.9rem;">
           ← Volver al Resumen
         </button>
       </div>
@@ -647,7 +647,7 @@ function mostrarPantallaRevisionRespuestas(st) {
       ${htmlPreguntas}
 
       <div style="text-align: center; margin-top: 30px; margin-bottom: 40px;">
-        <button id="btn-volver-resumen-abajo" class="boton" style="background: #1e3a8a; color: white; padding: 12px 24px; border-radius: 6px; font-weight: bold; border: none; cursor: pointer; font-size: 1rem;">
+        <button id="btn-volver-resumen-abajo" class="boton" style="padding: 12px 24px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 1rem;">
           ← Volver al Resumen y Opciones de Pago
         </button>
       </div>
@@ -698,6 +698,7 @@ function mostrarResultadosFinales(st, tema) {
   let alertaColor = "#dc2626";
   let fondoCaja = "#fff5f5";
 
+  // Lenguaje riguroso sin mencionar "preguntas trampa"
   if (porcentaje >= 80) {
     alertaColor = "#16a34a";
     fondoCaja = "#f0fdf4";
@@ -705,22 +706,22 @@ function mostrarResultadosFinales(st, tema) {
   } else if (porcentaje >= 50) {
     alertaColor = "#d97706";
     fondoCaja = "#fffbeb";
-    mensajeDesempeno = `Nivel intermedio en <strong>${temaActual?.titulo || temaActual?.id || "este módulo"}</strong>. Reforzar los ítems con distractores te ayudará a subir tu puntaje.`;
+    mensajeDesempeno = `Nivel intermedio en <strong>${temaActual?.titulo || temaActual?.id || "este módulo"}</strong>. Revisar los distractores y las condiciones del enunciado te ayudará a subir tu puntaje.`;
   } else {
     alertaColor = "#dc2626";
     fondoCaja = "#fff5f5";
-    mensajeDesempeno = `Se detectaron oportunidades de mejora en <strong>${temaActual?.titulo || temaActual?.id || "este módulo"}</strong>. Conviene repasar el tema y practicar de nuevo.`;
+    mensajeDesempeno = `Se detectaron oportunidades de mejora en <strong>${temaActual?.titulo || temaActual?.id || "este módulo"}</strong>. Conviene repasar los conceptos clave y practicar de nuevo.`;
   }
 
   const tituloModulo = temaActual?.titulo || temaActual?.id || "Módulo";
   const linkSimulacroGlobal = "prueba.html?todas=1";
   const numeroWhatsApp = "573115574410";
   const mensajeWhatsApp = encodeURIComponent(
-    `Hola Mundo Matemático, terminé la práctica de ${tituloModulo} y quiero agendar la sesión de 30 minutos ($15) con 20% de descuento para clases personalizadas online.`
+    `Hola Mundo Matemático, terminé la práctica de ${tituloModulo} y quiero agendar la sesión de 30 minutos ($15) con descuento para clases personalizadas.`
   );
 
   root.innerHTML = `
-    <div style="max-width: 720px; width: 100%; margin: 0 auto; background: #fff; border: 1px solid #cbd5e1; border-radius: 16px; padding: 28px; box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06); box-sizing: border-box;">
+    <div style="max-width: 820px; width: 100%; margin: 0 auto; background: #fff; border: 1px solid #cbd5e1; border-radius: 16px; padding: 28px; box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06); box-sizing: border-box;">
       <div style="text-align: center; border-bottom: 1px dashed #cbd5e1; padding-bottom: 18px; margin-bottom: 20px;">
         <span style="background: #eff6ff; color: #1e3a8a; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; text-transform: uppercase;">
           Práctica Focalizada
@@ -743,6 +744,7 @@ function mostrarResultadosFinales(st, tema) {
 
       ${bloqueSesionYDescuentoHTML()}
 
+      <!-- Cuatro botones en cajoncitos paralelos dos a dos -->
       <div class="rejilla-dos-a-dos" style="margin-bottom: 0;">
         <button id="btn-repetir-tema" class="boton" style="margin-top: 0; width: 100%;">
           Repetir este Módulo
@@ -797,7 +799,7 @@ function generarPDFInformePersonalizado(aciertos, totalPreguntas, porcentaje, ni
   `;
 
   const recomendacionTemas = `
-1. <strong>Foco prioritario en ${temaCritico1}:</strong> Revisar conceptos clave, propiedades operativas y resolución de situaciones tipo viñeta donde este componente es evaluado.<br><br>
+1. <strong>Foco prioritario en ${temaCritico1}:</strong> Revisar conceptos clave, propiedades operativas y condiciones de los enunciados donde este componente es evaluado.<br><br>
 2. <strong>Refuerzo en ${temaCritico2}:</strong> Practicar ejercicios de interpretación de modelos y aplicación algorítmica para reducir errores recurrentes.<br><br>
 3. <strong>Lectura y gestión del tiempo:</strong> Leer cuidadosamente los enunciados y verificar las condiciones del problema antes de elegir opción.
   `;
