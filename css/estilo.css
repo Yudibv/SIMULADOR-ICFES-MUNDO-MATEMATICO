@@ -1,10 +1,11 @@
 /* ==============================================================================
-   MUNDO MATEMÁTICO — ESTILO FRESCO Y MODERNO (css/estilo.css)
+   MUNDO MATEMÁTICO — HOJA DE ESTILOS PRINCIPAL (css/estilo.css)
    ==============================================================================
-   Diseño inspirado en interfaces limpias:
-   - Fondo claro y aireado con marca de agua matemática sutil
-   - Tarjetas blancas con sombra suave, círculo superior y texto breve
-   - Contraste equilibrado entre azul corporativo (#1e3a8a) y rojo (#dc2626)
+   - Reduce el espacio sobrante a los lados en escritorio
+   - Mantiene marca de agua matemática sutil pero visible
+   - Mezcla mejor azul institucional, rojo de acción, verde WhatsApp y gris
+   - Organiza casillas y botones en filas paralelas de 2 columnas (dos a dos)
+   - Centra el pie de página en todas las vistas
    ============================================================================== */
 
 :root {
@@ -15,6 +16,9 @@
   --rojo-oscuro: #b91c1c;
   --rojo-claro: #fef2f2;
   --verde: #15803d;
+  --verde-oscuro: #166534;
+  --gris: #64748b;
+  --gris-oscuro: #475569;
   --circulo-bg: #f1f5f9;
   --borde-suave: #e2e8f0;
   --fondo: #f8fafc;
@@ -22,7 +26,7 @@
   --texto-suave: #475569;
 }
 
-/* Base limpia con pie fijo al final */
+/* Base con pie pegado al final */
 html, body {
   margin: 0;
   padding: 0;
@@ -38,7 +42,7 @@ html, body {
   overflow-x: hidden;
 }
 
-/* Marca de agua sutil de fondo sin estorbar */
+/* Marca de agua sutil pero perceptible */
 body::before {
   content: "MUNDO MATEMÁTICO   Δ   π   e   ϕ   θ   ∫   ∑   ∞   √   MUNDO MATEMÁTICO   Δ   π   e   ϕ   θ   ∫   ∑   ∞   √   MUNDO MATEMÁTICO   Δ   π   e   ϕ   θ   ∫   ∑   ∞   √   MUNDO MATEMÁTICO   Δ   π   e   ϕ   θ   ∫   ∑   ∞   √";
   position: fixed;
@@ -50,7 +54,7 @@ body::before {
   text-align: center;
   font-size: 2rem;
   font-weight: 800;
-  color: rgba(30, 58, 138, 0.065);
+  color: rgba(30, 58, 138, 0.085);
   white-space: pre-wrap;
   word-spacing: 28px;
   line-height: 4.5rem;
@@ -68,9 +72,7 @@ body::before {
   z-index: 1;
 }
 
-/* ------------------------------------------------------------------------------
-   CABECERA LIMPIA
-   ------------------------------------------------------------------------------ */
+/* Cabecera superior */
 .header-principal {
   width: 100%;
   box-sizing: border-box;
@@ -103,6 +105,7 @@ body::before {
   color: var(--azul);
   margin: 0;
   font-weight: 800;
+  display: block;
 }
 
 .sub-saber {
@@ -112,31 +115,41 @@ body::before {
   display: block;
 }
 
-/* ------------------------------------------------------------------------------
-   CONTENEDOR PRINCIPAL CON AIRE
-   ------------------------------------------------------------------------------ */
+.link-nav {
+  color: var(--azul);
+  font-weight: 700;
+  text-decoration: none;
+  font-size: 0.92rem;
+}
+
+.link-nav:hover {
+  text-decoration: underline;
+}
+
+/* Contenedor central más amplio para reducir exceso de espacio lateral */
 .contenedor-principal {
-  max-width: 980px;
-  width: 92%;
-  margin: 34px auto;
+  max-width: 1220px;
+  width: 95%;
+  margin: 28px auto;
   box-sizing: border-box;
   flex: 1 0 auto;
 }
 
-/* Tarjeta principal de Simulacro Global arriba */
+/* Bloque destacado del Simulacro Global */
 .bloque-simulacro-destacado {
   background: #ffffff;
   border: 1px solid var(--borde-suave);
+  border-left: 5px solid var(--rojo);
   border-radius: 16px;
-  padding: 28px;
-  margin-bottom: 30px;
+  padding: 26px;
+  margin-bottom: 24px;
   box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05);
   box-sizing: border-box;
 }
 
 .bloque-simulacro-destacado h2 {
   color: var(--azul);
-  font-size: 1.45rem;
+  font-size: 1.4rem;
   margin: 8px 0 8px 0;
   font-weight: 800;
 }
@@ -144,17 +157,17 @@ body::before {
 .bloque-simulacro-destacado p {
   color: var(--texto-suave);
   font-size: 0.95rem;
-  margin: 0 0 18px 0;
+  margin: 0 0 16px 0;
   line-height: 1.5;
 }
 
-/* Presentación corta */
+/* Presentación y beneficios */
 .presentacion-bienvenida {
   background: #ffffff;
   border: 1px solid var(--borde-suave);
   border-radius: 16px;
   padding: 28px;
-  margin-bottom: 32px;
+  margin-bottom: 30px;
   box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
   box-sizing: border-box;
 }
@@ -177,7 +190,7 @@ body::before {
 .presentacion-bienvenida > p {
   color: var(--texto-suave);
   margin: 0;
-  font-size: 0.95rem;
+  font-size: 0.96rem;
 }
 
 .divisor-interno {
@@ -193,15 +206,15 @@ body::before {
   font-weight: 800;
 }
 
-/* ------------------------------------------------------------------------------
-   CASILLAS DOS A DOS CON ESTILO DE TARJETA FRESCA Y CÍRCULO SUPERIOR
-   ------------------------------------------------------------------------------ */
+/* Rejillas dos a dos (beneficios, módulos y botones finales) */
 .rejilla-beneficios,
-.rejilla-dos-a-dos {
+.rejilla-dos-a-dos,
+#rejilla {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 18px;
-  margin-bottom: 18px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .cuadro-beneficio {
@@ -215,31 +228,25 @@ body::before {
   align-items: center;
   gap: 8px;
   box-shadow: 0 6px 18px rgba(15, 23, 42, 0.04);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
   box-sizing: border-box;
 }
 
-.cuadro-beneficio:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.07);
-}
-
-/* Círculo suave arriba como en las tarjetas de áreas */
 .circulo-icono {
-  width: 52px;
-  height: 52px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
-  background: var(--circulo-bg);
+  background: var(--rojo-claro);
   color: var(--rojo);
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 800;
-  font-size: 1.15rem;
+  font-size: 1.1rem;
   margin-bottom: 4px;
 }
 
-.cuadro-beneficio:nth-child(even) .circulo-icono {
+.cuadro-beneficio:nth-child(even) .circulo-icono,
+.tarjeta:nth-child(even) .circulo-icono {
   color: var(--azul);
   background: var(--azul-claro);
 }
@@ -256,46 +263,39 @@ body::before {
   font-size: 0.88rem;
   line-height: 1.45;
   margin: 0;
-  max-width: 280px;
+  max-width: 320px;
 }
 
+/* Caja de aviso junto al Simulacro Global */
 .caja-aviso-azul {
   background: var(--azul-claro);
-  border: 1px solid #dbeafe;
+  border: 1px solid #bfdbfe;
+  border-left: 4px solid var(--azul);
   border-radius: 12px;
   padding: 16px 20px;
-  margin-top: 14px;
+  text-align: left;
 }
 
 .caja-aviso-azul h3 {
   color: var(--azul);
   margin: 0 0 6px 0;
-  font-size: 0.98rem;
+  font-size: 1rem;
   font-weight: 800;
 }
 
 .caja-aviso-azul p {
   color: var(--texto-suave);
-  font-size: 0.9rem;
+  font-size: 0.92rem;
   margin: 0;
+  line-height: 1.5;
 }
 
-/* ------------------------------------------------------------------------------
-   MÓDULOS POR TEMA EN TARJETAS LIMPIAS
-   ------------------------------------------------------------------------------ */
+/* Módulos por tema */
 .titulo-modulos {
   color: var(--azul);
   font-size: 1.3rem;
   margin: 0 0 18px 0;
   font-weight: 800;
-}
-
-#rejilla {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
-  width: 100%;
-  box-sizing: border-box;
 }
 
 .tarjeta,
@@ -309,13 +309,7 @@ body::before {
   flex-direction: column;
   align-items: center;
   text-align: center;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
   box-sizing: border-box;
-}
-
-.tarjeta:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 26px rgba(15, 23, 42, 0.08);
 }
 
 .badge,
@@ -323,7 +317,7 @@ body::before {
   padding: 4px 12px;
   border-radius: 999px;
   font-weight: 800;
-  font-size: 0.76rem;
+  font-size: 0.75rem;
   margin-bottom: 10px;
 }
 
@@ -360,7 +354,7 @@ img,
   border-radius: 10px;
 }
 
-/* Botones */
+/* Botones con variedad cromática */
 .boton,
 button,
 .btn {
@@ -398,19 +392,33 @@ button:hover {
   color: #ffffff !important;
 }
 
+.boton-verde:hover {
+  background: var(--verde-oscuro) !important;
+}
+
 .boton-gris {
-  background: #64748b !important;
+  background: var(--gris) !important;
   color: #ffffff !important;
 }
 
-/* Pie de página */
+.boton-gris:hover {
+  background: var(--gris-oscuro) !important;
+}
+
+/* Centrado de bloques dentro de #vista en prueba.html */
+#vista > div {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Pie de página centrado */
 .footer-principal {
   width: 100%;
   box-sizing: border-box;
   text-align: center;
   padding: 18px 24px;
   color: var(--texto-suave);
-  font-size: 0.85rem;
+  font-size: 0.86rem;
   border-top: 1px solid var(--borde-suave);
   background: #ffffff;
   margin-top: auto;
@@ -420,7 +428,7 @@ button:hover {
   display: none !important;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 680px) {
   .rejilla-beneficios,
   .rejilla-dos-a-dos,
   #rejilla {
@@ -434,7 +442,7 @@ button:hover {
   }
 
   .contenedor-principal {
-    width: 94%;
+    width: 95%;
     margin: 20px auto;
   }
 }
