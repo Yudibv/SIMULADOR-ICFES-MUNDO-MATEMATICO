@@ -1,34 +1,28 @@
 /* ==============================================================================
-   MUNDO MATEMÁTICO — HOJA DE ESTILOS PRINCIPAL (css/estilo.css)
+   MUNDO MATEMÁTICO — ESTILO FRESCO Y MODERNO (css/estilo.css)
    ==============================================================================
-   Secciones incluidas:
-   1. Variables de color corporativas y base del documento
-   2. Marca de agua matemática en modo tapiz
-   3. Cabecera institucional y logo
-   4. Contenedores centrados y tarjeta de bienvenida
-   5. Rejilla de beneficios (ajustable a 2x2 o 3 columnas)
-   6. Bloques de Simulacro Global, tarjetas de temas y botones
-   7. Pie de página institucional y reglas responsivas
+   Diseño inspirado en interfaces limpias:
+   - Fondo claro y aireado con marca de agua matemática sutil
+   - Tarjetas blancas con sombra suave, círculo superior y texto breve
+   - Contraste equilibrado entre azul corporativo (#1e3a8a) y rojo (#dc2626)
    ============================================================================== */
 
-/* ------------------------------------------------------------------------------
-   1. VARIABLES Y BASE GENERAL
-   ------------------------------------------------------------------------------ */
 :root {
-  --azul: #1e3a8a;         /* Azul corporativo principal */
-  --azul-oscuro: #172554;  /* Azul profundo para hover o énfasis */
-  --azul-claro: #eff6ff;   /* Fondo azul suave para avisos y badges */
-  --rojo: #dc2626;         /* Rojo corporativo para acciones clave y alertas */
-  --rojo-oscuro: #b91c1c;  /* Rojo más oscuro al pasar el cursor */
-  --rojo-claro: #fef2f2;   /* Fondo rojo suave para destacados */
-  --verde: #15803d;        /* Verde de apoyo para WhatsApp / logros */
-  --borde: #cbd5e1;        /* Borde estándar */
-  --borde-suave: #e2e8f0;  /* Borde sutil para tarjetas */
-  --fondo: #f8fafc;        /* Fondo general claro */
-  --texto: #1e293b;        /* Color principal de lectura */
-  --texto-suave: #475569;  /* Color secundario para descripciones */
+  --azul: #1e3a8a;
+  --azul-oscuro: #172554;
+  --azul-claro: #eff6ff;
+  --rojo: #dc2626;
+  --rojo-oscuro: #b91c1c;
+  --rojo-claro: #fef2f2;
+  --verde: #15803d;
+  --circulo-bg: #f1f5f9;
+  --borde-suave: #e2e8f0;
+  --fondo: #f8fafc;
+  --texto: #1e293b;
+  --texto-suave: #475569;
 }
 
+/* Base limpia con pie fijo al final */
 html, body {
   margin: 0;
   padding: 0;
@@ -39,35 +33,43 @@ html, body {
   color: var(--texto);
   display: flex;
   flex-direction: column;
-  overflow-x: hidden; /* Evita desplazamiento horizontal accidental */
+  position: relative;
+  z-index: 0;
+  overflow-x: hidden;
 }
 
-/* ------------------------------------------------------------------------------
-   2. MARCA DE AGUA EN MODO TAPIZ
-   ------------------------------------------------------------------------------ */
+/* Marca de agua sutil de fondo sin estorbar */
 body::before {
-  content: "MUNDO MATEMÁTICO     Δ     π     e     ϕ     θ     \A     ∫     ∑     ∞     √     MUNDO MATEMÁTICO     \A     Δ     e     π     θ     ϕ     \A     ∫     ∑     ∞     √     MUNDO MATEMÁTICO     Δ     π     \A     Δ     π     e     ϕ     θ     MUNDO MATEMÁTICO     ∫     ∑     ∞     √";
+  content: "MUNDO MATEMÁTICO   Δ   π   e   ϕ   θ   ∫   ∑   ∞   √   MUNDO MATEMÁTICO   Δ   π   e   ϕ   θ   ∫   ∑   ∞   √   MUNDO MATEMÁTICO   Δ   π   e   ϕ   θ   ∫   ∑   ∞   √   MUNDO MATEMÁTICO   Δ   π   e   ϕ   θ   ∫   ∑   ∞   √";
   position: fixed;
-  top: -50%;
-  left: -50%;
-  width: 200vw;
-  height: 200vh;
+  top: -35%;
+  left: -35%;
+  width: 170vw;
+  height: 170vh;
   display: block;
   text-align: center;
-  font-size: 2.2rem;
+  font-size: 2rem;
   font-weight: 800;
-  color: rgba(30, 58, 138, 0.045);
+  color: rgba(30, 58, 138, 0.065);
   white-space: pre-wrap;
-  z-index: -1;
+  word-spacing: 28px;
+  line-height: 4.5rem;
+  letter-spacing: 6px;
+  transform: rotate(-16deg);
+  z-index: 0;
   pointer-events: none;
   user-select: none;
-  line-height: 5rem;
-  letter-spacing: 6px;
-  transform: rotate(-15deg);
+}
+
+.header-principal,
+.contenedor-principal,
+.footer-principal {
+  position: relative;
+  z-index: 1;
 }
 
 /* ------------------------------------------------------------------------------
-   3. CABECERA INSTITUCIONAL Y LOGO
+   CABECERA LIMPIA
    ------------------------------------------------------------------------------ */
 .header-principal {
   width: 100%;
@@ -75,10 +77,10 @@ body::before {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 30px;
+  padding: 14px 32px;
   background: #ffffff;
-  border-bottom: 3px solid var(--azul); /* Línea corporativa superior */
-  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.05);
+  border-bottom: 1px solid var(--borde-suave);
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04);
 }
 
 .logo-contenedor {
@@ -87,146 +89,166 @@ body::before {
   gap: 12px;
 }
 
-/* Tamaño controlado del logo (logo.jpg en la raíz del proyecto) */
 .logo-contenedor img {
-  height: 44px;
+  height: 42px;
   width: auto;
-  max-width: 130px;
+  max-width: 120px;
   object-fit: contain;
   display: block;
-  border-radius: 6px;
+  border-radius: 8px;
 }
 
 .titulo-sitio {
-  font-size: 1.25rem;
+  font-size: 1.2rem;
   color: var(--azul);
   margin: 0;
   font-weight: 800;
-  letter-spacing: -0.4px;
 }
 
 .sub-saber {
-  font-size: 0.8rem;
-  font-weight: 600;
+  font-size: 0.78rem;
+  font-weight: 700;
   color: var(--rojo);
   display: block;
 }
 
-.link-nav {
-  text-decoration: none;
-  color: var(--azul);
-  font-weight: 700;
-  font-size: 0.92rem;
-  padding: 8px 14px;
-  border-radius: 6px;
-  border: 1px solid var(--borde);
-  background: var(--azul-claro);
-  transition: all 0.2s ease;
-}
-
-.link-nav:hover {
-  background: var(--azul);
-  color: #ffffff;
-  border-color: var(--azul);
-}
-
 /* ------------------------------------------------------------------------------
-   4. CONTENEDOR PRINCIPAL CENTRADO Y TARJETA DE PRESENTACIÓN
+   CONTENEDOR PRINCIPAL CON AIRE
    ------------------------------------------------------------------------------ */
 .contenedor-principal {
-  max-width: 960px;
+  max-width: 980px;
   width: 92%;
-  margin: 28px auto; /* Centrado horizontal garantizado */
+  margin: 34px auto;
   box-sizing: border-box;
   flex: 1 0 auto;
 }
 
+/* Tarjeta principal de Simulacro Global arriba */
+.bloque-simulacro-destacado {
+  background: #ffffff;
+  border: 1px solid var(--borde-suave);
+  border-radius: 16px;
+  padding: 28px;
+  margin-bottom: 30px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05);
+  box-sizing: border-box;
+}
+
+.bloque-simulacro-destacado h2 {
+  color: var(--azul);
+  font-size: 1.45rem;
+  margin: 8px 0 8px 0;
+  font-weight: 800;
+}
+
+.bloque-simulacro-destacado p {
+  color: var(--texto-suave);
+  font-size: 0.95rem;
+  margin: 0 0 18px 0;
+  line-height: 1.5;
+}
+
+/* Presentación corta */
+.presentacion-bienvenida {
+  background: #ffffff;
+  border: 1px solid var(--borde-suave);
+  border-radius: 16px;
+  padding: 28px;
+  margin-bottom: 32px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+  box-sizing: border-box;
+}
+
 .seccion-subtitulo {
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   font-weight: 800;
   color: var(--rojo);
   text-transform: uppercase;
   margin: 0 0 6px 0;
-  letter-spacing: 0.6px;
-}
-
-.presentacion-bienvenida {
-  background: #ffffff;
-  border: 1px solid var(--borde-suave);
-  border-left: 5px solid var(--azul);
-  border-radius: 12px;
-  padding: 24px;
-  margin-bottom: 24px;
-  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.04);
-  box-sizing: border-box;
+  letter-spacing: 0.8px;
 }
 
 .presentacion-bienvenida h1 {
   color: var(--azul);
-  margin: 0 0 10px 0;
-  font-size: 1.7rem;
+  margin: 0 0 8px 0;
+  font-size: 1.65rem;
 }
 
-.presentacion-bienvenida p {
+.presentacion-bienvenida > p {
   color: var(--texto-suave);
-  line-height: 1.6;
-  margin: 0 0 16px 0;
+  margin: 0;
+  font-size: 0.95rem;
 }
 
-/* ------------------------------------------------------------------------------
-   5. BENEFICIOS Y CASILLAS (CONFIGURADAS DOS A DOS POR DEFECTO)
-   ------------------------------------------------------------------------------ */
 .divisor-interno {
   border: 0;
   border-top: 1px solid var(--borde-suave);
-  margin: 20px 0;
+  margin: 22px 0;
 }
 
 .subtitulo-beneficios {
   color: var(--azul);
-  font-size: 1.15rem;
-  margin: 0 0 6px 0;
+  font-size: 1.2rem;
+  margin: 0 0 16px 0;
   font-weight: 800;
 }
 
-.descripcion-beneficios {
-  color: var(--texto-suave);
-  font-size: 0.92rem;
-  margin: 0 0 16px 0;
-  line-height: 1.5;
-}
-
-/* Casillas acomodadas dos a dos (2 columnas) en escritorio y tablet */
+/* ------------------------------------------------------------------------------
+   CASILLAS DOS A DOS CON ESTILO DE TARJETA FRESCA Y CÍRCULO SUPERIOR
+   ------------------------------------------------------------------------------ */
 .rejilla-beneficios,
 .rejilla-dos-a-dos {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 14px;
+  gap: 18px;
   margin-bottom: 18px;
 }
 
 .cuadro-beneficio {
-  background: var(--fondo);
+  background: #ffffff;
   border: 1px solid var(--borde-suave);
-  border-top: 3px solid var(--azul);
-  border-radius: 10px;
-  padding: 15px 16px;
+  border-radius: 16px;
+  padding: 22px 18px;
+  text-align: center;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.04);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
   box-sizing: border-box;
 }
 
-/* Alterna sutilmente el borde superior en casillas pares para dar variedad visual */
-.cuadro-beneficio:nth-child(even) {
-  border-top-color: var(--rojo);
+.cuadro-beneficio:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.07);
+}
+
+/* Círculo suave arriba como en las tarjetas de áreas */
+.circulo-icono {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--circulo-bg);
+  color: var(--rojo);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 1.15rem;
+  margin-bottom: 4px;
+}
+
+.cuadro-beneficio:nth-child(even) .circulo-icono {
+  color: var(--azul);
+  background: var(--azul-claro);
 }
 
 .cuadro-beneficio h3 {
   color: var(--azul);
   margin: 0;
-  font-size: 0.98rem;
-  font-weight: 700;
+  font-size: 1rem;
+  font-weight: 800;
 }
 
 .cuadro-beneficio p {
@@ -234,57 +256,44 @@ body::before {
   font-size: 0.88rem;
   line-height: 1.45;
   margin: 0;
+  max-width: 280px;
 }
 
-/* ------------------------------------------------------------------------------
-   6. SIMULACRO GLOBAL ARRIBA, MÓDULOS Y BOTONES CON COLORES CORPORATIVOS
-   ------------------------------------------------------------------------------ */
 .caja-aviso-azul {
   background: var(--azul-claro);
-  border: 1px solid #bfdbfe;
-  border-radius: 10px;
-  padding: 18px 20px;
+  border: 1px solid #dbeafe;
+  border-radius: 12px;
+  padding: 16px 20px;
   margin-top: 14px;
 }
 
 .caja-aviso-azul h3 {
   color: var(--azul);
-  margin: 0 0 8px 0;
-  font-size: 1rem;
+  margin: 0 0 6px 0;
+  font-size: 0.98rem;
   font-weight: 800;
 }
 
 .caja-aviso-azul p {
-  color: var(--texto);
-  font-size: 0.92rem;
-  margin: 0 0 8px 0;
-  line-height: 1.45;
+  color: var(--texto-suave);
+  font-size: 0.9rem;
+  margin: 0;
 }
 
-/* Bloque destacado del Simulacro Global colocado arriba antes de los temas */
-.bloque-simulacro-destacado {
-  background: #ffffff;
-  border: 1px solid var(--borde-suave);
-  border-left: 5px solid var(--rojo);
-  border-radius: 12px;
-  padding: 22px;
-  margin-bottom: 28px;
-  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.05);
-  box-sizing: border-box;
-}
-
+/* ------------------------------------------------------------------------------
+   MÓDULOS POR TEMA EN TARJETAS LIMPIAS
+   ------------------------------------------------------------------------------ */
 .titulo-modulos {
   color: var(--azul);
-  font-size: 1.25rem;
+  font-size: 1.3rem;
   margin: 0 0 18px 0;
   font-weight: 800;
 }
 
-/* Rejilla de módulos por tema */
 #rejilla {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 18px;
+  gap: 20px;
   width: 100%;
   box-sizing: border-box;
 }
@@ -293,82 +302,73 @@ body::before {
 .panel-pregunta {
   background: #ffffff;
   border: 1px solid var(--borde-suave);
-  border-radius: 12px;
-  box-shadow: 0 4px 8px rgba(15, 23, 42, 0.04);
-  padding: 22px;
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(15, 23, 42, 0.04);
+  padding: 24px;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  text-align: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
   box-sizing: border-box;
 }
 
 .tarjeta:hover {
-  box-shadow: 0 10px 18px rgba(15, 23, 42, 0.08);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 26px rgba(15, 23, 42, 0.08);
+}
+
+.badge,
+.badge-rojo {
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-weight: 800;
+  font-size: 0.76rem;
+  margin-bottom: 10px;
 }
 
 .badge {
   background: var(--azul-claro);
   color: var(--azul);
-  padding: 4px 10px;
-  border-radius: 6px;
-  font-weight: 700;
-  font-size: 0.82rem;
-  width: fit-content;
-  margin-bottom: 10px;
 }
 
 .badge-rojo {
   background: var(--rojo-claro);
   color: var(--rojo);
-  padding: 4px 10px;
-  border-radius: 6px;
-  font-weight: 800;
-  font-size: 0.82rem;
-  width: fit-content;
-  margin-bottom: 10px;
 }
 
-.tarjeta h2,
-.bloque-simulacro-destacado h2 {
-  font-size: 1.18rem;
+.tarjeta h2 {
+  font-size: 1.15rem;
   color: var(--azul);
-  margin: 0 0 8px 0;
+  margin: 0 0 6px 0;
+  font-weight: 800;
 }
 
-.tarjeta .subtitulo,
-.bloque-simulacro-destacado .subtitulo {
+.tarjeta .subtitulo {
   color: var(--rojo);
   font-weight: 700;
-  font-size: 0.88rem;
-  margin: 0 0 10px 0;
-}
-
-.tarjeta p,
-.bloque-simulacro-destacado p {
-  color: var(--texto-suave);
-  font-size: 0.9rem;
+  font-size: 0.86rem;
   margin: 0 0 16px 0;
-  line-height: 1.5;
 }
 
-/* Imágenes de preguntas centradas y adaptables */
 img,
 .pregunta-img {
   max-width: 100%;
   height: auto;
   display: block;
   margin: 14px auto;
-  border-radius: 8px;
+  border-radius: 10px;
 }
 
-/* Botones base y variantes de color corporativo */
+/* Botones */
 .boton,
 button,
 .btn {
   background: var(--azul);
   color: #ffffff;
   border: none;
-  padding: 11px 18px;
-  border-radius: 8px;
+  padding: 11px 20px;
+  border-radius: 10px;
   font-weight: 700;
   cursor: pointer;
   text-decoration: none;
@@ -384,7 +384,6 @@ button:hover {
   background: var(--azul-oscuro);
 }
 
-/* Botón rojo para "Presentar Simulacro Global" */
 .boton-rojo {
   background: var(--rojo) !important;
   color: #ffffff !important;
@@ -394,38 +393,33 @@ button:hover {
   background: var(--rojo-oscuro) !important;
 }
 
-/* Botón verde para WhatsApp */
 .boton-verde {
   background: var(--verde) !important;
   color: #ffffff !important;
 }
 
-/* Botón gris neutro para acciones secundarias como Volver al Menú */
 .boton-gris {
   background: #64748b !important;
   color: #ffffff !important;
 }
 
-/* ------------------------------------------------------------------------------
-   7. PIE DE PÁGINA CENTRADO Y RESPONSIVIDAD
-   ------------------------------------------------------------------------------ */
+/* Pie de página */
 .footer-principal {
   width: 100%;
   box-sizing: border-box;
   text-align: center;
   padding: 18px 24px;
   color: var(--texto-suave);
-  font-size: 0.86rem;
-  border-top: 2px solid var(--azul);
+  font-size: 0.85rem;
+  border-top: 1px solid var(--borde-suave);
   background: #ffffff;
-  margin-top: auto; /* Empuja el pie al final de la pantalla */
+  margin-top: auto;
 }
 
 .oculto {
   display: none !important;
 }
 
-/* En celulares: pasa de 2 columnas a 1 columna para que sea cómodo leer */
 @media (max-width: 640px) {
   .rejilla-beneficios,
   .rejilla-dos-a-dos,
@@ -441,6 +435,6 @@ button:hover {
 
   .contenedor-principal {
     width: 94%;
-    margin: 18px auto;
+    margin: 20px auto;
   }
 }
