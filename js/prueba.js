@@ -769,11 +769,34 @@ function mostrarResultadosFinales(st, tema) {
         </div>
         <span style="font-size: 0.85rem; color: #64748b; font-weight: 700;">${aciertos} correctas de ${totalPreguntas} ejercicios (${incorrectas} por reforzar)</span>
       </div>
-      
+
       <div style="background: ${fondoCaja}; border: 1px solid ${alertaColor}; padding: 18px; margin-bottom: 18px; border-radius: 10px; text-align: left;">
         <h3 style="color: ${alertaColor}; margin: 0 0 8px 0; font-size: 1rem;">Diagnóstico del módulo</h3>
         <p style="margin: 0; line-height: 1.55; color: #334155; font-size: 0.92rem;">${mensajeDesempeno}</p>
       </div>
+
+      ${bloqueBeneficiosYClasesHTML()}
+
+      <!-- Cuatro botones en cajoncitos paralelos dos a dos -->
+      <div class="rejilla-dos-a-dos" style="margin-bottom: 0;">
+        <button id="btn-repetir-tema" class="boton" style="margin-top: 0; width: 100%;">
+          Repetir este Módulo
+        </button>
+
+        <a class="boton boton-rojo" href="${linkSimulacroGlobal}" style="margin-top: 0; width: 100%;">
+          Presentar Simulacro Global
+        </a>
+
+        <a class="boton boton-verde" href="https://wa.me/${numeroWhatsApp}?text=${mensajeWhatsApp}" target="_blank" style="margin-top: 0; width: 100%;">
+          Solicitar Tutoría por WhatsApp
+        </a>
+
+        <a class="boton boton-gris" href="index.html" style="margin-top: 0; width: 100%;">
+          Volver al Menú Principal
+        </a>
+      </div>
+    </div>
+  `;
 
       ${bloqueBeneficiosYClasesHTML()}
 
