@@ -621,7 +621,120 @@ function mostrarPantallaRevisionRespuestas(st) {
 }
 
 init();
+/**
+ * ==========================================================================
+ * SECCIÓN 6: PRÁCTICAS FOCALIZADAS (CARPETAS / MÓDULOS INDIVIDUALES)
+ * ==========================================================================
+ */
+function mostrarResultadosFinales(st, tema) {
+  if (st.intervaloTimer) clearInterval(st.intervaloTimer);
 
+  const temaActual = tema || temaPorId(st.cola?.[st.indiceTema || 0]);
+  const preguntasTema = Array.isArray(st.seleccion) ? st.seleccion : [];
+  const totalPreguntas = preguntasTema.length;
+  let aciertos = 0;
+
+  preguntasTema.forEach((archivo, index) => {
+    const respuestaCorrecta = (temaActual?.respuestas || {})[archivo];
+    const respuestaUsuario = st.respuestas?.[index];
+
+    if (respuestaCorrecta && typeof respuestaCorrecta === "object") {
+      let todasCorrectas = true;
+      for (const subKey in respuestaCorrecta) {
+        if (respuestaUsuario?.[subKey] !== respuestaCorrecta[subKey]) {
+          todasCorrectas = false;
+        }
+      }
+      if (todasCorrectas) aciertos++;
+    } else if (respuestaCorrecta !== undefined) {
+      if (respuestaUsuario === respuestaCorrecta) {
+        aciertos++;
+      }
+    }
+  });
+
+  const porcentaje = totalPreguntas > 0 ? Math.round((aciertos / totalPreguntas) * 100) : 0;
+  const incorrectas = Math.max(0, totalPreguntas - aciertos);
+  const root = obtenerContenedor();
+
+  let mensajeDesempeno = "";
+  let alertaColor = "#dc2626";
+  let fondoCaja = "#fff5f5";
+
+  if (porcentaje >= 80) {
+    alertaColor = "#16a34a";
+    fondoCaja = "#f0fdf4";
+    mensajeDesempeno = `¡Excelente nivel en <strong>${temaActual?.titulo || temaActual?.id || "este módulo"}</strong>! Tienes bases muy sólidas. Sigue manteniendo este gran ritmo de estudio para asegurar un puntaje sobresaliente en el ICFES.`;
+  } else if (porcentaje >= 50) {
+    alertaColor = "#d97706";
+    fondoCaja = "#fffbeb";
+    mensajeDesempeno = `Tienes bases intermedias en <strong>${temaActual?.titulo || temaActual?.id || "este módulo"}</strong>, pero hay vacíos conceptuales en preguntas clave que el ICFES suele evaluar con distractores. ¡Un repaso focalizado marca la diferencia!`;
+  } else {
+    alertaColor = "#dc2626";
+    fondoCaja = "#fff5f5";
+    mensajeDesempeno = `Identificamos oportunidades de mejora críticas en <strong>${temaActual?.titulo || temaActual?.id || "este módulo"}</strong>. Te sugerimos reforzar este tema con práctica guiada o tutoría antes de la prueba real.`;
+  }
+
+  const tituloModulo = temaActual?.titulo || temaActual?.id || "Módulo";
+  const linkSimulacroGlobal = "prueba.html?todas=1";
+  const numeroWhatsApp = "573115574410";
+  const mensajeWp = encodeURIComponent(
+    `Hola, acabo de hacer la práctica focalizada de ${tituloModulo} en Mundo Matemático y obtuve ${aciertos}/${totalPreguntas}. Me gustaría información sobre tutorías.`
+  );
+
+  root.innerHTML = `
+    <div style="max-width: 650px; margin: 0 auto; background: #fff; border: 1px solid #cbd5e1; border-radius: 12px; padding: 28px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+      <div style="text-align: center; border-bottom: 1px dashed #cbd5e1; padding-bottom: 18px; margin-bottom: 20px;">
+        <span style="background: #eff6ff; color: #1e3a8a; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; text-transform: uppercase;">
+          Práctica Focalizada
+        </span>
+        <h2 style="color: #1e3a8a; font-size: 1.5rem; margin: 10px 0 5px 0;">${tituloModulo}</h2>
+        <p style="color: #64748b; font-size: 0.85rem; margin: 0;">Resumen de desempeño del módulo</p>
+      </div>
+
+      <div style="text-align: center; margin-bottom: 22px;">
+        <div style="width: 105px; height: 105px; border: 6px solid #e2e8f0; border-top-color: ${alertaColor}; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px auto;">
+          <span style="font-size: 1.8rem; font-weight: 800; color: #1e293b;">${porcentaje}%</span>
+        </div>
+        <span style="font-size: 0.85rem; color: #64748b; font-weight: 700;">${aciertos} correctas de ${totalPreguntas} ejercicios (${incorrectas} por reforzar)</span>
+      </div>
+
+      <div style="background: ${fondoCaja}; border: 1px solid ${alertaColor}; padding: 18px; margin-bottom: 22px; border-radius: 8px; text-align: left;">
+        <h3 style="color: ${alertaColor}; margin: 0 0 8px 0; font-size: 1rem;">Diagnóstico del módulo</h3>
+        <p style="margin: 0; line-height: 1.55; color: #334155; font-size: 0.92rem;">${mensajeDesempeno}</p>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <button id="btn-repetir-tema" class="boton" style="background: #2563eb; color: white; padding: 12px 18px; border-radius: 6px; font-weight: bold; border: none; cursor: pointer; font-size: 0.95rem; width: 100%;">
+          🔄 Repetir este Módulo
+        </button>
+
+        <a class="boton" href="${linkSimulacroGlobal}" style="background: #1e3a8a; color: white; text-decoration: none; padding: 12px 18px; border-radius: 6px; font-weight: bold; font-size: 0.95rem; width: 100%; box-sizing: border-box; text-align: center;">
+          🚀 Presentar Simulacro Global Completo
+        </a>
+
+        <a class="boton" href="https://wa.me/${numeroWhatsApp}?text=${mensajeWp}" target="_blank" style="background: #16a34a; color: white; text-decoration: none; padding: 12px 18px; border-radius: 6px; font-weight: bold; font-size: 0.95rem; width: 100%; box-sizing: border-box; text-align: center;">
+          💬 Solicitar Tutoría por WhatsApp
+        </a>
+
+        <a class="boton" href="index.html" style="background: #64748b; color: white; text-decoration: none; padding: 11px 18px; border-radius: 6px; font-weight: bold; font-size: 0.9rem; width: 100%; box-sizing: border-box; text-align: center;">
+          🏠 Volver al Menú Principal
+        </a>
+      </div>
+    </div>
+  `;
+
+  setTimeout(() => {
+    const btnRepetir = document.getElementById("btn-repetir-tema");
+    if (btnRepetir) {
+      btnRepetir.onclick = () => {
+        prepararTemaActual();
+        iniciarTemporizador();
+        renderPregunta(state);
+      };
+    }
+  }, 50);
+}
 /**
  * ==========================================================================
  * SECCIÓN 7: GENERACIÓN DE PDF NATIVO (CUADERNILLO PRO 100% PERSONALIZADO)
