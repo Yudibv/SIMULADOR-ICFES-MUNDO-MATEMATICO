@@ -293,4 +293,118 @@ body::before {
   color: var(--rojo);
   font-weight: 600;
   font-size: 0.88rem;
-  margin: 0 0 10px
+  margin: 0 0 10px 0;
+}
+
+.tarjeta p {
+  color: #475569;
+  font-size: 0.88rem;
+  margin: 0 0 15px 0;
+  line-height: 1.4;
+}
+
+/* ==============================================================================
+   IMÁGENES DE PREGUNTAS, OPCIONES Y BOTONES
+   ============================================================================== */
+
+/* Imágenes de ejercicios centradas y adaptables al ancho disponible */
+img,
+.pregunta-img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 15px auto;
+  border-radius: 8px;
+}
+
+/* Contenedor de opciones de respuesta */
+.opciones {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 20px 0;
+}
+
+/* Opción individual interactiva */
+.opcion {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.opcion:hover {
+  background: var(--azul-claro);
+  border-color: var(--azul);
+}
+
+.opcion input[type="radio"] {
+  accent-color: var(--azul);
+  transform: scale(1.2);
+}
+
+/* Botones principales y de acción */
+.boton,
+button,
+.btn {
+  background: var(--azul);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
+  transition: background 0.2s;
+  margin-top: auto;
+}
+
+.boton:hover,
+button:hover {
+  background: #1e40af;
+}
+
+/* ==============================================================================
+   PIE DE PÁGINA, UTILIDADES Y RESPONSIVIDAD
+   ============================================================================== */
+
+/* Pie de página institucional */
+.footer-principal {
+  text-align: center;
+  padding: 20px;
+  color: #64748b;
+  font-size: 0.85rem;
+  border-top: 1px solid var(--borde);
+  background: rgba(255, 255, 255, 0.7);
+  margin-top: auto;
+}
+
+/* Clase utilitaria para ocultar elementos */
+.oculto {
+  display: none !important;
+}
+
+/* 2 columnas para los 6 cuadritos en tablets y pantallas intermedias */
+@media (max-width: 820px) {
+  .rejilla-beneficios {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* 1 columna y cabecera compacta en celulares */
+@media (max-width: 540px) {
+  .rejilla-beneficios {
+    grid-template-columns: 1fr;
+  }
+
+  .header-principal {
+    padding: 12px 16px;
+  }
+}
