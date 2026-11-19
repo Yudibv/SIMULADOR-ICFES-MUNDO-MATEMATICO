@@ -3,10 +3,11 @@
  * MUNDO MATEMÁTICO - MOTOR PRINCIPAL DE PRUEBAS Y SIMULACROS (prueba.js)
  * ==========================================================================
  * Controla:
- * - Inicialización de simulacro global (?todas=1) o práctica por tema (?tema=...).
+ * - Inicialización de simulacro global (?todas=1), minisimulacro (?todas=1&demo=1)
+ *   o práctica por tema (?tema=...).
  * - Cronómetro visual y cierre automático al agotarse el tiempo.
  * - Renderizado de preguntas con imagen amplia y opciones en cuadrícula 2x2.
- * - Resultados globales (con pantalla de revisión, sesión de 30 min / $15 + descuento y Wompi).
+ * - Resultados globales (con sesión de 30 min / $15 + descuento, Wompi y PDF).
  * - Resultados focalizados por carpeta/tema con botones en cajoncitos dos a dos.
  */
 
@@ -75,6 +76,7 @@ async function init() {
   }
 
   const temaId = params.get("tema");
+  const esTodas = params.get("todas") === "1";
   const esMinisimulacro = params.get("demo") === "1" || params.get("mini") === "1";
 
   state.temas = aliasTemas(await cargarTemas());
@@ -118,7 +120,7 @@ async function init() {
           }
         }
       }
-    );
+    });
 
     // Mezcla el orden general de las preguntas seleccionadas para que no salgan siempre igual
     state.seleccionGlobal = preguntasGlobales.sort(() => Math.random() - 0.5);
@@ -126,11 +128,6 @@ async function init() {
 
     // 10 minutos para la demo de sustentación; 90 minutos para el Simulacro Global completo
     state.tiempoRestante = esMinisimulacro ? 10 * 60 : 90 * 60;
-  }
-   
-    state.seleccionGlobal = preguntasGlobales.sort(() => Math.random() - 0.5);
-    state.seleccion = state.seleccionGlobal.map((x) => x.archivo);
-    state.tiempoRestante = 90 * 60;
   } else if (temaId) {
     state.todas = false;
     state.cola = [temaId];
@@ -711,7 +708,6 @@ function mostrarResultadosFinales(st, tema) {
   let alertaColor = "#dc2626";
   let fondoCaja = "#fff5f5";
 
-  // Lenguaje riguroso sin mencionar "preguntas trampa"
   if (porcentaje >= 80) {
     alertaColor = "#16a34a";
     fondoCaja = "#f0fdf4";
