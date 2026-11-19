@@ -7,11 +7,15 @@
 -   o práctica por tema (?tema=...).
 - - Cronómetro visual y cierre automático al agotarse el tiempo.
 - - Renderizado de preguntas con imagen amplia y opciones en cuadrícula 2x2.
-- - Resultados globales (con sesión de 30 min / $15 + descuento, Wompi y PDF).
+- - Resultados globales (con sesión de 20 min / $15.000 + descuento, Wompi y PDF por intento).
 - - Resultados focalizados por carpeta/tema con botones en cajoncitos dos a dos.
  */
 
 import { cargarTemas, urlPng, PREGUNTAS_POR_PRUEBA } from "./temas.js";
+
+function crearIdIntento() {
+  return `sim_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
+}
 
 // Estado global de la sesión de evaluación
 let state = {
@@ -24,15 +28,48 @@ let state = {
   respuestas: {},      // Respuestas marcadas por el estudiante según el índice de pregunta
   todas: false,        // true = Simulacro Global | false = Práctica por tema
   tiempoRestante: 0,   // Tiempo restante en segundos
-  intervaloTimer: null // Referencia del setInterval del cronómetro
+  intervaloTimer: null,// Referencia del setInterval del cronómetro
+  idIntento: crearIdIntento()
 };
 
-// Bloque HTML reutilizable: sesión de 30 minutos ($15) + descuento en clases personalizadas
+function limpiarEstadoPagosAnteriores() {
+  sessionStorage.removeItem("mundo_matematico_pagado_pro");
+  const claves = [];
+  for (let i = 0; i < sessionStorage.length; i++) {
+    const k = sessionStorage.key(i);
+    if (k && (k.startsWith("mundo_matematico_pagado_") || k.startsWith("mundo_matematico_pdf_descargado_"))) {
+      claves.push(k);
+    }
+  }
+  claves.forEach((k) => sessionStorage.removeItem(k));
+}
+
+function estaPagadoIntento(idIntento) {
+  if (!idIntento) return false;
+  return sessionStorage.getItem(`mundo_matematico_pagado_${idIntento}`) === "true";
+}
+
+function marcarPagadoIntento(idIntento) {
+  if (!idIntento) return;
+  sessionStorage.setItem(`mundo_matematico_pagado_${idIntento}`, "true");
+}
+
+function pdfYaDescargadoIntento(idIntento) {
+  if (!idIntento) return false;
+  return sessionStorage.getItem(`mundo_matematico_pdf_descargado_${idIntento}`) === "true";
+}
+
+function marcarPdfDescargadoIntento(idIntento) {
+  if (!idIntento) return;
+  sessionStorage.setItem(`mundo_matematico_pdf_descargado_${idIntento}`, "true");
+}
+
+// Bloque HTML reutilizable: sesión de 20 minutos ($15.000) + descuento en clases personalizadas
 function bloqueSesionYDescuentoHTML() {
   return `
     <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px; padding: 14px 18px; margin-bottom: 18px; text-align: left;">
       <p style="margin: 0; line-height: 1.55; color: #1e293b; font-size: 0.92rem;">
-        <strong style="color: #1e3a8a;">Sesión de revisión de 30 minutos ($15) y descuento en clases personalizadas:</strong>
+        <strong style="color: #1e3a8a;">Sesión de revisión de 20 minutos ($15.000) y descuento en clases personalizadas:</strong>
         los $15 abarcan una sesión de 30 minutos para analizar tus resultados, resolver dudas clave y ofrecerte un
         <strong style="color: #dc2626;">descuento especial en clases personalizadas</strong> de Mundo Matemático.
       </p>
@@ -67,12 +104,17 @@ function obtenerContenedor() {
  */
 async function init() {
   const params = new URLSearchParams(window.location.search);
+  const vieneConPago = params.get("pagado") === "true";
 
-  if (params.get("pagado") === "true") {
-    sessionStorage.setItem("mundo_matematico_pagado_pro", "true");
+  if (!vieneConPago) {
+    limpiarEstadoPagosAnteriores();
+  }
+
+  state.idIntento = crearIdIntento();
+
+  if (vieneConPago) {
+    marcarPagadoIntento(state.idIntento);
     window.history.replaceState({}, document.title, window.location.pathname + "?todas=1");
-  } else if (params.get("todas") === "1" && !window.location.search.includes("pagado=true")) {
-    sessionStorage.removeItem("mundo_matematico_pagado_pro");
   }
 
   const temaId = params.get("tema");
@@ -456,7 +498,11 @@ function mostrarResultadosFinalesGlobal(st) {
   const root = obtenerContenedor();
   const linkWompi = "https://checkout.wompi.co/l/Mzd7Vo";
   const urlQrWompi = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(linkWompi)}`;
-  const yaPago = sessionStorage.getItem("mundo_matematico_pagado_pro") === "true";
+  const yaPago = estaPagadoIntento(st.idIntento);
+  const pdfDescargado = pdfYaDescargadoIntento(st.idIntento);
+  const textoAgendaWhatsApp = encodeURIComponent(
+    `Hola Mundo Matemático, ya realicé el pago del Simulacro Global (${porcentaje}%) y quiero agendar mi sesión de análisis de 20 minutos ($15.000).`
+  );
 
   let htmlCompetencias = "";
   let contadorComp = 1;
@@ -536,27 +582,48 @@ function mostrarResultadosFinalesGlobal(st) {
         </div>
       ` : ""}
 
-      <div style="border: 2px solid ${yaPago ? "#10b981" : "#1e3a8a"}; background: ${yaPago ? "#f0fdf4" : "#eff6ff"}; padding: 20px; border-radius: 12px; text-align: center;">
+      <div id="bloque-pago-pro" style="border: 2px solid ${yaPago ? "#10b981" : "#1e3a8a"}; background: ${yaPago ? "#f0fdf4" : "#eff6ff"}; padding: 20px; border-radius: 12px; text-align: center;">
         ${yaPago ? `
           <span style="background: #10b981; color: white; padding: 4px 12px; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">PAGO VERIFICADO</span>
           <h3 style="color: #10b981; margin: 10px 0 5px 0; font-size: 1.2rem;">Tu Cuadernillo Pro está listo</h3>
-          <p style="color: #334155; font-size: 0.85rem; margin-bottom: 15px;">Descarga tu informe con la ruta de corrección personalizada.</p>
+          <p style="color: #334155; font-size: 0.85rem; margin-bottom: 12px;">
+            ${pdfDescargado
+              ? "El PDF correspondiente a este simulacro ya fue generado. Si deseas presentar otro simulacro con un nuevo informe, inicia un nuevo intento."
+              : "Descarga el informe correspondiente a este simulacro y agenda tu sesión de análisis de 20 minutos."}
+          </p>
           <button id="btn-descargar-pdf" class="boton boton-verde" style="padding: 12px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; font-size: 1rem; margin-bottom: 10px;">
-            Descargar mi Cuadernillo Pro (PDF)
+            ${pdfDescargado ? "Volver a abrir el PDF de este Simulacro" : "Descargar mi Cuadernillo Pro (PDF)"}
           </button>
+          <a
+            href="https://wa.me/573115574410?text=${textoAgendaWhatsApp}"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="boton"
+            style="padding: 12px 20px; border-radius: 8px; font-weight: bold; width: 100%; font-size: 0.95rem; margin-top: 0; box-sizing: border-box; text-align: center;"
+          >
+            Agendar Sesión de Análisis (20 min · WhatsApp)
+          </a>
         ` : `
-          <span style="background: #1e3a8a; color: white; padding: 4px 12px; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">SESIÓN DE 30 MIN · $15</span>
-          <h3 style="color: #1e3a8a; margin: 10px 0 5px 0; font-size: 1.2rem;">Sesión de 30 minutos ($15) + descuento en clases personalizadas</h3>
-          <p style="color: #334155; font-size: 0.85rem; margin-bottom: 15px;">Los $15 abarcan una sesión de 30 minutos para revisar tus resultados y acceder a un descuento en clases personalizadas.</p>
+          <span style="background: #1e3a8a; color: white; padding: 4px 12px; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">SESIÓN DE 20 MIN · $15.000</span>
+          <h3 style="color: #1e3a8a; margin: 10px 0 5px 0; font-size: 1.2rem;">Sesión de 20 minutos ($15.000) + descuento en clases personalizadas</h3>
+          <p style="color: #334155; font-size: 0.85rem; margin-bottom: 15px;">Los $15.000 abarcan una sesión de 20 minutos para revisar tus resultados y acceder a un descuento en clases personalizadas.</p>
           
           <div style="display: flex; flex-direction: column; gap: 12px; align-items: center;">
-            <a href="${linkWompi}" target="_blank" class="boton boton-verde" style="padding: 12px 20px; border-radius: 8px; font-weight: bold; font-size: 1rem; width: 100%; box-sizing: border-box; text-align: center;">
+            <a href="${linkWompi}" target="_blank" rel="noopener noreferrer" class="boton boton-verde" style="padding: 12px 20px; border-radius: 8px; font-weight: bold; font-size: 1rem; width: 100%; box-sizing: border-box; text-align: center;">
               Agendar / Pagar con Wompi
             </a>
             <div style="background: #fff; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; display: inline-block;">
               <img src="${urlQrWompi}" alt="QR Wompi" style="width: 110px; height: 110px; display: block; margin: 0 auto 5px auto;" />
               <span style="font-size: 0.7rem; color: #64748b; font-weight: bold;">Escanea para pagar</span>
             </div>
+            <button
+              id="btn-confirmar-pago-demo"
+              type="button"
+              class="boton boton-gris"
+              style="padding: 10px 16px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; font-size: 0.88rem; margin-top: 4px;"
+            >
+              Ya realicé el pago / Habilitar PDF y Agenda
+            </button>
           </div>
         `}
 
@@ -574,10 +641,27 @@ function mostrarResultadosFinalesGlobal(st) {
   `;
 
   setTimeout(() => {
+    const btnConfirmarPago = document.getElementById("btn-confirmar-pago-demo");
+    if (btnConfirmarPago) {
+      btnConfirmarPago.onclick = () => {
+        marcarPagadoIntento(st.idIntento);
+        mostrarResultadosFinalesGlobal(st);
+      };
+    }
+
     const btnPdf = document.getElementById("btn-descargar-pdf");
     if (btnPdf) {
       btnPdf.onclick = () => {
-        generarPDFInformePersonalizado(aciertos, totalPreguntas, porcentaje, nivelDesempeno, erroresPorTema);
+        marcarPdfDescargadoIntento(st.idIntento);
+        generarPDFInformePersonalizado(
+          aciertos,
+          totalPreguntas,
+          porcentaje,
+          nivelDesempeno,
+          erroresPorTema,
+          st.idIntento
+        );
+        mostrarResultadosFinalesGlobal(st);
       };
     }
 
@@ -591,7 +675,7 @@ function mostrarResultadosFinalesGlobal(st) {
     const btnNuevoExamen = document.getElementById("btn-nuevo-examen");
     if (btnNuevoExamen) {
       btnNuevoExamen.onclick = () => {
-        sessionStorage.removeItem("mundo_matematico_pagado_pro");
+        limpiarEstadoPagosAnteriores();
         window.location.href = "prueba.html?todas=1";
       };
     }
@@ -788,7 +872,7 @@ function mostrarResultadosFinales(st, tema) {
           Presentar Simulacro Global
         </a>
 
-        <a class="boton boton-verde" href="https://wa.me/${numeroWhatsApp}?text=${mensajeWhatsApp}" target="_blank" style="margin-top: 0; width: 100%;">
+        <a class="boton boton-verde" href="https://wa.me/${numeroWhatsApp}?text=${mensajeWhatsApp}" target="_blank" rel="noopener noreferrer" style="margin-top: 0; width: 100%;">
           Solicitar Tutoría por WhatsApp
         </a>
 
@@ -816,7 +900,7 @@ function mostrarResultadosFinales(st, tema) {
 - SECCIÓN 7: GENERACIÓN DE PDF NATIVO (CUADERNILLO PRO PERSONALIZADO)
 - ==========================================================================
  */
-function generarPDFInformePersonalizado(aciertos, totalPreguntas, porcentaje, nivelDesempeno, erroresPorTema) {
+function generarPDFInformePersonalizado(aciertos, totalPreguntas, porcentaje, nivelDesempeno, erroresPorTema, idIntento = "") {
   const ventanaImpresion = window.open("", "_blank");
 
   if (!ventanaImpresion) {
@@ -877,7 +961,7 @@ function generarPDFInformePersonalizado(aciertos, totalPreguntas, porcentaje, ni
         </div>
         <div class="header-right">
           <span>INFORME PREDICTIVO SABER 11</span>
-          Fecha: ${new Date().toLocaleDateString()}
+          Fecha: ${new Date().toLocaleDateString()}${idIntento ? `<br><small style="color:#64748b;">Ref: ${idIntento}</small>` : ""}
         </div>
       </div>
 
