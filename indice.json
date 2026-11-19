@@ -82,10 +82,10 @@
       "icono": "05",
       "carpeta": "preguntas/Geometria",
       "preguntas": [
-        "2a.png", "5a.png", "5c.png", "7c.png", "12b.png", "14b.png", "14c.png", "16a.png", "17d.png", "18b.png", "20c.jpg", "22c.png", "23b.png", "24d.png", "25c.png", "29c.png", "32b.png", "37b.png", "41b.png", "50a.png", "69c.png"
+        "2a.png", "5a.png", "5c.png", "7c.png", "12b.png", "14b.png", "14c.png", "16a.png", "17d.png", "18b.png", "20c.jpg", "22c.png", "23b.png", "24d.png", "25c.png", "11d.png", "32b.png", "37b.png", "41b.png", "50a.png", "69c.png"
       ],
       "respuestas": {
-        "2a.png": "B", "5a.png": "A", "5c.png": "C", "7c.png": "C", "12b.png": "B", "14b.png": "B", "14c.png": "C", "16a.png": "A", "17d.png": "D", "18b.png": "B", "20c.jpg": "C", "22c.png": "C", "23b.png": "B", "24d.png": "D", "25c.png": "C", "29c.png": "C", "32b.png": "B", "37b.png": "B", "41b.png": "B", "50a.png": "A", "69c.png": "C"
+        "2a.png": "B", "5a.png": "A", "5c.png": "C", "7c.png": "C", "12b.png": "B", "14b.png": "B", "14c.png": "C", "16a.png": "A", "17d.png": "D", "18b.png": "B", "20c.jpg": "C", "22c.png": "C", "23b.png": "B", "24d.png": "D", "25c.png": "C", "11d.png": "D", "32b.png": "B", "37b.png": "B", "41b.png": "B", "50a.png": "A", "69c.png": "C"
       },
       "explicaciones": {}
     },
