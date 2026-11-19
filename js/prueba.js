@@ -679,9 +679,27 @@ function mostrarPantallaRevisionRespuestas(st) {
  * SECCIÓN 6: PRÁCTICAS FOCALIZADAS (CARPETAS / MÓDULOS INDIVIDUALES)
  * ==========================================================================
  */
+function bloqueBeneficiosYClasesHTML() {
+  const urlWhatsApp = "https://wa.me/573115574410?text=" + encodeURIComponent(
+    "Hola Mundo Matemático, quiero agendar una clase personalizada."
+  );
+
+  return `
+    <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px; padding: 14px 18px; margin-bottom: 18px; text-align: left;">
+      <p style="margin: 0; line-height: 1.55; color: #1e293b; font-size: 0.92rem;">
+        <strong style="color: #1e3a8a;">Un buen puntaje en el ICFES te abre muchas puertas:</strong>
+        acceso a universidades, becas, apoyos y oportunidades académicas. Con
+        <strong style="color: #dc2626;">clases personalizadas</strong> en Mundo Matemático puedes fortalecer tus bases, corregir vacíos y lograr un gran resultado.
+        <a href="${urlWhatsApp}" target="_blank" rel="noopener noreferrer" style="color: #1e3a8a; font-weight: 700; text-decoration: underline;">
+          ¡Agenda tu clase ahora!
+        </a>
+      </p>
+    </div>
+  `;
+}
 function mostrarResultadosFinales(st, tema) {
   if (st.intervaloTimer) clearInterval(st.intervaloTimer);
-
+  
   const temaActual = tema || temaPorId(st.cola?.[st.indiceTema || 0]);
   const preguntasTema = Array.isArray(st.seleccion) ? st.seleccion : [];
   const totalPreguntas = preguntasTema.length;
@@ -732,7 +750,7 @@ function mostrarResultadosFinales(st, tema) {
   const linkSimulacroGlobal = "prueba.html?todas=1";
   const numeroWhatsApp = "573115574410";
   const mensajeWhatsApp = encodeURIComponent(
-    `Hola Mundo Matemático, terminé la práctica de ${tituloModulo} y quiero agendar la sesión de 30 minutos ($15) con descuento para clases personalizadas.`
+    `Hola Mundo Matemático, terminé la práctica de ${tituloModulo} y quiero agendar una clase personalizada`
   );
 
   root.innerHTML = `
@@ -751,11 +769,17 @@ function mostrarResultadosFinales(st, tema) {
         </div>
         <span style="font-size: 0.85rem; color: #64748b; font-weight: 700;">${aciertos} correctas de ${totalPreguntas} ejercicios (${incorrectas} por reforzar)</span>
       </div>
-
+      
       <div style="background: ${fondoCaja}; border: 1px solid ${alertaColor}; padding: 18px; margin-bottom: 18px; border-radius: 10px; text-align: left;">
         <h3 style="color: ${alertaColor}; margin: 0 0 8px 0; font-size: 1rem;">Diagnóstico del módulo</h3>
         <p style="margin: 0; line-height: 1.55; color: #334155; font-size: 0.92rem;">${mensajeDesempeno}</p>
       </div>
+
+      ${bloqueBeneficiosYClasesHTML()}
+
+      <!-- Cuatro botones en cajoncitos paralelos dos a dos -->
+
+      
 
       ${bloqueSesionYDescuentoHTML()}
 
@@ -804,20 +828,23 @@ function generarPDFInformePersonalizado(aciertos, totalPreguntas, porcentaje, ni
     alert("Por favor permite las ventanas emergentes (pop-ups) en tu navegador para descargar el PDF.");
     return;
   }
-
-  const temasFallados = Object.keys(erroresPorTema || {}).sort((a, b) => erroresPorTema[b] - erroresPorTema[a]);
+const temasFallados = Object.keys(erroresPorTema || {}).sort((a, b) => erroresPorTema[b] - erroresPorTema[a]);
   const temaCritico1 = temasFallados[0] || "Razonamiento Cuantitativo General";
   const temaCritico2 = temasFallados[1] || "Pensamiento Espacial y Métrico";
+  const totalErrores = Object.values(erroresPorTema || {}).reduce((acc, n) => acc + n, 0);
 
-  const analisisCompetencias = `
-    Bajo el modelo de estimación de parámetros TRI (Teoría de Respuesta al Ítem) aplicado en este simulacro global, el patrón de respuestas del aspirante evidencia una base conceptual en resolución inicial, pero revela <strong>vulnerabilidades en el componente de ${temaCritico1}</strong>. Esta diferencia impacta el desempeño en preguntas de complejidad media y alta del Saber 11.
-  `;
+  const analisisCompetencias = totalErrores === 0
+    ? `Bajo el modelo de estimación de parámetros TRI (Teoría de Respuesta al Ítem) aplicado en este simulacro global, el desempeño muestra dominio sólido y consistencia en los componentes evaluados. El siguiente paso recomendado es sostener el ritmo y practicar ítems de alta exigencia y gestión del tiempo para consolidar el puntaje en el Saber 11.`
+    : `Bajo el modelo de estimación de parámetros TRI (Teoría de Respuesta al Ítem) aplicado en este simulacro global, el desempeño actual (${porcentaje}%) muestra avances en la resolución inicial, pero evidencia oportunidades de mejora prioritarias en <strong>${temaCritico1}</strong>${temasFallados[1] ? ` y <strong>${temaCritico2}</strong>` : ""}. Fortalecer estos puntos ayuda a ganar precisión en preguntas de dificultad media y alta del Saber 11.`;
 
-  const recomendacionTemas = `
-1. <strong>Foco prioritario en ${temaCritico1}:</strong> Revisar conceptos clave, propiedades operativas y condiciones de los enunciados donde este componente es evaluado.<br><br>
-2. <strong>Refuerzo en ${temaCritico2}:</strong> Practicar ejercicios de interpretación de modelos y aplicación algorítmica para reducir errores recurrentes.<br><br>
-3. <strong>Lectura y gestión del tiempo:</strong> Leer cuidadosamente los enunciados y verificar las condiciones del problema antes de elegir opción.
-  `;
+  const recomendacionTemas = totalErrores === 0
+    ? `1. <strong>Consolidación de nivel alto:</strong> Resolver conjuntos mixtos de preguntas tipo Saber 11 sin exceder el tiempo promedio por ítem.<br><br>
+2. <strong>Precisión en enunciados largos:</strong> Verificar datos, unidades y condiciones antes de marcar la opción definitiva.<br><br>
+3. <strong>Acompañamiento estratégico:</strong> Aprovechar la sesión de revisión para pulir detalles finos y estrategia de examen.`
+    : `1. <strong>Foco prioritario en ${temaCritico1}:</strong> Repasar conceptos base, propiedades y condiciones clave donde se concentraron los errores.<br><br>
+2. <strong>Refuerzo en ${temaCritico2}:</strong> Practicar ejercicios de interpretación, modelación y cálculo paso a paso para ganar seguridad.<br><br>
+3. <strong>Lectura y gestión del tiempo:</strong> Leer con calma cada enunciado, descartar distractores con criterio y administrar mejor el cronómetro.`;
+  
 
   ventanaImpresion.document.write(`
     <!DOCTYPE html>
@@ -893,7 +920,7 @@ function generarPDFInformePersonalizado(aciertos, totalPreguntas, porcentaje, ni
       <div class="footer">
         <div class="footer-title">Asegura tu cupo universitario con tutorías especializadas</div>
         <div class="footer-info">
-          Web oficial: <strong>mimundomatematico.com</strong> &nbsp;|&nbsp; WhatsApp / Contacto directo: <strong>311 557 4410</strong><br>
+          Web oficial: <strong>www.mimundomatematico.com</strong> &nbsp;|&nbsp; WhatsApp / Contacto directo: <strong>311 557 4410</strong><br>
           <span style="font-size: 10px; color: #64748b; display: block; margin-top: 6px;">
             Mundo Matemático es una iniciativa educativa independiente. Documento exclusivo para validación de desempeño académico.
           </span>
