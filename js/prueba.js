@@ -724,16 +724,29 @@ function mostrarResultadosFinalesGlobal(st) {
 - PANTALLA AUXILIAR: REVISIÓN DETALLADA DE RESPUESTAS Y JUSTIFICACIONES
 - ==========================================================================
  */
+function formatearRespuestaLegible(resp) {
+  if (resp === undefined || resp === null || resp === "") return "Sin responder";
+  if (typeof resp === "object") {
+    return Object.entries(resp)
+      .map(([k, v]) => `${k}: ${v}`)
+      .join(" | ");
+  }
+  return String(resp);
+}
+
 function mostrarPantallaRevisionRespuestas(st) {
   const root = obtenerContenedor();
   const preguntasGlobales = Array.isArray(st.seleccionGlobal) ? st.seleccionGlobal : [];
 
   const htmlPreguntas = preguntasGlobales.map((itemGlobal, index) => {
     const tema = itemGlobal.tema || {};
+    const nombreTema = tema.titulo || tema.carpeta || "General";
     const archivo = itemGlobal.archivo;
     const rutaImg = urlPng(tema, archivo);
     const respuestaCorrecta = (tema.respuestas || {})[archivo];
     const respuestaUsuario = st.respuestas?.[index];
+    const justificacionCustom = (tema.justificaciones || {})[archivo];
+    const competenciaItem = (tema.competencias || {})[archivo] || nombreTema;
 
     let esAcierto = false;
     if (respuestaCorrecta && typeof respuestaCorrecta === "object") {
@@ -746,12 +759,21 @@ function mostrarPantallaRevisionRespuestas(st) {
       if (respuestaUsuario === respuestaCorrecta) esAcierto = true;
     }
 
+    const textoUsuario = formatearRespuestaLegible(respuestaUsuario);
+    const textoCorrecta = formatearRespuestaLegible(respuestaCorrecta);
+
+    const textoJustificacion = justificacionCustom
+      ? justificacionCustom
+      : esAcierto
+        ? `Respondiste <strong>${textoUsuario}</strong>, que coincide con la clave correcta (<strong>${textoCorrecta}</strong>) para este ítem de <strong>${nombreTema}</strong>. Mantén este procedimiento y revisa que no hayas llegado a la respuesta por descarte casual sino por aplicación directa del concepto.`
+        : `Marcaste <strong>${textoUsuario}</strong>, pero la opción correcta para este ejercicio de <strong>${nombreTema}</strong> es <strong>${textoCorrecta}</strong>. Revisa el enunciado, las unidades o condiciones del gráfico y contrasta por qué la opción <strong>${textoCorrecta}</strong> satisface la pregunta mientras <strong>${textoUsuario}</strong> no.`;
+
     return `
       <div style="background: #fff; border: 1px solid #cbd5e1; border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.04);">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;">
-          <span style="font-weight: bold; color: #1e3a8a; font-size: 0.95rem;">Pregunta ${index + 1} (${tema.titulo || "General"})</span>
+        <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;">
+          <span style="font-weight: bold; color: #1e3a8a; font-size: 0.95rem;">Pregunta ${index + 1} · ${nombreTema}</span>
           <span style="background: ${esAcierto ? "#dcfce7" : "#fee2e2"}; color: ${esAcierto ? "#166534" : "#991b1b"}; padding: 4px 10px; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">
-            ${esAcierto ? "Tu respuesta es correcta" : "Tu respuesta fue incorrecta"}
+            ${esAcierto ? "Correcta" : "Incorrecta"} · Tu respuesta: ${textoUsuario} | Clave: ${textoCorrecta}
           </span>
         </div>
 
@@ -760,12 +782,12 @@ function mostrarPantallaRevisionRespuestas(st) {
         </div>
 
         <div style="background: #f8fafc; border: 1px dashed #cbd5e1; padding: 15px; border-radius: 8px; margin-top: 10px;">
-          <span style="background: #8b5cf6; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; display: inline-block; margin-bottom: 6px;">JUSTIFICACIÓN ANALÍTICA</span>
-          <p style="font-size: 0.85rem; color: #334155; margin: 0 0 8px 0; line-height: 1.5;">
-            La opción correcta seleccionada por el modelo TRI para este ítem corresponde al análisis riguroso de los datos presentados en la gráfica y la aplicación de propiedades conceptuales del componente.
+          <span style="background: #8b5cf6; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; display: inline-block; margin-bottom: 6px;">ANÁLISIS DEL ÍTEM</span>
+          <p style="font-size: 0.88rem; color: #334155; margin: 0 0 8px 0; line-height: 1.55;">
+            ${textoJustificacion}
           </p>
           <div style="font-size: 0.8rem; color: #1e3a8a; font-weight: bold;">
-            Competencia evaluada: <span style="font-weight: normal; color: #475569;">Razonamiento y Resolución de Problemas</span>
+            Componente / Tema: <span style="font-weight: normal; color: #475569;">${competenciaItem}</span>
           </div>
         </div>
       </div>
@@ -774,7 +796,7 @@ function mostrarPantallaRevisionRespuestas(st) {
 
   root.innerHTML = `
     <div style="max-width: 820px; width: 100%; margin: 0 auto; padding: 20px; box-sizing: border-box;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: #fff; padding: 15px 20px; border-radius: 10px; border: 1px solid #cbd5e1;">
+      <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; background: #fff; padding: 15px 20px; border-radius: 10px; border: 1px solid #cbd5e1;">
         <h2 style="color: #1e3a8a; margin: 0; font-size: 1.4rem;">Revisión Detallada de Respuestas</h2>
         <button id="btn-volver-resumen" class="boton" style="padding: 8px 16px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 0.9rem;">
           ← Volver al Resumen
