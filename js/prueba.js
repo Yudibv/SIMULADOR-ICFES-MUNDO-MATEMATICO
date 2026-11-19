@@ -2,30 +2,43 @@
  * ==========================================================================
  * MUNDO MATEMÁTICO - MOTOR PRINCIPAL DE PRUEBAS Y SIMULACROS (prueba.js)
  * ==========================================================================
- * Control estricto de seguridad: El PDF SOLO se desbloquea tras el pago en Wompi.
+ * Controla:
+ * - Inicialización de simulacro global (?todas=1) o práctica por tema (?tema=...).
+ * - Cronómetro visual y cierre automático al agotarse el tiempo.
+ * - Renderizado de preguntas con imagen amplia y opciones en cuadrícula 2x2.
+ * - Resultados globales (con pantalla de revisión y validación de pago Wompi).
+ * - Resultados focalizados por carpeta/tema sin quedarse detenido.
  */
 
 import { cargarTemas, urlPng, PREGUNTAS_POR_PRUEBA } from "./temas.js";
 
+// Estado global de la sesión de evaluación
 let state = {
-  temas: [],
-  cola: [],
-  indiceTema: 0,
-  seleccion: [],
-  item: 0,
-  respuestas: {},
-  todas: false,
-  tiempoRestante: 0,
-  intervaloTimer: null
+  temas: [],          // Lista completa de temas cargados desde temas.js / indice.json
+  cola: [],           // Cola de temas cuando se practica por carpeta individual
+  indiceTema: 0,      // Índice del tema activo dentro de la cola
+  seleccion: [],      // Arreglo de archivos de pregunta seleccionados para la prueba actual
+  item: 0,            // Índice de la pregunta actual (0 = primera pregunta)
+  respuestas: {},     // Respuestas marcadas por el estudiante según el índice de pregunta
+  todas: false,       // true = Simulacro Global | false = Práctica por tema
+  tiempoRestante: 0,  // Tiempo restante en segundos
+  intervaloTimer: null // Referencia del setInterval del cronómetro
 };
 
 /**
  * ==========================================================================
  * SECCIÓN 1: GESTIÓN DE CONTENEDORES Y DOM
  * ==========================================================================
+ * Busca el contenedor principal donde se pintará la interfaz en prueba.html.
  */
 function obtenerContenedor() {
-  let root = document.getElementById("vista") || document.getElementById("root") || document.getElementById("panel") || document.querySelector("main");
+  let root =
+    document.getElementById("vista") ||
+    document.getElementById("root") ||
+    document.getElementById("panel") ||
+    document.querySelector("main");
+
+  // Si el HTML no tuviera un contenedor con esos IDs, crea uno de respaldo
   if (!root) {
     root = document.createElement("main");
     root.id = "vista";
@@ -36,19 +49,22 @@ function obtenerContenedor() {
 
 /**
  * ==========================================================================
- * SECCIÓN 2: INICIALIZACIÓN DEL SISTEMA Y PARÁMETROS (ANTIDUPLICADOS)
+ * SECCIÓN 2: INICIALIZACIÓN DEL SISTEMA Y PARÁMETROS
  * ==========================================================================
+ * Lee los parámetros de la URL, gestiona el estado de pago de Wompi,
+ * carga los temas y arma el banco de preguntas (global o por tema).
  */
 async function init() {
   const params = new URLSearchParams(window.location.search);
-  
+
+  // Si regresa de Wompi con ?pagado=true, guarda el desbloqueo en sessionStorage
+  // y limpia la barra de direcciones manteniendo ?todas=1
   if (params.get("pagado") === "true") {
     sessionStorage.setItem("mundo_matematico_pagado_pro", "true");
     window.history.replaceState({}, document.title, window.location.pathname + "?todas=1");
-  } else {
-    if (params.get("todas") === "1" && !window.location.search.includes("pagado=true")) {
-      sessionStorage.removeItem("mundo_matematico_pagado_pro");
-    }
+  } else if (params.get("todas") === "1" && !window.location.search.includes("pagado=true")) {
+    // Al iniciar un simulacro global nuevo sin confirmación de pago, reinicia el estado
+    sessionStorage.removeItem("mundo_matematico_pagado_pro");
   }
 
   const temaId = params.get("tema");
@@ -56,32 +72,40 @@ async function init() {
 
   state.temas = aliasTemas(await cargarTemas());
   const root = obtenerContenedor();
-  
-  if (!state.temas.length) {
-    root.innerHTML = `<p class="alerta" style="padding: 20px; color: red;">No se pudieron cargar los temas. Revisa el archivo indice.json.</p>`;
+
+  // Si no hay temas disponibles, avisa claramente en pantalla
+  if (!Array.isArray(state.temas) || !state.temas.length) {
+    root.innerHTML = `
+      <div class="tarjeta">
+        <h2>Error al cargar módulos</h2>
+        <p>No se pudieron cargar los temas. Revisa el archivo <code>indice.json</code> y <code>js/temas.js</code>.</p>
+        <a href="index.html" class="boton">Volver al Menú</a>
+      </div>
+    `;
     return;
   }
 
   state.indiceTema = 0;
 
   if (esTodas) {
+    // Modo Simulacro Global: toma hasta 5 preguntas únicas por tema y las mezcla
     state.todas = true;
-    let preguntasGlobales = [];
-    let rutasYaAgregadas = new Set();
-    
-    state.temas.forEach(t => {
-      if (t.preguntas && t.preguntas.length > 0) {
+    const preguntasGlobales = [];
+    const rutasYaAgregadas = new Set();
+
+    state.temas.forEach((t) => {
+      if (Array.isArray(t.preguntas) && t.preguntas.length > 0) {
         const preguntasMezcladas = [...t.preguntas].sort(() => Math.random() - 0.5);
         const cantidadASeleccionar = Math.min(5, preguntasMezcladas.length);
         let seleccionadasTema = 0;
-        
-        for (let archivo of preguntasMezcladas) {
+
+        for (const archivo of preguntasMezcladas) {
           if (seleccionadasTema >= cantidadASeleccionar) break;
-          const claveUnica = `${t.carpeta || t.id}___${archivo.trim()}`;
-          
+          const claveUnica = `${t.carpeta || t.id}___${String(archivo).trim()}`;
+
           if (!rutasYaAgregadas.has(claveUnica)) {
             rutasYaAgregadas.add(claveUnica);
-            preguntasGlobales.push({ archivo: archivo, tema: t });
+            preguntasGlobales.push({ archivo, tema: t });
             seleccionadasTema++;
           }
         }
@@ -89,14 +113,16 @@ async function init() {
     });
 
     state.seleccionGlobal = preguntasGlobales.sort(() => Math.random() - 0.5);
-    state.seleccion = state.seleccionGlobal.map(x => x.archivo);
-    state.tiempoRestante = 90 * 60; 
+    state.seleccion = state.seleccionGlobal.map((x) => x.archivo);
+    state.tiempoRestante = 90 * 60; // 90 minutos para simulacro global
   } else if (temaId) {
+    // Modo Práctica por carpeta/tema solicitada en la URL
     state.todas = false;
     state.cola = [temaId];
     prepararTemaActual();
-    state.tiempoRestante = 20 * 60;
+    state.tiempoRestante = 20 * 60; // 20 minutos para práctica focalizada
   } else {
+    // Respaldo si se entra a prueba.html sin parámetros: toma el primer tema
     state.todas = false;
     state.cola = [state.temas[0].id];
     prepararTemaActual();
@@ -105,19 +131,19 @@ async function init() {
 
   state.item = 0;
   state.respuestas = {};
-  
+
   iniciarTemporizador();
   renderPregunta(state);
 }
 
 /**
  * ==========================================================================
- * SECCIÓN 3: TEMPORIZADOR Y RELOJ VISUAL
+ * SECCIÓN 3: TEMPORIZADOR, RELOJ Y PREPARACIÓN DE TEMAS
  * ==========================================================================
  */
 function iniciarTemporizador() {
   if (state.intervaloTimer) clearInterval(state.intervaloTimer);
-  
+
   state.intervaloTimer = setInterval(() => {
     if (state.tiempoRestante > 0) {
       state.tiempoRestante--;
@@ -135,68 +161,74 @@ function iniciarTemporizador() {
   }, 1000);
 }
 
+// Actualiza el reloj en pantalla cada segundo y resalta en rojo con menos de 5 min
 function actualizarRelojVisual() {
   const elReloj = document.getElementById("reloj-tiempo");
   if (elReloj) {
     const minutos = Math.floor(state.tiempoRestante / 60);
     const segundos = state.tiempoRestante % 60;
-    elReloj.textContent = `${minutos.toString().padStart(2, '0')}:${segundos.toString().padStart(2, '0')}`;
+    elReloj.textContent = `${minutos.toString().padStart(2, "0")}:${segundos.toString().padStart(2, "0")}`;
     if (state.tiempoRestante < 300) {
       elReloj.style.color = "#dc2626";
-      elReloj.style.fontWeight = "bold";
+      elReloj.style.fontWeight = "800";
     }
   }
 }
 
+// Garantiza que cada tema tenga un identificador 'id' usable
 function aliasTemas(temas) {
-  return temas.map(t => ({
+  return (temas || []).map((t) => ({
     ...t,
     id: t.id || t.carpeta
   }));
 }
 
+// Busca un tema por id o carpeta; si no lo encuentra, retorna el primero
 function temaPorId(id) {
-  return state.temas.find(t => t.id === id || t.carpeta === id) || state.temas[0];
+  return state.temas.find((t) => t.id === id || t.carpeta === id) || state.temas[0];
 }
 
+// Selecciona preguntas únicas y aleatorias para el módulo o carpeta activa
 function prepararTemaActual() {
   const tema = temaPorId(state.cola[state.indiceTema]);
-  const todasLasPreguntas = tema.preguntas || [];
-  
+  const todasLasPreguntas = Array.isArray(tema?.preguntas) ? tema.preguntas : [];
+
   if (todasLasPreguntas.length > 0) {
     const preguntasMezcladas = [...todasLasPreguntas].sort(() => Math.random() - 0.5);
     const cantidadDeseada = Math.min(PREGUNTAS_POR_PRUEBA || 10, preguntasMezcladas.length);
-    
-    let unicas = [];
-    let vistas = new Set();
-    
-    for (let archivo of preguntasMezcladas) {
+
+    const unicas = [];
+    const vistas = new Set();
+
+    for (const archivo of preguntasMezcladas) {
       if (unicas.length >= cantidadDeseada) break;
       if (!vistas.has(archivo)) {
         vistas.add(archivo);
         unicas.push(archivo);
       }
     }
-    
+
     state.seleccion = unicas;
   } else {
     state.seleccion = [];
   }
-  
+
   state.item = 0;
   state.respuestas = {};
 }
 
 /**
  * ==========================================================================
- * SECCIÓN 4: RENDERIZADO DE PREGUNTAS (OPTIMIZADO PARA MÓVILES - 2x2 COMPACTO)
+ * SECCIÓN 4: RENDERIZADO DE PREGUNTAS (IMAGEN AMPLIA + CAJONES 2x2)
  * ==========================================================================
+ * Dibuja la pregunta actual, conserva las respuestas ya elegidas al retroceder
+ * y redirige a los resultados correspondientes al finalizar el último ítem.
  */
 export function renderPregunta(st) {
   let tema, archivo;
-  
+
   if (st.todas) {
-    const actualGlobal = st.seleccionGlobal[st.item];
+    const actualGlobal = st.seleccionGlobal?.[st.item];
     if (!actualGlobal) {
       if (st.intervaloTimer) clearInterval(st.intervaloTimer);
       mostrarResultadosFinalesGlobal(st);
@@ -205,13 +237,14 @@ export function renderPregunta(st) {
     tema = actualGlobal.tema;
     archivo = actualGlobal.archivo;
   } else {
-    tema = temaPorId(st.cola[st.indiceTema]);
-    archivo = st.seleccion[st.item];
+    tema = temaPorId(st.cola?.[st.indiceTema || 0]);
+    archivo = st.seleccion?.[st.item];
   }
 
-  const total = st.todas ? st.seleccionGlobal.length : st.seleccion.length;
+  const total = st.todas ? (st.seleccionGlobal?.length || 0) : (st.seleccion?.length || 0);
   const root = obtenerContenedor();
 
+  // Si ya no hay más archivos por mostrar, pasa a la pantalla de resultados
   if (!archivo) {
     if (st.intervaloTimer) clearInterval(st.intervaloTimer);
     if (st.todas) {
@@ -228,36 +261,44 @@ export function renderPregunta(st) {
   const subPreguntas = esMulti ? Object.keys(respuestasClave) : [null];
   const respuestaPrevia = st.respuestas[st.item] || {};
 
-  const minInicial = Math.floor(st.tiempoRestante / 60).toString().padStart(2, '0');
-  const segInicial = (st.tiempoRestante % 60).toString().padStart(2, '0');
+  const minInicial = Math.floor(st.tiempoRestante / 60).toString().padStart(2, "0");
+  const segInicial = (st.tiempoRestante % 60).toString().padStart(2, "0");
 
   root.innerHTML = `
     <div style="max-width: 850px; margin: 0 auto; padding: 5px;">
       
-      <!-- Cabecera de Navegación y Tiempo -->
+      <!-- Barra superior con ruta del módulo y cronómetro -->
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; background: #fff; padding: 8px 12px; border-radius: 6px; border: 1px solid #cbd5e1;">
-        <p class="migas" style="margin: 0; font-size: 0.8rem;"><a href="index.html">Menú</a> / ${st.todas ? 'Simulacro Global' : (tema.titulo || tema.id)}</p>
+        <p class="migas" style="margin: 0; font-size: 0.8rem;"><a href="index.html">Menú</a> / ${st.todas ? "Simulacro Global" : (tema.titulo || tema.id)}</p>
         <div style="font-size: 0.85rem; font-weight: bold; color: #1e3a8a; background: #eff6ff; padding: 3px 8px; border-radius: 4px;">
-          ⏱️ <span id="reloj-tiempo">${minInicial}:${segInicial}</span>
+          Tiempo: <span id="reloj-tiempo">${minInicial}:${segInicial}</span>
         </div>
       </div>
 
-      <!-- Barra de Progreso -->
+      <!-- Barra de progreso del examen -->
       <div style="height: 5px; background: #e2e8f0; border-radius: 3px; margin-bottom: 4px; overflow: hidden;">
-        <div style="height: 100%; background: #1e3a8a; border-radius: 3px; width:${((st.item + 1) / total) * 100}%"></div>
+        <div style="height: 100%; background: #1e3a8a; border-radius: 3px; width: ${total > 0 ? ((st.item + 1) / total) * 100 : 0}%"></div>
       </div>
       <p style="font-size: 0.8rem; color: #64748b; margin-bottom: 12px; font-weight: 600;">Ejercicio ${st.item + 1} de ${total}</p>
       
-      <!-- Panel Principal -->
-      <section style="background: #fff; padding: 15px; border-radius: 8px; border: 1px solid #cbd5e1; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+      <!-- Tarjeta principal de la pregunta -->
+      <section class="panel-pregunta" style="margin: 0 auto; width: 100%; padding: 15px;">
         
-        <!-- IMAGEN DE LA PREGUNTA (PROTAGONISTA ABSOLUTA Y GRANDE) -->
+        <!-- Imagen de la pregunta a ancho completo -->
         <div style="text-align: center; margin-bottom: 15px;">
-          <img class="pregunta-img" alt="Pregunta ${st.item + 1}" src="${rutaImagenFinal}" style="width: 100%; height: auto; max-height: none; display: block; margin: 0 auto; border-radius: 4px;" onerror="this.style.display='none'; document.getElementById('img-error').style.display='block';">
-          <p id="img-error" style="display:none; color: red; font-size: 0.8rem;">[No se pudo cargar la imagen: ${archivo}]</p>
+          <img
+            class="pregunta-img"
+            alt="Pregunta ${st.item + 1}"
+            src="${rutaImagenFinal}"
+            style="width: 100%; height: auto; max-height: none; display: block; margin: 0 auto; border-radius: 4px;"
+            onerror="this.style.display='none'; document.getElementById('img-error').style.display='block';"
+          />
+          <p id="img-error" style="display: none; color: #dc2626; font-size: 0.82rem;">[No se pudo cargar la imagen: ${archivo}]</p>
         </div>
 
-        <p id="error" class="alerta oculto" style="margin-bottom: 10px; color: #dc2626; font-size: 0.8rem; font-weight: bold; text-align: center;">Por favor responde la pregunta para continuar.</p>
+        <p id="error" class="alerta oculto" style="margin-bottom: 10px; color: #dc2626; font-size: 0.82rem; font-weight: bold; text-align: center;">
+          Por favor responde la pregunta para continuar.
+        </p>
         
         <form id="form-opciones">
           ${subPreguntas.map((num) => {
@@ -268,33 +309,40 @@ export function renderPregunta(st) {
               <div style="margin-bottom: 12px;">
                 <p style="font-size: 0.8rem; color: #64748b; font-weight: bold; margin-bottom: 4px; text-transform: uppercase;">Elige una respuesta:</p>
                 
-                <!-- CAJONES DE OPCIONES 2x2 ULTRA COMPACTOS PARA CELULAR -->
+                <!-- Opciones en cuadrícula 2x2 compacta -->
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
-                  ${["A", "B", "C", "D"]
-                    .map((l) => {
-                      const marcado = valorAnterior === l ? 'checked' : '';
-                      const bgSeleccionado = marcado ? '#eff6ff' : '#f8fafc';
-                      const borderSeleccionado = marcado ? '#2563eb' : '#cbd5e1';
-                      return `
-                        <label style="display: flex; align-items: center; justify-content: center; gap: 8px; background: ${bgSeleccionado}; border: 1.5px solid ${borderSeleccionado}; padding: 8px 10px; border-radius: 6px; cursor: pointer; font-size: 0.9rem; font-weight: bold; transition: all 0.1s;">
-                          <input type="radio" name="opcion_${num || 'unica'}" value="${l}" ${marcado} required style="cursor: pointer; accent-color: #1e3a8a; margin: 0;">
-                          <span style="color: #1e293b; font-size: 0.95rem;">${l}</span>
-                        </label>
-                      `;
-                    })
-                    .join("")}
+                  ${["A", "B", "C", "D"].map((l) => {
+                    const marcado = valorAnterior === l ? "checked" : "";
+                    const bgSeleccionado = marcado ? "#eff6ff" : "#f8fafc";
+                    const borderSeleccionado = marcado ? "#2563eb" : "#cbd5e1";
+                    return `
+                      <label style="display: flex; align-items: center; justify-content: center; gap: 8px; background: ${bgSeleccionado}; border: 1.5px solid ${borderSeleccionado}; padding: 8px 10px; border-radius: 6px; cursor: pointer; font-size: 0.9rem; font-weight: bold; transition: all 0.1s;">
+                        <input type="radio" name="opcion_${num || "unica"}" value="${l}" ${marcado} required style="cursor: pointer; accent-color: #1e3a8a; margin: 0;" />
+                        <span style="color: #1e293b; font-size: 0.95rem;">${l}</span>
+                      </label>
+                    `;
+                  }).join("")}
                 </div>
               </div>
             `;
           }).join("")}
 
-          <!-- Botones de Navegación -->
+          <!-- Botones de navegación entre preguntas -->
           <div style="display: flex; justify-content: space-between; gap: 10px; margin-top: 15px; border-top: 1px solid #e2e8f0; padding-top: 12px;">
-            <button class="boton" type="button" id="btn-anterior" ${st.item === 0 ? 'style="opacity: 0.4; cursor: not-allowed; background: #64748b; color: white; padding: 8px 14px; border-radius: 6px; border: none; font-weight: bold; font-size: 0.85rem;"' : 'style="background: #64748b; color: white; padding: 8px 14px; border-radius: 6px; border: none; font-weight: bold; cursor: pointer; font-size: 0.85rem;"'}>
+            <button
+              class="boton"
+              type="button"
+              id="btn-anterior"
+              ${st.item === 0 ? 'disabled style="opacity: 0.4; cursor: not-allowed; background: #64748b; color: white; padding: 8px 14px; border-radius: 6px; border: none; font-weight: bold; font-size: 0.85rem;"' : 'style="background: #64748b; color: white; padding: 8px 14px; border-radius: 6px; border: none; font-weight: bold; cursor: pointer; font-size: 0.85rem;"'}
+            >
               ← Anterior
             </button>
-            <button class="boton" type="submit" style="flex: 1; background: #1e3a8a; color: white; padding: 8px 14px; border-radius: 6px; border: none; font-weight: bold; cursor: pointer; font-size: 0.9rem;">
-              ${st.item + 1 < total ? 'Siguiente →' : 'Ver Resultados 🏁'}
+            <button
+              class="boton"
+              type="submit"
+              style="flex: 1; background: #1e3a8a; color: white; padding: 8px 14px; border-radius: 6px; border: none; font-weight: bold; cursor: pointer; font-size: 0.9rem;"
+            >
+              ${st.item + 1 < total ? "Siguiente →" : "Ver Resultados"}
             </button>
           </div>
         </form>
@@ -302,17 +350,22 @@ export function renderPregunta(st) {
     </div>
   `;
 
-  document.getElementById("btn-anterior").onclick = () => {
-    if (st.item > 0) {
-      st.item -= 1;
-      renderPregunta(st);
-    }
-  };
+  // Retroceder a la pregunta anterior
+  const btnAnterior = document.getElementById("btn-anterior");
+  if (btnAnterior) {
+    btnAnterior.onclick = () => {
+      if (st.item > 0) {
+        st.item -= 1;
+        renderPregunta(st);
+      }
+    };
+  }
 
+  // Validar selección y avanzar o mostrar resultados finales
   document.getElementById("form-opciones").onsubmit = (ev) => {
     ev.preventDefault();
     const formData = new FormData(ev.target);
-    
+
     if (esMulti) {
       const respuestasObj = {};
       for (const num of subPreguntas) {
@@ -349,30 +402,32 @@ export function renderPregunta(st) {
 
 /**
  * ==========================================================================
- * SECCIÓN 5: RESULTADOS GLOBALES, PASARELA WOMPI Y REVISIÓN DE RESPUESTAS
+ * SECCIÓN 5: RESULTADOS GLOBALES, REVISIÓN Y DESBLOQUEO WOMPI
  * ==========================================================================
  */
 function mostrarResultadosFinalesGlobal(st) {
   if (st.intervaloTimer) clearInterval(st.intervaloTimer);
-  let aciertos = 0;
-  let totalPreguntas = st.seleccionGlobal.length;
-  
-  let erroresPorTema = {};
-  let aciertosPorCompetencia = {};
-  let totalPorCompetencia = {};
 
-  st.seleccionGlobal.forEach((itemGlobal, index) => {
-    const tema = itemGlobal.tema;
+  let aciertos = 0;
+  const preguntasGlobales = Array.isArray(st.seleccionGlobal) ? st.seleccionGlobal : [];
+  const totalPreguntas = preguntasGlobales.length;
+
+  const erroresPorTema = {};
+  const aciertosPorCompetencia = {};
+  const totalPorCompetencia = {};
+
+  preguntasGlobales.forEach((itemGlobal, index) => {
+    const tema = itemGlobal.tema || {};
     const nombreTema = tema.titulo || tema.carpeta || "General";
     const archivo = itemGlobal.archivo;
     const respuestaCorrecta = (tema.respuestas || {})[archivo];
-    const respuestaUsuario = st.respuestas[index];
+    const respuestaUsuario = st.respuestas?.[index];
 
     totalPorCompetencia[nombreTema] = (totalPorCompetencia[nombreTema] || 0) + 1;
     if (!aciertosPorCompetencia[nombreTema]) aciertosPorCompetencia[nombreTema] = 0;
 
     let esAcierto = false;
-    if (typeof respuestaCorrecta === "object") {
+    if (respuestaCorrecta && typeof respuestaCorrecta === "object") {
       let todasCorrectas = true;
       for (const subKey in respuestaCorrecta) {
         if (respuestaUsuario?.[subKey] !== respuestaCorrecta[subKey]) {
@@ -380,7 +435,7 @@ function mostrarResultadosFinalesGlobal(st) {
         }
       }
       if (todasCorrectas) esAcierto = true;
-    } else {
+    } else if (respuestaCorrecta !== undefined) {
       if (respuestaUsuario === respuestaCorrecta) {
         esAcierto = true;
       }
@@ -394,9 +449,9 @@ function mostrarResultadosFinalesGlobal(st) {
     }
   });
 
-  const incorrectas = totalPreguntas - aciertos;
+  const incorrectas = Math.max(0, totalPreguntas - aciertos);
   const porcentaje = totalPreguntas > 0 ? Math.round((aciertos / totalPreguntas) * 100) : 0;
-  
+
   let nivelDesempeno = "1";
   if (porcentaje >= 75) nivelDesempeno = "4";
   else if (porcentaje >= 50) nivelDesempeno = "3";
@@ -440,30 +495,30 @@ function mostrarResultadosFinalesGlobal(st) {
 
       <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 25px;">
         <div style="display: flex; align-items: center; justify-content: space-between; background: #f8fafc; padding: 10px 15px; border-radius: 6px; border: 1px solid #e2e8f0;">
-          <span style="font-size: 0.9rem; color: #64748b; font-weight: 600;">✔️ CORRECTAS:</span>
+          <span style="font-size: 0.9rem; color: #64748b; font-weight: 600;">CORRECTAS:</span>
           <div style="display: flex; align-items: center; gap: 10px; flex: 1; max-width: 200px; margin: 0 15px;">
             <div style="flex: 1; height: 8px; background: #e2e8f0; border-radius: 4px; overflow: hidden;">
-              <div style="width: ${totalPreguntas > 0 ? (aciertos/totalPreguntas)*100 : 0}%; height: 100%; background: #10b981;"></div>
+              <div style="width: ${totalPreguntas > 0 ? (aciertos / totalPreguntas) * 100 : 0}%; height: 100%; background: #10b981;"></div>
             </div>
           </div>
           <span style="font-size: 1rem; font-weight: bold; color: #10b981; min-width: 25px; text-align: right;">${aciertos}</span>
         </div>
 
         <div style="display: flex; align-items: center; justify-content: space-between; background: #f8fafc; padding: 10px 15px; border-radius: 6px; border: 1px solid #e2e8f0;">
-          <span style="font-size: 0.9rem; color: #64748b; font-weight: 600;">❌ INCORRECTAS:</span>
+          <span style="font-size: 0.9rem; color: #64748b; font-weight: 600;">INCORRECTAS:</span>
           <div style="display: flex; align-items: center; gap: 10px; flex: 1; max-width: 200px; margin: 0 15px;">
             <div style="flex: 1; height: 8px; background: #e2e8f0; border-radius: 4px; overflow: hidden;">
-              <div style="width: ${totalPreguntas > 0 ? (incorrectas/totalPreguntas)*100 : 0}%; height: 100%; background: #ef4444;"></div>
+              <div style="width: ${totalPreguntas > 0 ? (incorrectas / totalPreguntas) * 100 : 0}%; height: 100%; background: #ef4444;"></div>
             </div>
           </div>
           <span style="font-size: 1rem; font-weight: bold; color: #ef4444; min-width: 25px; text-align: right;">${incorrectas}</span>
         </div>
 
         <div style="display: flex; align-items: center; justify-content: space-between; background: #f8fafc; padding: 10px 15px; border-radius: 6px; border: 1px solid #e2e8f0;">
-          <span style="font-size: 0.9rem; color: #64748b; font-weight: 600;">📊 NIVEL ESTIMADO:</span>
+          <span style="font-size: 0.9rem; color: #64748b; font-weight: 600;">NIVEL ESTIMADO:</span>
           <div style="display: flex; align-items: center; gap: 10px; flex: 1; max-width: 200px; margin: 0 15px;">
             <div style="flex: 1; height: 8px; background: #e2e8f0; border-radius: 4px; overflow: hidden;">
-              <div style="width: ${(nivelDesempeno/4)*100}%; height: 100%; background: #8b5cf6;"></div>
+              <div style="width: ${(nivelDesempeno / 4) * 100}%; height: 100%; background: #8b5cf6;"></div>
             </div>
           </div>
           <span style="font-size: 1rem; font-weight: bold; color: #8b5cf6; min-width: 25px; text-align: right;">${nivelDesempeno}</span>
@@ -477,17 +532,17 @@ function mostrarResultadosFinalesGlobal(st) {
 
       <div style="margin-bottom: 25px;">
         <button id="btn-ver-respuestas" class="boton" style="background: #ef4444; color: white; padding: 14px 20px; border-radius: 6px; font-weight: bold; border: none; cursor: pointer; width: 100%; font-size: 1.05rem; box-shadow: 0 2px 4px rgba(239,68,68,0.3);">
-          🔍 VER RESPUESTAS Y JUSTIFICACIONES
+          VER RESPUESTAS Y JUSTIFICACIONES
         </button>
       </div>
 
-      <div style="border: 2px solid ${yaPago ? '#10b981' : '#1e3a8a'}; background: ${yaPago ? '#f0fdf4' : '#eff6ff'}; padding: 20px; border-radius: 8px; text-align: center;">
+      <div style="border: 2px solid ${yaPago ? "#10b981" : "#1e3a8a"}; background: ${yaPago ? "#f0fdf4" : "#eff6ff"}; padding: 20px; border-radius: 8px; text-align: center;">
         ${yaPago ? `
-          <span style="background: #10b981; color: white; padding: 4px 12px; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">¡PAGO VERIFICADO!</span>
+          <span style="background: #10b981; color: white; padding: 4px 12px; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">PAGO VERIFICADO</span>
           <h3 style="color: #10b981; margin: 10px 0 5px 0; font-size: 1.2rem;">Tu Cuadernillo Pro está listo</h3>
           <p style="color: #334155; font-size: 0.85rem; margin-bottom: 15px;">Descarga tu informe con la ruta de corrección personalizada.</p>
           <button id="btn-descargar-pdf" class="boton" style="background: #10b981; color: white; padding: 12px 20px; border-radius: 6px; font-weight: bold; border: none; cursor: pointer; width: 100%; font-size: 1rem; margin-bottom: 10px;">
-            📥 Descargar mi Cuadernillo Pro (PDF)
+            Descargar mi Cuadernillo Pro (PDF)
           </button>
         ` : `
           <span style="background: #1e3a8a; color: white; padding: 4px 12px; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">CUADERNILLO PRO EXCLUSIVO</span>
@@ -496,17 +551,17 @@ function mostrarResultadosFinalesGlobal(st) {
           
           <div style="display: flex; flex-direction: column; gap: 12px; align-items: center;">
             <a href="${linkWompi}" target="_blank" class="boton" style="background: #10b981; color: white; text-decoration: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; font-size: 1rem; width: 100%; box-sizing: border-box; text-align: center;">
-              💳 Pagar $15.000 con Wompi
+              Pagar $15.000 con Wompi
             </a>
             <div style="background: #fff; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1; display: inline-block;">
-              <img src="${urlQrWompi}" alt="QR Wompi" style="width: 110px; height: 110px; display: block; margin: 0 auto 5px auto;">
+              <img src="${urlQrWompi}" alt="QR Wompi" style="width: 110px; height: 110px; display: block; margin: 0 auto 5px auto;" />
               <span style="font-size: 0.7rem; color: #64748b; font-weight: bold;">Escanea para pagar</span>
             </div>
           </div>
         `}
 
         <button id="btn-nuevo-examen" class="boton" style="background: #64748b; color: white; padding: 10px 16px; border-radius: 6px; font-weight: bold; border: none; cursor: pointer; width: 100%; font-size: 0.9rem; margin-top: 12px;">
-          🔄 Presentar Otro Examen (Nuevo Intento)
+          Presentar Otro Examen (Nuevo Intento)
         </button>
       </div>
     </div>
@@ -534,7 +589,7 @@ function mostrarResultadosFinalesGlobal(st) {
         window.location.href = "prueba.html?todas=1";
       };
     }
-  }, 100);
+  }, 50);
 }
 
 /**
@@ -544,37 +599,37 @@ function mostrarResultadosFinalesGlobal(st) {
  */
 function mostrarPantallaRevisionRespuestas(st) {
   const root = obtenerContenedor();
-  
-  let htmlPreguntas = "";
-  st.seleccionGlobal.forEach((itemGlobal, index) => {
-    const tema = itemGlobal.tema;
+  const preguntasGlobales = Array.isArray(st.seleccionGlobal) ? st.seleccionGlobal : [];
+
+  const htmlPreguntas = preguntasGlobales.map((itemGlobal, index) => {
+    const tema = itemGlobal.tema || {};
     const archivo = itemGlobal.archivo;
     const rutaImg = urlPng(tema, archivo);
     const respuestaCorrecta = (tema.respuestas || {})[archivo];
-    const respuestaUsuario = st.respuestas[index];
+    const respuestaUsuario = st.respuestas?.[index];
 
     let esAcierto = false;
-    if (typeof respuestaCorrecta === "object") {
+    if (respuestaCorrecta && typeof respuestaCorrecta === "object") {
       let todasCorrectas = true;
       for (const subKey in respuestaCorrecta) {
         if (respuestaUsuario?.[subKey] !== respuestaCorrecta[subKey]) todasCorrectas = false;
       }
       if (todasCorrectas) esAcierto = true;
-    } else {
+    } else if (respuestaCorrecta !== undefined) {
       if (respuestaUsuario === respuestaCorrecta) esAcierto = true;
     }
 
-    htmlPreguntas += `
+    return `
       <div style="background: #fff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.04);">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;">
-          <span style="font-weight: bold; color: #1e3a8a; font-size: 0.95rem;">Pregunta ${index + 1} (${tema.titulo || 'General'})</span>
-          <span style="background: ${esAcierto ? '#dcfce7' : '#fee2e2'}; color: ${esAcierto ? '#166534' : '#991b1b'}; padding: 4px 10px; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">
-            ${esAcierto ? '✔️ Tu respuesta es correcta!' : '❌ Tu respuesta fue incorrecta'}
+          <span style="font-weight: bold; color: #1e3a8a; font-size: 0.95rem;">Pregunta ${index + 1} (${tema.titulo || "General"})</span>
+          <span style="background: ${esAcierto ? "#dcfce7" : "#fee2e2"}; color: ${esAcierto ? "#166534" : "#991b1b"}; padding: 4px 10px; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">
+            ${esAcierto ? "Tu respuesta es correcta" : "Tu respuesta fue incorrecta"}
           </span>
         </div>
 
         <div style="text-align: center; margin-bottom: 15px; background: #f8fafc; padding: 10px; border-radius: 6px;">
-          <img src="${rutaImg}" alt="Pregunta ${index + 1}" style="max-width: 100%; height: auto; object-fit: contain;">
+          <img src="${rutaImg}" alt="Pregunta ${index + 1}" style="max-width: 100%; height: auto; object-fit: contain;" />
         </div>
 
         <div style="background: #f8fafc; border: 1px dashed #cbd5e1; padding: 15px; border-radius: 6px; margin-top: 10px;">
@@ -588,7 +643,7 @@ function mostrarPantallaRevisionRespuestas(st) {
         </div>
       </div>
     `;
-  });
+  }).join("");
 
   root.innerHTML = `
     <div style="max-width: 700px; margin: 0 auto; padding: 20px;">
@@ -617,6 +672,7 @@ function mostrarPantallaRevisionRespuestas(st) {
  * ==========================================================================
  * SECCIÓN 6: PRÁCTICAS FOCALIZADAS (CARPETAS / MÓDULOS INDIVIDUALES)
  * ==========================================================================
+ * Calcula y muestra los resultados al terminar una carpeta de tema específica.
  */
 function mostrarResultadosFinales(st, tema) {
   if (st.intervaloTimer) clearInterval(st.intervaloTimer);
@@ -656,22 +712,22 @@ function mostrarResultadosFinales(st, tema) {
   if (porcentaje >= 80) {
     alertaColor = "#16a34a";
     fondoCaja = "#f0fdf4";
-    mensajeDesempeno = `¡Excelente nivel en <strong>${temaActual?.titulo || temaActual?.id || "este módulo"}</strong>! Tienes bases muy sólidas. Sigue manteniendo este gran ritmo de estudio para asegurar un puntaje sobresaliente en el ICFES.`;
+    mensajeDesempeno = `Excelente nivel en <strong>${temaActual?.titulo || temaActual?.id || "este módulo"}</strong>. Mantén este ritmo de práctica para consolidar tu desempeño en el Saber 11.`;
   } else if (porcentaje >= 50) {
     alertaColor = "#d97706";
     fondoCaja = "#fffbeb";
-    mensajeDesempeno = `Tienes bases intermedias en <strong>${temaActual?.titulo || temaActual?.id || "este módulo"}</strong>, pero hay vacíos conceptuales en preguntas clave que el ICFES suele evaluar con distractores. ¡Un repaso focalizado marca la diferencia!`;
+    mensajeDesempeno = `Nivel intermedio en <strong>${temaActual?.titulo || temaActual?.id || "este módulo"}</strong>. Reforzar los ítems con distractores te ayudará a subir tu puntaje.`;
   } else {
     alertaColor = "#dc2626";
     fondoCaja = "#fff5f5";
-    mensajeDesempeno = `Identificamos oportunidades de mejora críticas en <strong>${temaActual?.titulo || temaActual?.id || "este módulo"}</strong>. Te sugerimos reforzar este tema con práctica guiada o tutoría antes de la prueba real.`;
+    mensajeDesempeno = `Se detectaron oportunidades de mejora en <strong>${temaActual?.titulo || temaActual?.id || "este módulo"}</strong>. Conviene repasar el tema y practicar de nuevo.`;
   }
 
   const tituloModulo = temaActual?.titulo || temaActual?.id || "Módulo";
   const linkSimulacroGlobal = "prueba.html?todas=1";
   const numeroWhatsApp = "573115574410";
   const mensajeWp = encodeURIComponent(
-    `Hola, acabo de hacer la práctica focalizada de ${tituloModulo} en Mundo Matemático y obtuve ${aciertos}/${totalPreguntas}. Me gustaría información sobre tutorías.`
+    `Hola, acabo de realizar la práctica de ${tituloModulo} en Mundo Matemático y obtuve ${aciertos}/${totalPreguntas}. Me gustaría información sobre tutorías.`
   );
 
   root.innerHTML = `
@@ -698,19 +754,19 @@ function mostrarResultadosFinales(st, tema) {
 
       <div style="display: flex; flex-direction: column; gap: 10px;">
         <button id="btn-repetir-tema" class="boton" style="background: #2563eb; color: white; padding: 12px 18px; border-radius: 6px; font-weight: bold; border: none; cursor: pointer; font-size: 0.95rem; width: 100%;">
-          🔄 Repetir este Módulo
+          Repetir este Módulo
         </button>
 
         <a class="boton" href="${linkSimulacroGlobal}" style="background: #1e3a8a; color: white; text-decoration: none; padding: 12px 18px; border-radius: 6px; font-weight: bold; font-size: 0.95rem; width: 100%; box-sizing: border-box; text-align: center;">
-          🚀 Presentar Simulacro Global Completo
+          Presentar Simulacro Global Completo
         </a>
 
         <a class="boton" href="https://wa.me/${numeroWhatsApp}?text=${mensajeWp}" target="_blank" style="background: #16a34a; color: white; text-decoration: none; padding: 12px 18px; border-radius: 6px; font-weight: bold; font-size: 0.95rem; width: 100%; box-sizing: border-box; text-align: center;">
-          💬 Solicitar Tutoría por WhatsApp
+          Solicitar Tutoría por WhatsApp
         </a>
 
         <a class="boton" href="index.html" style="background: #64748b; color: white; text-decoration: none; padding: 11px 18px; border-radius: 6px; font-weight: bold; font-size: 0.9rem; width: 100%; box-sizing: border-box; text-align: center;">
-          🏠 Volver al Menú Principal
+          Volver al Menú Principal
         </a>
       </div>
     </div>
@@ -730,37 +786,37 @@ function mostrarResultadosFinales(st, tema) {
 
 /**
  * ==========================================================================
- * SECCIÓN 7: GENERACIÓN DE PDF NATIVO (CUADERNILLO PRO 100% PERSONALIZADO)
+ * SECCIÓN 7: GENERACIÓN DE PDF NATIVO (CUADERNILLO PRO PERSONALIZADO)
  * ==========================================================================
+ * Abre una vista imprimible/exportable a PDF con métricas, análisis y ruta.
  */
 function generarPDFInformePersonalizado(aciertos, totalPreguntas, porcentaje, nivelDesempeno, erroresPorTema) {
-  const ventanaImpresion = window.open('', '_blank');
-  
+  const ventanaImpresion = window.open("", "_blank");
+
   if (!ventanaImpresion) {
     alert("Por favor permite las ventanas emergentes (pop-ups) en tu navegador para descargar el PDF.");
     return;
   }
 
-  const temasFallados = Object.keys(erroresPorTema).sort((a, b) => erroresPorTema[b] - erroresPorTema[a]);
-  
-  const temaCritico1 = temasFallados[0] || 'Razonamiento Cuantitativo General';
-  const temaCritico2 = temasFallados[1] || 'Pensamiento Espacial y Métrico';
+  const temasFallados = Object.keys(erroresPorTema || {}).sort((a, b) => erroresPorTema[b] - erroresPorTema[a]);
+  const temaCritico1 = temasFallados[0] || "Razonamiento Cuantitativo General";
+  const temaCritico2 = temasFallados[1] || "Pensamiento Espacial y Métrico";
 
   const analisisCompetencias = `
-    Bajo el modelo de estimación de parámetros TRI (Teoría de Respuesta al Ítem) aplicado en este simulacro global, el patrón de respuestas del aspirante evidencia una sólida comprensión en conceptos aritméticos básicos, pero revela <strong>vulnerabilidades conceptuales críticas en el componente de ${temaCritico1}</strong>. Esta deficiencia genera un impacto directo en la probabilidad de acierto en preguntas de complejidad media y alta del ICFES Saber 11, limitando la consolidación hacia niveles superiores de desempeño analítico.
+    Bajo el modelo de estimación de parámetros TRI (Teoría de Respuesta al Ítem) aplicado en este simulacro global, el patrón de respuestas del aspirante evidencia una base conceptual en resolución inicial, pero revela <strong>vulnerabilidades en el componente de ${temaCritico1}</strong>. Esta diferencia impacta el desempeño en preguntas de complejidad media y alta del Saber 11.
   `;
 
   const recomendacionTemas = `
-    1. <strong>Foco de Intervención Urgente en ${temaCritico1}:</strong> Es imperativo revisar la fundamentación teórica, las propiedades operativas y la resolución de situaciones tipo viñeta donde este componente es evaluado bajo múltiples distractores lógicos.<br><br>
-    2. <strong>Consolidación en ${temaCritico2}:</strong> Se detectaron inconsistencias en la aplicación algorítmica y la interpretación de modelos matemáticos asociados, sugiriendo prácticas de refuerzo guiado.<br><br>
-    3. <strong>Estrategia de Gestión de Tiempo y Distractores:</strong> Entrenar la lectura crítica de enunciados extensos para evitar caer en las trampas de opción múltiple diseñadas por el ICFES.
+    1. <strong>Foco prioritario en ${temaCritico1}:</strong> Revisar conceptos clave, propiedades operativas y resolución de situaciones tipo viñeta donde este componente es evaluado.<br><br>
+    2. <strong>Refuerzo en ${temaCritico2}:</strong> Practicar ejercicios de interpretación de modelos y aplicación algorítmica para reducir errores recurrentes.<br><br>
+    3. <strong>Lectura y gestión del tiempo:</strong> Leer cuidadosamente los enunciados y verificar las condiciones del problema antes de elegir opción.
   `;
 
   ventanaImpresion.document.write(`
     <!DOCTYPE html>
     <html lang="es">
     <head>
-      <meta charset="UTF-8">
+      <meta charset="UTF-8" />
       <title>Cuadernillo Pro - Mundo Matemático</title>
       <style>
         body { font-family: 'Helvetica Neue', Arial, sans-serif; color: #1e293b; margin: 0; padding: 40px; background: #fff; line-height: 1.6; }
@@ -797,14 +853,14 @@ function generarPDFInformePersonalizado(aciertos, totalPreguntas, porcentaje, ni
       </div>
 
       <div class="card">
-        <h3>📊 Certificado de Diagnóstico y Métricas (Estándar TRI)</h3>
+        <h3>Certificado de Diagnóstico y Métricas (Estándar TRI)</h3>
         <div class="grid">
           <div class="metric-box">
             <div class="num">${aciertos} / ${totalPreguntas}</div>
             <div class="label">Aciertos Totales (${porcentaje}%)</div>
           </div>
           <div class="metric-box">
-            <div class="num" style="font-size: 16px; color: #dc2626; margin-top: 4px;">${nivelDesempeno}</div>
+            <div class="num" style="font-size: 16px; color: #dc2626; margin-top: 4px;">Nivel ${nivelDesempeno}</div>
             <div class="label">Desempeño Estimado</div>
           </div>
         </div>
@@ -814,23 +870,23 @@ function generarPDFInformePersonalizado(aciertos, totalPreguntas, porcentaje, ni
       </div>
 
       <div class="card">
-        <h3>🔍 Análisis de Competencias Latentes</h3>
+        <h3>Análisis de Competencias Latentes</h3>
         <p style="font-size: 13px; color: #334155; margin: 0; text-align: justify;">
           ${analisisCompetencias}
         </p>
       </div>
 
       <div class="card">
-        <h3>🎯 Ruta de Corrección y Recomendaciones Académicas</h3>
+        <h3>Ruta de Corrección y Recomendaciones Académicas</h3>
         <p style="font-size: 13px; color: #334155; margin: 0; line-height: 1.6; text-align: justify;">
           ${recomendacionTemas}
         </p>
       </div>
 
       <div class="footer">
-        <div class="footer-title">¡Asegura tu cupo universitario con tutorías especializadas!</div>
+        <div class="footer-title">Asegura tu cupo universitario con tutorías especializadas</div>
         <div class="footer-info">
-          🌐 Web oficial: <strong>mimundomatematico.com</strong> &nbsp;|&nbsp; 📞 WhatsApp / Contacto directo: <strong>311 557 4410</strong><br>
+          Web oficial: <strong>mimundomatematico.com</strong> &nbsp;|&nbsp; WhatsApp / Contacto directo: <strong>311 557 4410</strong><br>
           <span style="font-size: 10px; color: #64748b; display: block; margin-top: 6px;">
             Mundo Matemático es una iniciativa educativa independiente. Documento exclusivo para validación de desempeño académico.
           </span>
@@ -842,4 +898,5 @@ function generarPDFInformePersonalizado(aciertos, totalPreguntas, porcentaje, ni
   ventanaImpresion.document.close();
 }
 
+// Arranque del simulacro una vez declaradas todas las funciones
 init();
