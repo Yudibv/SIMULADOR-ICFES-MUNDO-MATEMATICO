@@ -432,11 +432,10 @@ export function renderPregunta(st) {
     }
   };
 }
-
 /**
- * ==========================================================================
- * SECCIÓN 5: RESULTADOS GLOBALES (PAGO -> VERIFICACIÓN CELULAR -> PDF)
- * ==========================================================================
+- ==========================================================================
+- SECCIÓN 5: RESULTADOS GLOBALES (PAGO -> VERIFICACIÓN CELULAR -> PDF)
+- ==========================================================================
  */
 function mostrarResultadosFinalesGlobal(st) {
   if (st.intervaloTimer) clearInterval(st.intervaloTimer);
@@ -652,12 +651,6 @@ function mostrarResultadosFinalesGlobal(st) {
         <button id="btn-nuevo-examen" class="boton boton-gris" style="padding: 10px 16px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; font-size: 0.9rem; margin-top: 12px;">
           Presentar Otro Examen (Nuevo Intento)
         </button>
-
-        <div style="margin-top: 12px; text-align: center;">
-          <a href="prueba.html?todas=1&demo=1" class="boton boton-gris" style="width: 100%; margin-top: 0; box-sizing: border-box;">
-            Probar Mini-Simulacro Demo (Sustentación)
-          </a>
-        </div>
       </div>
     </div>
   `;
