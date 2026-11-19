@@ -399,7 +399,14 @@ export function renderPregunta(st) {
     }
   };
 }
-
+<!-- BLOQUE NUEVO: Sesión de 30 min por $15 + descuento en clases personalizadas -->
+<div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px; padding: 14px 16px; margin-bottom: 18px; text-align: left;">
+  <p style="margin: 0; line-height: 1.5; color: #1e293b; font-size: 0.92rem;">
+    <strong style="color: #1e3a8a;">Sesión de 30 minutos ($15):</strong>
+    revisamos tus resultados, resolvemos dudas clave y obtienes un
+    <strong style="color: #dc2626;">descuento especial</strong> en clases personalizadas de Mundo Matemático.
+  </p>
+</div>
 /**
  * ==========================================================================
  * SECCIÓN 5: RESULTADOS GLOBALES, REVISIÓN Y DESBLOQUEO WOMPI
@@ -726,9 +733,10 @@ function mostrarResultadosFinales(st, tema) {
   const tituloModulo = temaActual?.titulo || temaActual?.id || "Módulo";
   const linkSimulacroGlobal = "prueba.html?todas=1";
   const numeroWhatsApp = "573115574410";
-  const mensajeWp = encodeURIComponent(
-    `Hola, acabo de realizar la práctica de ${tituloModulo} en Mundo Matemático y obtuve ${aciertos}/${totalPreguntas}. Me gustaría información sobre tutorías.`
-  );
+  // MENSAJE DE WHATSAPP: incluye la sesión de 30 min ($15) y el interés en clases personalizadas
+const mensajeWhatsApp = encodeURIComponent(
+  `Hola Mundo Matemático, terminé la práctica de ${tituloModulo} y quiero agendar la sesión de 30 minutos ($15) con descuento para clases personalizadas.`
+);
 
   root.innerHTML = `
     <div style="max-width: 650px; margin: 0 auto; background: #fff; border: 1px solid #cbd5e1; border-radius: 12px; padding: 28px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
