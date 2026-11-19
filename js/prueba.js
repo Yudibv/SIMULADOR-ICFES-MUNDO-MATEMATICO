@@ -895,12 +895,16 @@ function mostrarResultadosFinales(st, tema) {
   }, 50);
 }
 
-/**
-- ==========================================================================
-- SECCIÓN 7: GENERACIÓN DE PDF NATIVO (CUADERNILLO PRO PERSONALIZADO)
-- ==========================================================================
- */
-function generarPDFInformePersonalizado(aciertos, totalPreguntas, porcentaje, nivelDesempeno, erroresPorTema, idIntento = "") {
+function generarPDFInformePersonalizado(
+  aciertos,
+  totalPreguntas,
+  porcentaje,
+  nivelDesempeno,
+  erroresPorTema,
+  idIntento = "",
+  aciertosPorCompetencia = {},
+  totalPorCompetencia = {}
+) {
   const ventanaImpresion = window.open("", "_blank");
 
   if (!ventanaImpresion) {
@@ -908,22 +912,66 @@ function generarPDFInformePersonalizado(aciertos, totalPreguntas, porcentaje, ni
     return;
   }
 
-  const temasFallados = Object.keys(erroresPorTema || {}).sort((a, b) => erroresPorTema[b] - erroresPorTema[a]);
-  const temaCritico1 = temasFallados[0] || "Razonamiento Cuantitativo General";
-  const temaCritico2 = temasFallados[1] || "Pensamiento Espacial y Métrico";
-  const totalErrores = Object.values(erroresPorTema || {}).reduce((acc, n) => acc + n, 0);
+  const listaCompetencias = Object.keys(totalPorCompetencia || {});
+  const temasConErrorOrdenados = listaCompetencias
+    .map((comp) => {
+      const tot = totalPorCompetencia[comp] || 0;
+      const ok = aciertosPorCompetencia[comp] || 0;
+      const err = erroresPorTema?.[comp] || Math.max(0, tot - ok);
+      const pctComp = tot > 0 ? Math.round((ok / tot) * 100) : 0;
+      return { comp, ok, tot, err, pctComp };
+    })
+    .sort((a, b) => a.pctComp - b.pctComp || b.err - a.err);
 
-  const analisisCompetencias = totalErrores === 0
-    ? `Bajo el modelo de estimación de parámetros TRI (Teoría de Respuesta al Ítem) aplicado en este simulacro global, el desempeño muestra dominio sólido y consistencia en los componentes evaluados. El siguiente paso recomendado es sostener el ritmo y practicar ítems de alta exigencia y gestión del tiempo para consolidar el puntaje en el Saber 11.`
-    : `Bajo el modelo de estimación de parámetros TRI (Teoría de Respuesta al Ítem) aplicado en este simulacro global, el desempeño actual (${porcentaje}%) muestra avances en la resolución inicial, pero evidencia oportunidades de mejora prioritarias en <strong>${temaCritico1}</strong>${temasFallados[1] ? ` y <strong>${temaCritico2}</strong>` : ""}. Fortalecer estos puntos ayuda a ganar precisión en preguntas de dificultad media y alta del Saber 11.`;
+  const critico1 = temasConErrorOrdenados[0]?.comp || "Razonamiento Cuantitativo";
+  const critico2 = temasConErrorOrdenados[1]?.comp || "Pensamiento Espacial y Métrico";
+  const todosEnRefuerzo = porcentaje < 50 && listaCompetencias.length > 0;
 
-  const recomendacionTemas = totalErrores === 0
-    ? `1. <strong>Consolidación de nivel alto:</strong> Resolver conjuntos mixtos de preguntas tipo Saber 11 sin exceder el tiempo promedio por ítem.<br><br>
-2. <strong>Precisión en enunciados largos:</strong> Verificar datos, unidades y condiciones antes de marcar la opción definitiva.<br><br>
-3. <strong>Acompañamiento estratégico:</strong> Aprovechar la sesión de revisión para pulir detalles finos y estrategia de examen.`
-    : `1. <strong>Foco prioritario en ${temaCritico1}:</strong> Repasar conceptos base, propiedades y condiciones clave donde se concentraron los errores.<br><br>
-2. <strong>Refuerzo en ${temaCritico2}:</strong> Practicar ejercicios de interpretación, modelación y cálculo paso a paso para ganar seguridad.<br><br>
-3. <strong>Lectura y gestión del tiempo:</strong> Leer con calma cada enunciado, descartar distractores con criterio y administrar mejor el cronómetro.`;
+  let analisisCompetencias = "";
+  let recomendacionTemas = "";
+
+  if (porcentaje >= 75) {
+    analisisCompetencias = `Bajo el modelo de estimación de parámetros TRI (Teoría de Respuesta al Ítem) aplicado en este simulacro global, el resultado (${porcentaje}%, ${aciertos}/${totalPreguntas}) refleja un dominio sólido en la mayoría de componentes evaluados. El enfoque principal debe centrarse en sostener la precisión en ítems de alta exigencia y optimizar los tiempos de resolución.`;
+    recomendacionTemas = `
+      <p style="margin: 0 0 10px 0;"><strong>1. Consolidación de alto desempeño:</strong> Resolver simulacros cronometrados combinando problemas de dificultad media y alta para estabilizar el puntaje superior.</p>
+      <p style="margin: 0 0 10px 0;"><strong>2. Ajuste fino en ${critico1}:</strong> Revisar los casos puntuales donde se cedieron puntos para cerrar brechas específicas.</p>
+      <p style="margin: 0;"><strong>3. Control de ritmo y lectura:</strong> Verificar unidades, condiciones y preguntas trampa antes de confirmar cada respuesta.</p>
+    `;
+  } else if (porcentaje >= 50) {
+    analisisCompetencias = `Bajo el modelo de estimación de parámetros TRI (Teoría de Respuesta al Ítem), el desempeño actual (${porcentaje}%, ${aciertos}/${totalPreguntas}) muestra una base funcional pero irregular entre componentes. Se observan brechas marcadas especialmente en <strong>${critico1}</strong> y <strong>${critico2}</strong>, que limitan el avance hacia niveles superiores del Saber 11.`;
+    recomendacionTemas = `
+      <p style="margin: 0 0 10px 0;"><strong>1. Intervención focalizada en ${critico1} y ${critico2}:</strong> Repasar conceptos fundamentales, propiedades y estrategias de planteamiento en estos componentes antes de pasar a problemas complejos.</p>
+      <p style="margin: 0 0 10px 0;"><strong>2. Práctica guiada por módulo:</strong> Trabajar series cortas por tema analizando por qué se descartan las opciones incorrectas.</p>
+      <p style="margin: 0;"><strong>3. Gestión del tiempo y lectura analítica:</strong> Evitar apresurarse en enunciados con tablas o gráficas y administrar mejor el cronómetro.</p>
+    `;
+  } else {
+    analisisCompetencias = `Bajo el modelo de estimación de parámetros TRI (Teoría de Respuesta al Ítem), el resultado actual (${porcentaje}%, ${aciertos}/${totalPreguntas} · Nivel ${nivelDesempeno}) indica que el aspirante requiere un <strong>refuerzo general en todos los componentes evaluados</strong>, con mayor urgencia en <strong>${critico1}</strong> y <strong>${critico2}</strong>. En este nivel, depender solo de lecturas rápidas o intuición genera alta tasa de error en el Saber 11.`;
+    recomendacionTemas = `
+      <p style="margin: 0 0 10px 0;"><strong>1. Plan integral sobre todos los componentes${todosEnRefuerzo ? ` (${listaCompetencias.length} áreas evaluadas)` : ""}:</strong> No limitarse a uno o dos temas; estructurar un cronograma de nivelación que cubra desde las bases conceptuales hasta la resolución guiada en cada eje.</p>
+      <p style="margin: 0 0 10px 0;"><strong>2. Prioridad inmediata en ${critico1} y ${critico2}:</strong> Iniciar por los componentes con menor porcentaje de acierto para destrabar los errores más frecuentes.</p>
+      <p style="margin: 0;"><strong>3. Método de estudio y acompañamiento:</strong> Hacer prácticas focalizadas por carpeta, llevar registro de errores recurrentes y apoyarse en tutorías personalizadas para corregir vacíos desde cero.</p>
+    `;
+  }
+
+  const htmlGraficaBarras = temasConErrorOrdenados.length
+    ? temasConErrorOrdenados
+        .map((item) => {
+          const colorBarra =
+            item.pctComp >= 75 ? "#16a34a" : item.pctComp >= 50 ? "#d97706" : "#dc2626";
+          return `
+            <div style="margin-bottom: 12px;">
+              <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 600; color: #1e293b; margin-bottom: 4px;">
+                <span>${item.comp}</span>
+                <span style="color: ${colorBarra};">${item.ok}/${item.tot} (${item.pctComp}%)</span>
+              </div>
+              <div style="width: 100%; height: 12px; background: #e2e8f0; border-radius: 999px; overflow: hidden;">
+                <div style="width: ${item.pctComp}%; height: 100%; background: ${colorBarra}; border-radius: 999px;"></div>
+              </div>
+            </div>
+          `;
+        })
+        .join("")
+    : `<p style="font-size: 12px; color: #64748b; margin: 0;">No hay desglose por componentes disponible para este intento.</p>`;
 
   ventanaImpresion.document.write(`
     <!DOCTYPE html>
@@ -932,24 +980,23 @@ function generarPDFInformePersonalizado(aciertos, totalPreguntas, porcentaje, ni
       <meta charset="UTF-8" />
       <title>Cuadernillo Pro - Mundo Matemático</title>
       <style>
-        body { font-family: 'Helvetica Neue', Arial, sans-serif; color: #1e293b; margin: 0; padding: 40px; background: #fff; line-height: 1.6; }
-        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #1e3a8a; padding-bottom: 15px; margin-bottom: 25px; }
+        body { font-family: 'Helvetica Neue', Arial, sans-serif; color: #1e293b; margin: 0; padding: 36px; background: #fff; line-height: 1.55; }
+        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #1e3a8a; padding-bottom: 14px; margin-bottom: 22px; }
         .header-left h1 { margin: 0; font-size: 24px; color: #1e3a8a; font-weight: 800; letter-spacing: 0.5px; }
         .header-left p { margin: 4px 0 0 0; font-size: 13px; color: #64748b; font-weight: 600; }
         .header-right { text-align: right; font-size: 12px; color: #334155; }
         .header-right span { display: block; font-weight: bold; color: #1e3a8a; }
-        .card { background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-        .card h3 { color: #1e3a8a; margin-top: 0; font-size: 16px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
+        .card { background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 18px 20px; margin-bottom: 18px; }
+        .card h3 { color: #1e3a8a; margin-top: 0; font-size: 15px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px; margin-bottom: 12px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 12px; }
         .metric-box { background: #fff; border: 1px solid #e2e8f0; padding: 12px; border-radius: 6px; text-align: center; }
         .metric-box .num { font-size: 20px; font-weight: bold; color: #1e3a8a; }
         .metric-box .label { font-size: 11px; color: #64748b; font-weight: bold; margin-top: 2px; }
-        .footer { background: #f0fdf4; border: 1px solid #16a34a; color: #166534; padding: 18px; border-radius: 8px; text-align: center; margin-top: 30px; }
-        .footer-title { font-weight: bold; font-size: 14px; margin-bottom: 5px; }
+        .footer { background: #f0fdf4; border: 1px solid #16a34a; color: #166534; padding: 16px; border-radius: 8px; text-align: center; margin-top: 24px; }
+        .footer-title { font-weight: bold; font-size: 14px; margin-bottom: 4px; }
         .footer-info { font-size: 12px; color: #334155; font-weight: normal; }
         @media print {
-          body { padding: 0; }
-          .no-print { display: none; }
+          body { padding: 18px; }
         }
       </style>
     </head>
@@ -983,17 +1030,22 @@ function generarPDFInformePersonalizado(aciertos, totalPreguntas, porcentaje, ni
       </div>
 
       <div class="card">
+        <h3>Gráfica de Rendimiento por Componente</h3>
+        ${htmlGraficaBarras}
+      </div>
+
+      <div class="card">
         <h3>Análisis de Competencias Latentes</h3>
-        <p style="font-size: 13px; color: #334155; margin: 0; text-align: justify;">
+        <div style="font-size: 13px; color: #334155; text-align: justify;">
           ${analisisCompetencias}
-        </p>
+        </div>
       </div>
 
       <div class="card">
         <h3>Ruta de Corrección y Recomendaciones Académicas</h3>
-        <p style="font-size: 13px; color: #334155; margin: 0; line-height: 1.6; text-align: justify;">
+        <div style="font-size: 13px; color: #334155; text-align: justify;">
           ${recomendacionTemas}
-        </p>
+        </div>
       </div>
 
       <div class="footer">
@@ -1010,6 +1062,3 @@ function generarPDFInformePersonalizado(aciertos, totalPreguntas, porcentaje, ni
   `);
   ventanaImpresion.document.close();
 }
-
-// Arranque del simulacro una vez declaradas todas las funciones
-init();
