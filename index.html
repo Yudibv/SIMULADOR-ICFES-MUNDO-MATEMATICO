@@ -1,67 +1,196 @@
-<!-- SECCIÓN PRINCIPAL UNIFICADA - MUNDO MATEMÁTICO -->
-<section class="panel" style="max-width: 850px; margin: 20px auto; background: #fff; border: 1px solid #cbd5e1; border-radius: 12px; padding: 28px; box-shadow: 0 2px 6px rgba(0,0,0,0.04);">
-  
-  <span style="color: #dc2626; font-size: 0.78rem; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase;">
-    SABER 11 · PRÁCTICA
-  </span>
-  <h2 style="color: #1e3a8a; font-size: 1.75rem; margin: 6px 0 10px 0; font-weight: 800;">
-    Simulador de Matemáticas
-  </h2>
-  <p style="color: #475569; font-size: 0.98rem; line-height: 1.6; margin: 0 0 22px 0;">
-    <strong>Mundo Matemático</strong> siempre piensa en mejorar la calidad de la educación; por eso, ha creado este simulador como una herramienta de apoyo académico independiente para fortalecer el razonamiento cuantitativo.
-  </p>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mundo Matemático — Simulador Saber 11</title>
+  <link rel="stylesheet" href="css/estilos.css" />
+</head>
+<body>
 
-  <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;">
+  <!-- ENCABEZADO CON LOGO DE TAMAÑO CONTROLADO -->
+  <header class="encabezado" style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 20px; background: #fff; border-bottom: 1px solid #e2e8f0;">
+    <a href="index.html" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: #1e3a8a; font-weight: 800; font-size: 1.05rem;">
+      <img
+        src="img/logo.png"
+        alt="Logo Mundo Matemático"
+        class="logo-img"
+        style="height: 40px; width: auto; max-height: 44px; object-fit: contain; display: block;"
+        onerror="this.style.display='none';"
+      />
+      <span>Mundo Matemático</span>
+    </a>
 
-  <h3 style="color: #1e3a8a; font-size: 1.15rem; margin: 0 0 6px 0; font-weight: 700;">
-    Beneficios de un buen puntaje en el Saber 11
-  </h3>
-  <p style="color: #64748b; font-size: 0.9rem; margin: 0 0 18px 0;">
-    Un resultado destacado facilita el acceso a cupos universitarios y programas de apoyo financiero en Colombia.
-  </p>
+    <nav style="display: flex; align-items: center; gap: 10px;">
+      <a href="prueba.html?todas=1" style="background: #1e3a8a; color: #fff; text-decoration: none; padding: 8px 14px; border-radius: 6px; font-size: 0.88rem; font-weight: 700;">
+        Simulacro Global
+      </a>
+    </nav>
+  </header>
 
-  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; margin-bottom: 18px;">
-    
-    <div style="border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px; background: #fafbfd;">
-      <h4 style="color: #1e3a8a; font-size: 0.95rem; margin: 0 0 6px 0; font-weight: 700;">
-        Universidades públicas
-      </h4>
-      <p style="color: #334155; font-size: 0.86rem; line-height: 1.5; margin: 0;">
-        Instituciones como la UIS, Unimagdalena, UPTC y Unillanos emplean el puntaje Saber 11 como criterio principal o exclusivo de admisión.
+  <main id="vista" style="max-width: 900px; margin: 0 auto; padding: 16px;">
+
+    <!-- SECCIÓN PRINCIPAL UNIFICADA -->
+    <section class="panel" style="background: #fff; border: 1px solid #cbd5e1; border-radius: 12px; padding: 28px; box-shadow: 0 2px 6px rgba(0,0,0,0.04); margin-bottom: 24px;">
+      <span style="color: #dc2626; font-size: 0.78rem; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase;">
+        SABER 11 · PRÁCTICA
+      </span>
+      <h1 style="color: #1e3a8a; font-size: 1.75rem; margin: 6px 0 10px 0; font-weight: 800;">
+        Simulador de Matemáticas
+      </h1>
+      <p style="color: #475569; font-size: 0.98rem; line-height: 1.6; margin: 0 0 22px 0;">
+        <strong>Mundo Matemático</strong> siempre piensa en mejorar la calidad de la educación; por eso, ha creado este simulador como una herramienta de apoyo académico independiente para fortalecer el razonamiento cuantitativo.
       </p>
-    </div>
 
-    <div style="border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px; background: #fafbfd;">
-      <h4 style="color: #1e3a8a; font-size: 0.95rem; margin: 0 0 6px 0; font-weight: 700;">
-        Becas en universidades privadas
-      </h4>
-      <p style="color: #334155; font-size: 0.86rem; line-height: 1.5; margin: 0;">
-        Universidades como Los Andes, Javeriana, Rosario, EAFIT y del Norte ofrecen apoyos entre el 50% y el 100% de la matrícula según rendimiento.
+      <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 22px 0;" />
+
+      <h2 style="color: #1e3a8a; font-size: 1.15rem; margin: 0 0 6px 0; font-weight: 700;">
+        Beneficios de un buen puntaje en el Saber 11
+      </h2>
+      <p style="color: #64748b; font-size: 0.9rem; margin: 0 0 18px 0;">
+        Un resultado destacado facilita el acceso a cupos universitarios, distinciones y programas de apoyo financiero en Colombia.
       </p>
-    </div>
 
-    <div style="border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px; background: #fafbfd;">
-      <h4 style="color: #1e3a8a; font-size: 0.95rem; margin: 0 0 6px 0; font-weight: 700;">
-        Bachilleres Ecopetrol
-      </h4>
-      <p style="color: #334155; font-size: 0.86rem; line-height: 1.5; margin: 0;">
-        Convocatoria con cobertura integral de matrícula y auxilio semestral de sostenimiento para bachilleres destacados de zonas rurales.
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; margin-bottom: 18px;">
+        <div style="border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px; background: #fafbfd;">
+          <h3 style="color: #1e3a8a; font-size: 0.95rem; margin: 0 0 6px 0; font-weight: 700;">
+            Universidades públicas
+          </h3>
+          <p style="color: #334155; font-size: 0.86rem; line-height: 1.5; margin: 0;">
+            Instituciones como la UIS, Unimagdalena, UPTC y Unillanos emplean el puntaje Saber 11 como criterio principal o exclusivo de admisión.
+          </p>
+        </div>
+
+        <div style="border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px; background: #fafbfd;">
+          <h3 style="color: #1e3a8a; font-size: 0.95rem; margin: 0 0 6px 0; font-weight: 700;">
+            Becas en universidades privadas
+          </h3>
+          <p style="color: #334155; font-size: 0.86rem; line-height: 1.5; margin: 0;">
+            Universidades como Los Andes, Javeriana, Rosario, EAFIT y del Norte ofrecen apoyos entre el 50% y el 100% de la matrícula según rendimiento.
+          </p>
+        </div>
+
+        <div style="border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px; background: #fafbfd;">
+          <h3 style="color: #1e3a8a; font-size: 0.95rem; margin: 0 0 6px 0; font-weight: 700;">
+            Bachilleres Ecopetrol
+          </h3>
+          <p style="color: #334155; font-size: 0.86rem; line-height: 1.5; margin: 0;">
+            Convocatoria con cobertura integral de matrícula y auxilio semestral de sostenimiento para bachilleres destacados de zonas rurales.
+          </p>
+        </div>
+
+        <div style="border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px; background: #fafbfd;">
+          <h3 style="color: #1e3a8a; font-size: 0.95rem; margin: 0 0 6px 0; font-weight: 700;">
+            Créditos condonables e ICETEX
+          </h3>
+          <p style="color: #334155; font-size: 0.86rem; line-height: 1.5; margin: 0;">
+            Acceso a líneas con tasas subsidiadas y fondos de condonación por mérito y condiciones socioeconómicas.
+          </p>
+        </div>
+
+        <div style="border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px; background: #fafbfd;">
+          <h3 style="color: #1e3a8a; font-size: 0.95rem; margin: 0 0 6px 0; font-weight: 700;">
+            Premio Andrés Bello
+          </h3>
+          <p style="color: #334155; font-size: 0.86rem; line-height: 1.5; margin: 0;">
+            Distinción nacional otorgada a los estudiantes con los mejores resultados en las pruebas de Estado, respaldando su trayectoria académica.
+          </p>
+        </div>
+
+        <div style="border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px; background: #fafbfd;">
+          <h3 style="color: #1e3a8a; font-size: 0.95rem; margin: 0 0 6px 0; font-weight: 700;">
+            Fondos y apoyos territoriales
+          </h3>
+          <p style="color: #334155; font-size: 0.86rem; line-height: 1.5; margin: 0;">
+            Programas regionales y entidades de crédito educativo que facilitan matrícula y sostenimiento para ingresar a educación superior.
+          </p>
+        </div>
+      </div>
+
+      <p style="color: #475569; font-size: 0.88rem; margin: 0; font-weight: 500;">
+        Practica por temas o presenta el simulacro global para identificar en qué componentes necesitas reforzar.
       </p>
-    </div>
+    </section>
 
-    <div style="border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px; background: #fafbfd;">
-      <h4 style="color: #1e3a8a; font-size: 0.95rem; margin: 0 0 6px 0; font-weight: 700;">
-        Créditos condonables e ICETEX
-      </h4>
-      <p style="color: #334155; font-size: 0.86rem; line-height: 1.5; margin: 0;">
-        Acceso a líneas con tasas subsidiadas y fondos de condonación por mérito y condiciones socioeconómicas.
+    <!-- CARPETAS / PRÁCTICAS POR TEMA -->
+    <section class="panel" style="background: #fff; border: 1px solid #cbd5e1; border-radius: 12px; padding: 24px; box-shadow: 0 2px 6px rgba(0,0,0,0.04); margin-bottom: 24px;">
+      <h2 style="color: #1e3a8a; font-size: 1.2rem; margin: 0 0 6px 0; font-weight: 700;">
+        Práctica por temas
+      </h2>
+      <p style="color: #64748b; font-size: 0.88rem; margin: 0 0 16px 0;">
+        Selecciona un componente o carpeta para entrenar de forma focalizada.
       </p>
-    </div>
 
-  </div>
+      <div id="temas" class="grid-temas"></div>
+      <div id="lista-temas"></div>
+      <div id="carpetas"></div>
+    </section>
 
-  <p style="color: #475569; font-size: 0.88rem; margin: 0; font-weight: 500;">
-    Practica por temas o presenta el simulacro global para identificar en qué componentes necesitas reforzar.
-  </p>
+    <!-- SIMULACRO GLOBAL -->
+    <section class="panel" style="background: #fff; border: 1px solid #cbd5e1; border-radius: 12px; padding: 24px; box-shadow: 0 2px 6px rgba(0,0,0,0.04); text-align: center;">
+      <span style="color: #dc2626; font-size: 0.75rem; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase;">
+        EVALUACIÓN COMPLETA
+      </span>
+      <h2 style="color: #1e3a8a; font-size: 1.35rem; margin: 6px 0 8px 0; font-weight: 800;">
+        Simulacro Global Saber 11
+      </h2>
+      <p style="color: #475569; font-size: 0.92rem; margin: 0 auto 18px auto; max-width: 560px; line-height: 1.5;">
+        Presenta una prueba integral con preguntas de distintos temas, cronómetro y diagnóstico de desempeño.
+      </p>
+      <a href="prueba.html?todas=1" class="boton" style="display: inline-block; background: #1e3a8a; color: #fff; text-decoration: none; padding: 12px 22px; border-radius: 8px; font-weight: 700; font-size: 0.95rem;">
+        Iniciar Simulacro Global
+      </a>
+    </section>
 
-</section>
+  </main>
+
+  <footer style="max-width: 900px; margin: 24px auto; padding: 14px 16px; text-align: center; color: #64748b; font-size: 0.8rem; line-height: 1.5;">
+    Mundo Matemático es una iniciativa educativa independiente de preparación preuniversitaria. No está afiliada, vinculada ni patrocinada oficialmente por el ICFES.
+  </footer>
+
+  <script type="module">
+    import { cargarTemas } from "./js/temas.js";
+
+    async function cargarMenuTemas() {
+      const destinos = [
+        document.getElementById("temas"),
+        document.getElementById("lista-temas"),
+        document.getElementById("carpetas")
+      ].filter(Boolean);
+
+      if (!destinos.length) return;
+
+      try {
+        const temas = await cargarTemas();
+        if (!Array.isArray(temas) || !temas.length) {
+          destinos[0].innerHTML = `<p style="color: #64748b; font-size: 0.9rem;">No hay carpetas de temas disponibles por el momento.</p>`;
+          return;
+        }
+
+        const tarjetasHtml = temas.map((t) => {
+          const idTema = encodeURIComponent(t.id || t.carpeta);
+          const titulo = t.titulo || t.carpeta || "Tema";
+          const cantidad = Array.isArray(t.preguntas) ? t.preguntas.length : 0;
+
+          return `
+            <a href="prueba.html?tema=${idTema}" style="display: block; text-decoration: none; border: 1px solid #cbd5e1; border-radius: 8px; padding: 14px; background: #fafbfd; color: #1e293b;">
+              <div style="font-weight: 700; color: #1e3a8a; font-size: 0.95rem; margin-bottom: 4px;">${titulo}</div>
+              <div style="font-size: 0.8rem; color: #64748b;">${cantidad > 0 ? `${cantidad} preguntas` : "Practicar módulo"}</div>
+            </a>
+          `;
+        }).join("");
+
+        destinos[0].innerHTML = `
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px;">
+            ${tarjetasHtml}
+          </div>
+        `;
+      } catch (err) {
+        destinos[0].innerHTML = `<p style="color: #dc2626; font-size: 0.88rem;">No se pudieron cargar las carpetas de temas.</p>`;
+      }
+    }
+
+    cargarMenuTemas();
+  </script>
+</body>
+</html>
