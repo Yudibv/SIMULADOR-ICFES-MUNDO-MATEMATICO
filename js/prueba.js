@@ -1,15 +1,15 @@
 /**
-- ==========================================================================
-- MUNDO MATEMÁTICO - MOTOR PRINCIPAL DE PRUEBAS Y SIMULACROS (prueba.js)
-- ==========================================================================
-- Controla:
-- - Inicialización de simulacro global (?todas=1), minisimulacro (?todas=1&demo=1)
--   o práctica por tema (?tema=...).
-- - Cronómetro visual y cierre automático al agotarse el tiempo.
-- - Renderizado de preguntas con imagen amplia y opciones en cuadrícula 2x2.
-- - Resultados globales (con sesión de 20 min / $15.000 + descuento, Wompi,
--   verificación con celular y PDF por intento).
-- - Resultados focalizados por carpeta/tema con botones en cajoncitos dos a dos.
+ * ==========================================================================
+ * MUNDO MATEMÁTICO - MOTOR PRINCIPAL DE PRUEBAS Y SIMULACROS (prueba.js)
+ * ==========================================================================
+ * Controla:
+ * - Inicialización de simulacro global (?todas=1), minisimulacro (?todas=1&demo=1)
+ *   o práctica por tema (?tema=...).
+ * - Cronómetro visual y cierre automático al agotarse el tiempo.
+ * - Renderizado de preguntas con imagen amplia y opciones en cuadrícula 2x2.
+ * - Resultados globales (Pago con Wompi/QR -> Verificación con celular ->
+ *   PDF Analítico por intento + sesión de 20 min / $15.000).
+ * - Resultados focalizados por carpeta/tema con botones en cajoncitos dos a dos.
  */
 
 import { cargarTemas, urlPng, PREGUNTAS_POR_PRUEBA } from "./temas.js";
@@ -83,9 +83,9 @@ function bloqueSesionYDescuentoHTML() {
 }
 
 /**
-- ==========================================================================
-- SECCIÓN 1: GESTIÓN DE CONTENEDORES Y DOM
-- ==========================================================================
+ * ==========================================================================
+ * SECCIÓN 1: GESTIÓN DE CONTENEDORES Y DOM
+ * ==========================================================================
  */
 function obtenerContenedor() {
   let root =
@@ -103,9 +103,9 @@ function obtenerContenedor() {
 }
 
 /**
-- ==========================================================================
-- SECCIÓN 2: INICIALIZACIÓN DEL SISTEMA Y PARÁMETROS
-- ==========================================================================
+ * ==========================================================================
+ * SECCIÓN 2: INICIALIZACIÓN DEL SISTEMA Y PARÁMETROS
+ * ==========================================================================
  */
 async function init() {
   const params = new URLSearchParams(window.location.search);
@@ -185,9 +185,9 @@ async function init() {
 }
 
 /**
-- ==========================================================================
-- SECCIÓN 3: TEMPORIZADOR, RELOJ Y PREPARACIÓN DE TEMAS
-- ==========================================================================
+ * ==========================================================================
+ * SECCIÓN 3: TEMPORIZADOR, RELOJ Y PREPARACIÓN DE TEMAS
+ * ==========================================================================
  */
 function iniciarTemporizador() {
   if (state.intervaloTimer) clearInterval(state.intervaloTimer);
@@ -262,9 +262,9 @@ function prepararTemaActual() {
 }
 
 /**
-- ==========================================================================
-- SECCIÓN 4: RENDERIZADO DE PREGUNTAS (IMAGEN AMPLIA + CAJONES 2x2)
-- ==========================================================================
+ * ==========================================================================
+ * SECCIÓN 4: RENDERIZADO DE PREGUNTAS (IMAGEN AMPLIA + CAJONES 2x2)
+ * ==========================================================================
  */
 export function renderPregunta(st) {
   let tema, archivo;
@@ -434,9 +434,9 @@ export function renderPregunta(st) {
 }
 
 /**
-- ==========================================================================
-- SECCIÓN 5: RESULTADOS GLOBALES, REVISIÓN Y DESBLOQUEO WOMPI
-- ==========================================================================
+ * ==========================================================================
+ * SECCIÓN 5: RESULTADOS GLOBALES (PAGO -> VERIFICACIÓN CELULAR -> PDF)
+ * ==========================================================================
  */
 function mostrarResultadosFinalesGlobal(st) {
   if (st.intervaloTimer) clearInterval(st.intervaloTimer);
@@ -571,25 +571,17 @@ function mostrarResultadosFinalesGlobal(st) {
         ${htmlCompetencias}
       </div>
 
-      ${yaPago ? `
-        <div style="margin-bottom: 25px;">
-          <button id="btn-ver-respuestas" class="boton boton-rojo" style="padding: 14px 20px; border-radius: 10px; font-weight: bold; cursor: pointer; width: 100%; font-size: 1.05rem;">
-            VER RESPUESTAS Y JUSTIFICACIONES
-          </button>
-        </div>
-      ` : ""}
-
       <div id="bloque-pago-pro" style="border: 2px solid ${yaPago ? "#10b981" : "#1e3a8a"}; background: ${yaPago ? "#f0fdf4" : "#eff6ff"}; padding: 20px; border-radius: 12px; text-align: center;">
         ${yaPago ? `
           <span style="background: #10b981; color: white; padding: 4px 12px; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">PAGO Y CELULAR VERIFICADOS (${celularGuardado})</span>
-          <h3 style="color: #10b981; margin: 10px 0 5px 0; font-size: 1.2rem;">Tu Cuadernillo Pro está listo</h3>
+          <h3 style="color: #10b981; margin: 10px 0 5px 0; font-size: 1.2rem;">Tu Informe Analítico PDF está listo</h3>
           <p style="color: #334155; font-size: 0.85rem; margin-bottom: 12px;">
             ${pdfDescargado
-              ? "El PDF correspondiente a este simulacro ya fue generado. Si deseas presentar otro simulacro con un nuevo informe, inicia un nuevo intento."
-              : "Descarga el informe correspondiente a este simulacro y agenda tu sesión de análisis de 20 minutos ($15.000)."}
+              ? "El informe analítico en PDF correspondiente a este simulacro ya fue generado. Si deseas presentar otro simulacro con un nuevo informe, inicia un nuevo intento."
+              : "Descarga tu informe analítico completo en PDF con gráfica por componente, matriz diagnóstica y ruta de estudio, y agenda tu sesión de 20 minutos ($15.000)."}
           </p>
           <button id="btn-descargar-pdf" class="boton boton-verde" style="padding: 12px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; font-size: 1rem; margin-bottom: 10px;">
-            ${pdfDescargado ? "Volver a abrir el PDF de este Simulacro" : "Descargar mi Cuadernillo Pro (PDF)"}
+            ${pdfDescargado ? "Volver a abrir el PDF Analítico de este Simulacro" : "Descargar Informe Analítico (PDF)"}
           </button>
           <a
             href="https://wa.me/573115574410?text=${textoAgendaWhatsApp}"
@@ -602,11 +594,11 @@ function mostrarResultadosFinalesGlobal(st) {
           </a>
         ` : `
           <span style="background: #1e3a8a; color: white; padding: 4px 12px; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">SESIÓN DE 20 MIN · $15.000</span>
-          <h3 style="color: #1e3a8a; margin: 10px 0 5px 0; font-size: 1.2rem;">Sesión de 20 minutos ($15.000) + descuento en clases personalizadas</h3>
-          <p style="color: #334155; font-size: 0.85rem; margin-bottom: 12px;">Los $15.000 abarcan una sesión de 20 minutos para revisar tus resultados y acceder a un descuento en clases personalizadas.</p>
+          <h3 style="color: #1e3a8a; margin: 10px 0 5px 0; font-size: 1.2rem;">Informe Analítico PDF + Sesión de 20 minutos ($15.000)</h3>
+          <p style="color: #334155; font-size: 0.85rem; margin-bottom: 12px;">Los $15.000 abarcan tu informe analítico en PDF, una sesión de 20 minutos para revisar tus resultados y acceso a un descuento en clases personalizadas.</p>
 
           <div style="background: #fffbeb; border: 1px solid #f59e0b; color: #92400e; padding: 10px 12px; border-radius: 8px; font-size: 0.82rem; margin-bottom: 14px; text-align: left;">
-            <strong>Importante:</strong> Para desbloquear y descargar tu cuadernillo PDF después de pagar, debes ingresar aquí el <strong>mismo número de celular</strong> con el que realizaste el pago.
+            <strong>Importante:</strong> Para desbloquear y descargar tu informe analítico PDF después de pagar, debes ingresar aquí el <strong>mismo número de celular</strong> con el que realizaste el pago.
           </div>
 
           <div style="display: flex; flex-direction: column; gap: 12px; align-items: center;">
@@ -630,7 +622,7 @@ function mostrarResultadosFinalesGlobal(st) {
                 style="width: 100%; padding: 10px 12px; border: 1px solid #94a3b8; border-radius: 8px; font-size: 0.95rem; box-sizing: border-box; margin-bottom: 8px;"
               />
               <p id="error-celular-pago" style="display: none; color: #dc2626; font-size: 0.78rem; font-weight: bold; margin: 0 0 8px 0;">
-                Ingresa un número de celular válido (mínimo 10 dígitos).
+                Ingresa un número de celular válido de 10 dígitos (ej. 3115574410).
               </p>
               <button
                 id="btn-verificar-celular-pago"
@@ -638,7 +630,7 @@ function mostrarResultadosFinalesGlobal(st) {
                 class="boton"
                 style="padding: 10px 16px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; font-size: 0.9rem; margin-top: 0;"
               >
-                Verificar Pago y Desbloquear PDF
+                Verificar Pago y Desbloquear PDF Analítico
               </button>
             </div>
           </div>
@@ -665,8 +657,11 @@ function mostrarResultadosFinalesGlobal(st) {
     if (btnVerificarCelular && inputCelular) {
       btnVerificarCelular.onclick = () => {
         const limpio = normalizarCelular(inputCelular.value);
-        if (limpio.length < 10) {
-          if (errorCelular) errorCelular.style.display = "block";
+        if (!/^3\d{9}$/.test(limpio)) {
+          if (errorCelular) {
+            errorCelular.textContent = "Ingresa un número de celular válido de 10 dígitos (ej. 3115574410).";
+            errorCelular.style.display = "block";
+          }
           inputCelular.focus();
           return;
         }
@@ -696,16 +691,10 @@ function mostrarResultadosFinalesGlobal(st) {
           erroresPorTema,
           st.idIntento,
           aciertosPorCompetencia,
-          totalPorCompetencia
+          totalPorCompetencia,
+          actual.celular || celularGuardado
         );
         mostrarResultadosFinalesGlobal(st);
-      };
-    }
-
-    const btnVerRespuestas = document.getElementById("btn-ver-respuestas");
-    if (btnVerRespuestas) {
-      btnVerRespuestas.onclick = () => {
-        mostrarPantallaRevisionRespuestas(st);
       };
     }
 
@@ -720,107 +709,9 @@ function mostrarResultadosFinalesGlobal(st) {
 }
 
 /**
-- ==========================================================================
-- PANTALLA AUXILIAR: REVISIÓN DETALLADA DE RESPUESTAS Y JUSTIFICACIONES
-- ==========================================================================
- */
-function formatearRespuestaLegible(resp) {
-  if (resp === undefined || resp === null || resp === "") return "Sin responder";
-  if (typeof resp === "object") {
-    return Object.entries(resp)
-      .map(([k, v]) => `${k}: ${v}`)
-      .join(" | ");
-  }
-  return String(resp);
-}
-
-function mostrarPantallaRevisionRespuestas(st) {
-  const root = obtenerContenedor();
-  const preguntasGlobales = Array.isArray(st.seleccionGlobal) ? st.seleccionGlobal : [];
-
-  const htmlPreguntas = preguntasGlobales.map((itemGlobal, index) => {
-    const tema = itemGlobal.tema || {};
-    const nombreTema = tema.titulo || tema.carpeta || "General";
-    const archivo = itemGlobal.archivo;
-    const rutaImg = urlPng(tema, archivo);
-    const respuestaCorrecta = (tema.respuestas || {})[archivo];
-    const respuestaUsuario = st.respuestas?.[index];
-    const justificacionCustom = (tema.justificaciones || {})[archivo];
-    const competenciaItem = (tema.competencias || {})[archivo] || nombreTema;
-
-    let esAcierto = false;
-    if (respuestaCorrecta && typeof respuestaCorrecta === "object") {
-      let todasCorrectas = true;
-      for (const subKey in respuestaCorrecta) {
-        if (respuestaUsuario?.[subKey] !== respuestaCorrecta[subKey]) todasCorrectas = false;
-      }
-      if (todasCorrectas) esAcierto = true;
-    } else if (respuestaCorrecta !== undefined) {
-      if (respuestaUsuario === respuestaCorrecta) esAcierto = true;
-    }
-
-    const textoUsuario = formatearRespuestaLegible(respuestaUsuario);
-    const textoCorrecta = formatearRespuestaLegible(respuestaCorrecta);
-
-    const textoJustificacion = justificacionCustom
-      ? justificacionCustom
-      : esAcierto
-        ? `Respondiste <strong>${textoUsuario}</strong>, que coincide con la clave correcta (<strong>${textoCorrecta}</strong>) para este ítem de <strong>${nombreTema}</strong>. Mantén este procedimiento y revisa que no hayas llegado a la respuesta por descarte casual sino por aplicación directa del concepto.`
-        : `Marcaste <strong>${textoUsuario}</strong>, pero la opción correcta para este ejercicio de <strong>${nombreTema}</strong> es <strong>${textoCorrecta}</strong>. Revisa el enunciado, las unidades o condiciones del gráfico y contrasta por qué la opción <strong>${textoCorrecta}</strong> satisface la pregunta mientras <strong>${textoUsuario}</strong> no.`;
-
-    return `
-      <div style="background: #fff; border: 1px solid #cbd5e1; border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.04);">
-        <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;">
-          <span style="font-weight: bold; color: #1e3a8a; font-size: 0.95rem;">Pregunta ${index + 1} · ${nombreTema}</span>
-          <span style="background: ${esAcierto ? "#dcfce7" : "#fee2e2"}; color: ${esAcierto ? "#166534" : "#991b1b"}; padding: 4px 10px; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">
-            ${esAcierto ? "Correcta" : "Incorrecta"} · Tu respuesta: ${textoUsuario} | Clave: ${textoCorrecta}
-          </span>
-        </div>
-
-        <div style="text-align: center; margin-bottom: 15px; background: #f8fafc; padding: 10px; border-radius: 8px;">
-          <img src="${rutaImg}" alt="Pregunta ${index + 1}" style="max-width: 100%; height: auto; object-fit: contain;" />
-        </div>
-
-        <div style="background: #f8fafc; border: 1px dashed #cbd5e1; padding: 15px; border-radius: 8px; margin-top: 10px;">
-          <span style="background: #8b5cf6; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; display: inline-block; margin-bottom: 6px;">ANÁLISIS DEL ÍTEM</span>
-          <p style="font-size: 0.88rem; color: #334155; margin: 0 0 8px 0; line-height: 1.55;">
-            ${textoJustificacion}
-          </p>
-          <div style="font-size: 0.8rem; color: #1e3a8a; font-weight: bold;">
-            Componente / Tema: <span style="font-weight: normal; color: #475569;">${competenciaItem}</span>
-          </div>
-        </div>
-      </div>
-    `;
-  }).join("");
-
-  root.innerHTML = `
-    <div style="max-width: 820px; width: 100%; margin: 0 auto; padding: 20px; box-sizing: border-box;">
-      <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; background: #fff; padding: 15px 20px; border-radius: 10px; border: 1px solid #cbd5e1;">
-        <h2 style="color: #1e3a8a; margin: 0; font-size: 1.4rem;">Revisión Detallada de Respuestas</h2>
-        <button id="btn-volver-resumen" class="boton" style="padding: 8px 16px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 0.9rem;">
-          ← Volver al Resumen
-        </button>
-      </div>
-
-      ${htmlPreguntas}
-
-      <div style="text-align: center; margin-top: 30px; margin-bottom: 40px;">
-        <button id="btn-volver-resumen-abajo" class="boton" style="padding: 12px 24px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 1rem;">
-          ← Volver al Resumen y Opciones de Pago
-        </button>
-      </div>
-    </div>
-  `;
-
-  document.getElementById("btn-volver-resumen").onclick = () => mostrarResultadosFinalesGlobal(st);
-  document.getElementById("btn-volver-resumen-abajo").onclick = () => mostrarResultadosFinalesGlobal(st);
-}
-
-/**
-- ==========================================================================
-- SECCIÓN 6: PRÁCTICAS FOCALIZADAS (CARPETAS / MÓDULOS INDIVIDUALES)
-- ==========================================================================
+ * ==========================================================================
+ * SECCIÓN 6: PRÁCTICAS FOCALIZADAS (CARPETAS / MÓDULOS INDIVIDUALES)
+ * ==========================================================================
  */
 function bloqueBeneficiosYClasesHTML() {
   const urlWhatsApp = "https://wa.me/573115574410?text=" + encodeURIComponent(
@@ -955,10 +846,11 @@ function mostrarResultadosFinales(st, tema) {
 }
 
 /**
-- ==========================================================================
-- SECCIÓN 7: GENERACIÓN DE PDF NATIVO (CUADERNILLO PRO PERSONALIZADO)
-- ==========================================================================
- function limpiarNombreComponente(nombre) {
+ * ==========================================================================
+ * SECCIÓN 7: GENERACIÓN DE PDF ANALÍTICO (INFORME PREDICTIVO SABER 11)
+ * ==========================================================================
+ */
+function limpiarNombreComponente(nombre) {
   return String(nombre || "Componente")
     .replace(/^\s*\d+\s*[\.\-\)]\s*/u, "")
     .trim();
@@ -972,7 +864,8 @@ function generarPDFInformePersonalizado(
   erroresPorTema,
   idIntento = "",
   aciertosPorCompetencia = {},
-  totalPorCompetencia = {}
+  totalPorCompetencia = {},
+  celularVerificado = ""
 ) {
   const ventanaImpresion = window.open("", "_blank");
 
@@ -1119,7 +1012,7 @@ function generarPDFInformePersonalizado(
         </div>
         <div class="header-right">
           <span>INFORME ANALÍTICO SABER 11</span>
-          Fecha: ${new Date().toLocaleDateString()}${idIntento ? `<br><small style="color:#64748b;">Ref: ${idIntento}</small>` : ""}
+          Fecha: ${new Date().toLocaleDateString()}${idIntento ? `<br><small style="color:#64748b;">Ref: ${idIntento}</small>` : ""}${celularVerificado ? `<br><small style="color:#64748b;">Cel: ${celularVerificado}</small>` : ""}
         </div>
       </div>
 
@@ -1191,3 +1084,6 @@ function generarPDFInformePersonalizado(
   `);
   ventanaImpresion.document.close();
 }
+
+// Arranque del simulacro una vez declaradas todas las funciones
+init();
