@@ -1,14 +1,14 @@
 /**
- * ==========================================================================
- * MUNDO MATEMÁTICO - MOTOR PRINCIPAL DE PRUEBAS Y SIMULACROS (prueba.js)
- * ==========================================================================
- * Controla:
- * - Inicialización de simulacro global (?todas=1), minisimulacro (?todas=1&demo=1)
- *   o práctica por tema (?tema=...).
- * - Cronómetro visual y cierre automático al agotarse el tiempo.
- * - Renderizado de preguntas con imagen amplia y opciones en cuadrícula 2x2.
- * - Resultados globales (con sesión de 30 min / $15 + descuento, Wompi y PDF).
- * - Resultados focalizados por carpeta/tema con botones en cajoncitos dos a dos.
+- ==========================================================================
+- MUNDO MATEMÁTICO - MOTOR PRINCIPAL DE PRUEBAS Y SIMULACROS (prueba.js)
+- ==========================================================================
+- Controla:
+- - Inicialización de simulacro global (?todas=1), minisimulacro (?todas=1&demo=1)
+-   o práctica por tema (?tema=...).
+- - Cronómetro visual y cierre automático al agotarse el tiempo.
+- - Renderizado de preguntas con imagen amplia y opciones en cuadrícula 2x2.
+- - Resultados globales (con sesión de 30 min / $15 + descuento, Wompi y PDF).
+- - Resultados focalizados por carpeta/tema con botones en cajoncitos dos a dos.
  */
 
 import { cargarTemas, urlPng, PREGUNTAS_POR_PRUEBA } from "./temas.js";
@@ -41,9 +41,9 @@ function bloqueSesionYDescuentoHTML() {
 }
 
 /**
- * ==========================================================================
- * SECCIÓN 1: GESTIÓN DE CONTENEDORES Y DOM
- * ==========================================================================
+- ==========================================================================
+- SECCIÓN 1: GESTIÓN DE CONTENEDORES Y DOM
+- ==========================================================================
  */
 function obtenerContenedor() {
   let root =
@@ -61,9 +61,9 @@ function obtenerContenedor() {
 }
 
 /**
- * ==========================================================================
- * SECCIÓN 2: INICIALIZACIÓN DEL SISTEMA Y PARÁMETROS
- * ==========================================================================
+- ==========================================================================
+- SECCIÓN 2: INICIALIZACIÓN DEL SISTEMA Y PARÁMETROS
+- ==========================================================================
  */
 async function init() {
   const params = new URLSearchParams(window.location.search);
@@ -148,9 +148,9 @@ async function init() {
 }
 
 /**
- * ==========================================================================
- * SECCIÓN 3: TEMPORIZADOR, RELOJ Y PREPARACIÓN DE TEMAS
- * ==========================================================================
+- ==========================================================================
+- SECCIÓN 3: TEMPORIZADOR, RELOJ Y PREPARACIÓN DE TEMAS
+- ==========================================================================
  */
 function iniciarTemporizador() {
   if (state.intervaloTimer) clearInterval(state.intervaloTimer);
@@ -225,9 +225,9 @@ function prepararTemaActual() {
 }
 
 /**
- * ==========================================================================
- * SECCIÓN 4: RENDERIZADO DE PREGUNTAS (IMAGEN AMPLIA + CAJONES 2x2)
- * ==========================================================================
+- ==========================================================================
+- SECCIÓN 4: RENDERIZADO DE PREGUNTAS (IMAGEN AMPLIA + CAJONES 2x2)
+- ==========================================================================
  */
 export function renderPregunta(st) {
   let tema, archivo;
@@ -397,9 +397,9 @@ export function renderPregunta(st) {
 }
 
 /**
- * ==========================================================================
- * SECCIÓN 5: RESULTADOS GLOBALES, REVISIÓN Y DESBLOQUEO WOMPI
- * ==========================================================================
+- ==========================================================================
+- SECCIÓN 5: RESULTADOS GLOBALES, REVISIÓN Y DESBLOQUEO WOMPI
+- ==========================================================================
  */
 function mostrarResultadosFinalesGlobal(st) {
   if (st.intervaloTimer) clearInterval(st.intervaloTimer);
@@ -599,9 +599,9 @@ function mostrarResultadosFinalesGlobal(st) {
 }
 
 /**
- * ==========================================================================
- * PANTALLA AUXILIAR: REVISIÓN DETALLADA DE RESPUESTAS Y JUSTIFICACIONES
- * ==========================================================================
+- ==========================================================================
+- PANTALLA AUXILIAR: REVISIÓN DETALLADA DE RESPUESTAS Y JUSTIFICACIONES
+- ==========================================================================
  */
 function mostrarPantallaRevisionRespuestas(st) {
   const root = obtenerContenedor();
@@ -675,9 +675,9 @@ function mostrarPantallaRevisionRespuestas(st) {
 }
 
 /**
- * ==========================================================================
- * SECCIÓN 6: PRÁCTICAS FOCALIZADAS (CARPETAS / MÓDULOS INDIVIDUALES)
- * ==========================================================================
+- ==========================================================================
+- SECCIÓN 6: PRÁCTICAS FOCALIZADAS (CARPETAS / MÓDULOS INDIVIDUALES)
+- ==========================================================================
  */
 function bloqueBeneficiosYClasesHTML() {
   const urlWhatsApp = "https://wa.me/573115574410?text=" + encodeURIComponent(
@@ -697,9 +697,10 @@ function bloqueBeneficiosYClasesHTML() {
     </div>
   `;
 }
+
 function mostrarResultadosFinales(st, tema) {
   if (st.intervaloTimer) clearInterval(st.intervaloTimer);
-  
+
   const temaActual = tema || temaPorId(st.cola?.[st.indiceTema || 0]);
   const preguntasTema = Array.isArray(st.seleccion) ? st.seleccion : [];
   const totalPreguntas = preguntasTema.length;
@@ -798,35 +799,6 @@ function mostrarResultadosFinales(st, tema) {
     </div>
   `;
 
-      ${bloqueBeneficiosYClasesHTML()}
-
-      <!-- Cuatro botones en cajoncitos paralelos dos a dos -->
-
-      
-
-      ${bloqueSesionYDescuentoHTML()}
-
-      <!-- Cuatro botones en cajoncitos paralelos dos a dos -->
-      <div class="rejilla-dos-a-dos" style="margin-bottom: 0;">
-        <button id="btn-repetir-tema" class="boton" style="margin-top: 0; width: 100%;">
-          Repetir este Módulo
-        </button>
-
-        <a class="boton boton-rojo" href="${linkSimulacroGlobal}" style="margin-top: 0; width: 100%;">
-          Presentar Simulacro Global
-        </a>
-
-        <a class="boton boton-verde" href="https://wa.me/${numeroWhatsApp}?text=${mensajeWhatsApp}" target="_blank" style="margin-top: 0; width: 100%;">
-          Solicitar Tutoría por WhatsApp
-        </a>
-
-        <a class="boton boton-gris" href="index.html" style="margin-top: 0; width: 100%;">
-          Volver al Menú Principal
-        </a>
-      </div>
-    </div>
-  `;
-
   setTimeout(() => {
     const btnRepetir = document.getElementById("btn-repetir-tema");
     if (btnRepetir) {
@@ -840,9 +812,9 @@ function mostrarResultadosFinales(st, tema) {
 }
 
 /**
- * ==========================================================================
- * SECCIÓN 7: GENERACIÓN DE PDF NATIVO (CUADERNILLO PRO PERSONALIZADO)
- * ==========================================================================
+- ==========================================================================
+- SECCIÓN 7: GENERACIÓN DE PDF NATIVO (CUADERNILLO PRO PERSONALIZADO)
+- ==========================================================================
  */
 function generarPDFInformePersonalizado(aciertos, totalPreguntas, porcentaje, nivelDesempeno, erroresPorTema) {
   const ventanaImpresion = window.open("", "_blank");
@@ -851,7 +823,8 @@ function generarPDFInformePersonalizado(aciertos, totalPreguntas, porcentaje, ni
     alert("Por favor permite las ventanas emergentes (pop-ups) en tu navegador para descargar el PDF.");
     return;
   }
-const temasFallados = Object.keys(erroresPorTema || {}).sort((a, b) => erroresPorTema[b] - erroresPorTema[a]);
+
+  const temasFallados = Object.keys(erroresPorTema || {}).sort((a, b) => erroresPorTema[b] - erroresPorTema[a]);
   const temaCritico1 = temasFallados[0] || "Razonamiento Cuantitativo General";
   const temaCritico2 = temasFallados[1] || "Pensamiento Espacial y Métrico";
   const totalErrores = Object.values(erroresPorTema || {}).reduce((acc, n) => acc + n, 0);
@@ -867,7 +840,6 @@ const temasFallados = Object.keys(erroresPorTema || {}).sort((a, b) => erroresPo
     : `1. <strong>Foco prioritario en ${temaCritico1}:</strong> Repasar conceptos base, propiedades y condiciones clave donde se concentraron los errores.<br><br>
 2. <strong>Refuerzo en ${temaCritico2}:</strong> Practicar ejercicios de interpretación, modelación y cálculo paso a paso para ganar seguridad.<br><br>
 3. <strong>Lectura y gestión del tiempo:</strong> Leer con calma cada enunciado, descartar distractores con criterio y administrar mejor el cronómetro.`;
-  
 
   ventanaImpresion.document.write(`
     <!DOCTYPE html>
