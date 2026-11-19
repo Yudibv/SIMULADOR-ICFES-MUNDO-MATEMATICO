@@ -159,91 +159,112 @@
     import { cargarTemas } from "./js/temas.js";
 
     // Genera un gráfico geométrico o matemático limpio según el tema (sin imágenes externas ni aspecto de IA)
-    function graficoPorTema(titulo = "", indice = 0) {
+   function graficoPorTema(titulo = "", indice = 0) {
       const nombre = String(titulo).toLowerCase();
       const esRojo = indice % 2 === 0;
       const trazo = esRojo ? "#dc2626" : "#1e3a8a";
       const rellenoSuave = esRojo ? "#fef2f2" : "#eff6ff";
+      const eje = "#94a3b8";
 
-      // Geometría / Figuras / Espacial
+      const marco = `
+        <rect x="6" y="4" width="128" height="62" rx="10" fill="${rellenoSuave}" stroke="${trazo}" stroke-width="1.5" />
+      `;
+
+      // 1. Porcentajes y Proporcionalidad (antes de aritmética para que no se confundan)
+      if (nombre.includes("porcent") || nombre.includes("proporc") || nombre.includes("razón") || nombre.includes("razon")) {
+        return `
+          <svg viewBox="0 0 140 70" width="126" height="62" aria-hidden="true" style="margin-bottom: 6px;">
+            ${marco}
+            <text x="42" y="34" text-anchor="middle" fill="${trazo}" font-size="16" font-weight="800" font-family="system-ui, sans-serif">a : b</text>
+            <text x="96" y="34" text-anchor="middle" fill="${trazo}" font-size="16" font-weight="800" font-family="system-ui, sans-serif">%</text>
+            <rect x="24" y="44" width="92" height="8" rx="4" fill="#ffffff" stroke="${trazo}" stroke-width="1.2" />
+            <rect x="24" y="44" width="60" height="8" rx="4" fill="${trazo}" opacity="0.85" />
+          </svg>
+        `;
+      }
+
+      // 2. Aritmética
+      if (nombre.includes("aritm")) {
+        return `
+          <svg viewBox="0 0 140 70" width="126" height="62" aria-hidden="true" style="margin-bottom: 6px;">
+            ${marco}
+            <text x="70" y="33" text-anchor="middle" fill="${trazo}" font-size="17" font-weight="800" font-family="system-ui, sans-serif">+  −  ×  ÷</text>
+            <text x="70" y="53" text-anchor="middle" fill="${trazo}" font-size="12" font-weight="700" font-family="system-ui, sans-serif" opacity="0.85">ℤ · ℚ</text>
+          </svg>
+        `;
+      }
+
+      // 3. Funciones (plano cartesiano con curva f(x))
+      if (nombre.includes("func")) {
+        return `
+          <svg viewBox="0 0 140 70" width="126" height="62" aria-hidden="true" style="margin-bottom: 6px;">
+            ${marco}
+            <line x1="22" y1="36" x2="118" y2="36" stroke="${eje}" stroke-width="1.5" />
+            <line x1="70" y1="12" x2="70" y2="58" stroke="${eje}" stroke-width="1.5" />
+            <path d="M 28,50 C 52,50 64,18 110,18" fill="none" stroke="${trazo}" stroke-width="2.4" stroke-linecap="round" />
+            <text x="104" y="15" fill="${trazo}" font-size="11" font-weight="800" font-family="system-ui, sans-serif">f(x)</text>
+          </svg>
+        `;
+      }
+
+      // 4. Trigonometría (onda periódica sen/cos)
+      if (nombre.includes("trigon") || nombre.includes("seno") || nombre.includes("coseno")) {
+        return `
+          <svg viewBox="0 0 140 70" width="126" height="62" aria-hidden="true" style="margin-bottom: 6px;">
+            ${marco}
+            <line x1="20" y1="35" x2="120" y2="35" stroke="${eje}" stroke-width="1.5" />
+            <path d="M 22,35 Q 46,10 70,35 T 118,35" fill="none" stroke="${trazo}" stroke-width="2.4" stroke-linecap="round" />
+            <circle cx="46" cy="22.5" r="2.5" fill="${trazo}" />
+            <circle cx="94" cy="47.5" r="2.5" fill="${trazo}" />
+          </svg>
+        `;
+      }
+
+      // 5. Álgebra y Cálculo (expresión algebraica + recta tangente/variación)
+      if (nombre.includes("álgebr") || nombre.includes("algebra") || nombre.includes("cálcul") || nombre.includes("calculo")) {
+        return `
+          <svg viewBox="0 0 140 70" width="126" height="62" aria-hidden="true" style="margin-bottom: 6px;">
+            ${marco}
+            <text x="70" y="30" text-anchor="middle" fill="${trazo}" font-size="15" font-weight="800" font-family="system-ui, sans-serif">x² + bx + c</text>
+            <line x1="28" y1="50" x2="112" y2="38" stroke="${trazo}" stroke-width="1.8" stroke-dasharray="4,2" />
+            <circle cx="70" cy="44" r="3.5" fill="${trazo}" />
+          </svg>
+        `;
+      }
+
+      // 6. Geometría / Espacial
       if (nombre.includes("geometr") || nombre.includes("espacial") || nombre.includes("triángul") || nombre.includes("figura")) {
         return `
-          <svg viewBox="0 0 120 64" width="110" height="58" aria-hidden="true" style="margin-bottom: 6px;">
-            <rect x="6" y="4" width="108" height="56" rx="10" fill="${rellenoSuave}" stroke="${trazo}" stroke-width="1.5" />
-            <polygon points="34,48 56,14 78,48" fill="none" stroke="${trazo}" stroke-width="2.5" stroke-linejoin="round" />
-            <line x1="56" y1="14" x2="56" y2="48" stroke="${trazo}" stroke-width="1.5" stroke-dasharray="3,2" />
-            <circle cx="88" cy="24" r="9" fill="none" stroke="${trazo}" stroke-width="2" />
+          <svg viewBox="0 0 140 70" width="126" height="62" aria-hidden="true" style="margin-bottom: 6px;">
+            ${marco}
+            <polygon points="34,53 56,16 78,53" fill="none" stroke="${trazo}" stroke-width="2.4" stroke-linejoin="round" />
+            <line x1="56" y1="16" x2="56" y2="53" stroke="${trazo}" stroke-width="1.5" stroke-dasharray="3,2" />
+            <circle cx="98" cy="30" r="10" fill="none" stroke="${trazo}" stroke-width="2.2" />
           </svg>
         `;
       }
 
-      // Estadística / Probabilidad / Datos
-      if (nombre.includes("estad") || nombre.includes("probab") || nombre.includes("datos") || nombre.includes("gráfic")) {
+      // 7. Estadística / Probabilidad
+      if (nombre.includes("estad") || nombre.includes("probab") || nombre.includes("datos")) {
         return `
-          <svg viewBox="0 0 120 64" width="110" height="58" aria-hidden="true" style="margin-bottom: 6px;">
-            <rect x="6" y="4" width="108" height="56" rx="10" fill="${rellenoSuave}" stroke="${trazo}" stroke-width="1.5" />
-            <line x1="24" y1="48" x2="96" y2="48" stroke="${trazo}" stroke-width="2" />
-            <line x1="24" y1="16" x2="24" y2="48" stroke="${trazo}" stroke-width="2" />
-            <rect x="34" y="32" width="12" height="16" fill="${trazo}" opacity="0.75" />
-            <rect x="54" y="22" width="12" height="26" fill="${trazo}" opacity="0.9" />
-            <rect x="74" y="27" width="12" height="21" fill="${trazo}" opacity="0.6" />
+          <svg viewBox="0 0 140 70" width="126" height="62" aria-hidden="true" style="margin-bottom: 6px;">
+            ${marco}
+            <line x1="28" y1="53" x2="112" y2="53" stroke="${trazo}" stroke-width="2" />
+            <line x1="28" y1="17" x2="28" y2="53" stroke="${trazo}" stroke-width="2" />
+            <rect x="38" y="35" width="14" height="18" fill="${trazo}" opacity="0.7" />
+            <rect x="60" y="24" width="14" height="29" fill="${trazo}" opacity="0.9" />
+            <rect x="82" y="30" width="14" height="23" fill="${trazo}" opacity="0.55" />
           </svg>
         `;
       }
 
-      // Funciones / Álgebra / Cálculo / Trigonometría
-      if (nombre.includes("func") || nombre.includes("álgebr") || nombre.includes("algebra") || nombre.includes("cálcul") || nombre.includes("calculo") || nombre.includes("trigon")) {
-        return `
-          <svg viewBox="0 0 120 64" width="110" height="58" aria-hidden="true" style="margin-bottom: 6px;">
-            <rect x="6" y="4" width="108" height="56" rx="10" fill="${rellenoSuave}" stroke="${trazo}" stroke-width="1.5" />
-            <line x1="20" y1="32" x2="100" y2="32" stroke="#94a3b8" stroke-width="1.5" />
-            <line x1="60" y1="12" x2="60" y2="52" stroke="#94a3b8" stroke-width="1.5" />
-            <path d="M 24,46 Q 60,8 96,46" fill="none" stroke="${trazo}" stroke-width="2.5" />
-          </svg>
-        `;
-      }
-
-      // Aritmética / Porcentajes / Razonamiento cuantitativo / General
+      // Respaldo general
       return `
-        <svg viewBox="0 0 120 64" width="110" height="58" aria-hidden="true" style="margin-bottom: 6px;">
-          <rect x="6" y="4" width="108" height="56" rx="10" fill="${rellenoSuave}" stroke="${trazo}" stroke-width="1.5" />
-          <text x="60" y="39" text-anchor="middle" fill="${trazo}" font-size="22" font-weight="800" font-family="system-ui, sans-serif">
-            f(x) · %
-          </text>
+        <svg viewBox="0 0 140 70" width="126" height="62" aria-hidden="true" style="margin-bottom: 6px;">
+          ${marco}
+          <text x="70" y="42" text-anchor="middle" fill="${trazo}" font-size="18" font-weight="800" font-family="system-ui, sans-serif">Σ · Δ</text>
         </svg>
       `;
-    }
-
-    async function iniciarMenu() {
-      const rejilla = document.getElementById("rejilla");
-      if (!rejilla) return;
-
-      try {
-        const temas = await cargarTemas();
-        if (!Array.isArray(temas) || !temas.length) {
-          rejilla.innerHTML = `<div class="tarjeta"><p>No hay módulos disponibles.</p></div>`;
-          return;
-        }
-
-        rejilla.innerHTML = temas.map((t, i) => {
-          const idTema = encodeURIComponent(t.id || t.carpeta);
-          const titulo = t.titulo || t.carpeta || "Módulo";
-          const totalPreguntas = Array.isArray(t.preguntas) ? t.preguntas.length : 0;
-          const ilustracionTema = graficoPorTema(titulo, i);
-
-          return `
-            <article class="tarjeta">
-              ${ilustracionTema}
-              <span class="badge">TEMA</span>
-              <h2>${titulo}</h2>
-              <p class="subtitulo">${totalPreguntas > 0 ? `${totalPreguntas} preguntas` : "Práctica focalizada"}</p>
-              <a href="prueba.html?tema=${idTema}" class="boton">Practicar tema</a>
-            </article>
-          `;
-        }).join("");
-      } catch (err) {
-        rejilla.innerHTML = `<div class="tarjeta"><p>Error al cargar <code>indice.json</code>.</p></div>`;
-      }
     }
 
     iniciarMenu();
