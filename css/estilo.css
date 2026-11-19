@@ -1,6 +1,8 @@
 /* ==============================================================================
    ESTILOS GENERALES Y MARCA DE AGUA EN MODO TAPIZ - MUNDO MATEMÁTICO
    ============================================================================== */
+
+/* Variables de color corporativas de Mundo Matemático */
 :root {
   --azul: #1e3a8a;
   --azul-claro: #eff6ff;
@@ -9,6 +11,7 @@
   --fondo: #f8fafc;
 }
 
+/* Estructura base de la página con pie fijo abajo y sin desborde horizontal */
 body {
   margin: 0;
   padding: 0;
@@ -22,7 +25,7 @@ body {
   overflow-x: hidden;
 }
 
-/* Marca de agua distribuida en modo tapiz por toda la pantalla */
+/* Marca de agua matemática repetida de fondo sin bloquear clics */
 body::before {
   content: "MUNDO MATEMÁTICO     Δ     π     e     ϕ     θ     \A     ∫     ∑     ∞     √     MUNDO MATEMÁTICO     \A     Δ     e     π     θ     ϕ     \A     ∫     ∑     ∞     √     MUNDO MATEMÁTICO     Δ     π     \A     Δ     π     e     ϕ     θ     MUNDO MATEMÁTICO     ∫     ∑     ∞     √";
   position: fixed;
@@ -44,7 +47,11 @@ body::before {
   transform: rotate(-15deg);
 }
 
-/* Cabecera institucional */
+/* ==============================================================================
+   CABECERA INSTITUCIONAL Y LOGO
+   ============================================================================== */
+
+/* Barra superior con logo a la izquierda y navegación a la derecha */
 .header-principal {
   display: flex;
   align-items: center;
@@ -52,15 +59,17 @@ body::before {
   padding: 15px 30px;
   background: white;
   border-bottom: 1px solid var(--borde);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
+/* Contenedor del logo y nombre del sitio */
 .logo-contenedor {
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
+/* Control de altura y proporción del logo para evitar deformaciones o excesos */
 .logo-contenedor img {
   height: 42px !important;
   width: auto !important;
@@ -69,6 +78,7 @@ body::before {
   display: block !important;
 }
 
+/* Título principal en la cabecera */
 .titulo-sitio {
   font-size: 1.25rem;
   color: var(--azul);
@@ -77,12 +87,14 @@ body::before {
   letter-spacing: -0.5px;
 }
 
+/* Etiqueta secundaria Saber 11 */
 .sub-saber {
   font-size: 0.8rem;
   font-weight: 500;
   color: #64748b;
 }
 
+/* Enlaces de navegación superiores */
 .link-nav {
   text-decoration: none;
   color: var(--azul);
@@ -90,24 +102,31 @@ body::before {
   font-size: 0.95rem;
 }
 
-/* Contenedor unificado */
-.contenedor-principal, .panel-pregunta, .card {
+/* ==============================================================================
+   CONTENEDOR PRINCIPAL Y PRESENTACIÓN
+   ============================================================================== */
+
+/* Ancho máximo y centrado general de vistas y tarjetas */
+.contenedor-principal,
+.panel-pregunta,
+.card {
   max-width: 950px;
   width: 90%;
   margin: 30px auto;
   box-sizing: border-box;
 }
 
-/* Textos institucionales */
+/* Antetítulo en rojo corporativo */
 .seccion-subtitulo {
   font-size: 0.85rem;
   font-weight: 700;
-  color: #dc2626;
+  color: var(--rojo);
   text-transform: uppercase;
   margin-bottom: 5px;
   letter-spacing: 0.5px;
 }
 
+/* Tarjeta principal de bienvenida en el inicio */
 .presentacion-bienvenida {
   background: white;
   border: 1px solid #e2e8f0;
@@ -130,13 +149,18 @@ body::before {
   margin-bottom: 20px;
 }
 
-/* Beneficios integrados dentro de la presentación */
+/* ==============================================================================
+   SECCIÓN DE 6 BENEFICIOS INTEGRADA EN LA PRESENTACIÓN
+   ============================================================================== */
+
+/* Línea divisoria interna dentro de la tarjeta principal */
 .divisor-interno {
   border: 0;
   border-top: 1px solid #e2e8f0;
   margin: 20px 0;
 }
 
+/* Encabezado y descripción del bloque de beneficios */
 .subtitulo-beneficios {
   color: var(--azul);
   font-size: 1.15rem;
@@ -151,6 +175,7 @@ body::before {
   line-height: 1.5;
 }
 
+/* Cuadrícula de 3 columnas en escritorio para acomodar los 6 cuadritos */
 .rejilla-beneficios {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -158,6 +183,7 @@ body::before {
   margin-bottom: 16px;
 }
 
+/* Cada cuadrito de beneficio con estética sobria y alineada */
 .cuadro-beneficio {
   background: var(--fondo);
   border: 1px solid #e2e8f0;
@@ -182,6 +208,11 @@ body::before {
   margin: 0;
 }
 
+/* ==============================================================================
+   AVISOS, MÓDULOS Y TARJETAS DEL MENÚ
+   ============================================================================== */
+
+/* Caja informativa azul clara dentro de la presentación */
 .caja-aviso-azul {
   background: var(--azul-claro);
   border: 1px solid #bfdbfe;
@@ -207,6 +238,7 @@ body::before {
   line-height: 1.4;
 }
 
+/* Título de la sección de carpetas o temas */
 .titulo-modulos {
   color: var(--azul);
   font-size: 1.25rem;
@@ -214,7 +246,7 @@ body::before {
   font-weight: 800;
 }
 
-/* Rejilla y tarjetas del menú principal */
+/* Rejilla adaptable para las tarjetas de temas/módulos */
 #rejilla {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -222,7 +254,9 @@ body::before {
   width: 100%;
 }
 
-.tarjeta, .panel-pregunta {
+/* Tarjeta base para módulos, simulacro global y paneles */
+.tarjeta,
+.panel-pregunta {
   background: white;
   border: 1px solid #e2e8f0;
   border-radius: 12px;
@@ -237,6 +271,7 @@ body::before {
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
 }
 
+/* Etiqueta tipo píldora en las tarjetas */
 .badge {
   background: var(--azul-claro);
   color: var(--azul);
@@ -258,102 +293,4 @@ body::before {
   color: var(--rojo);
   font-weight: 600;
   font-size: 0.88rem;
-  margin: 0 0 10px 0;
-}
-
-.tarjeta p {
-  color: #475569;
-  font-size: 0.88rem;
-  margin: 0 0 15px 0;
-  line-height: 1.4;
-}
-
-/* Imágenes de preguntas alineadas */
-img, .pregunta-img {
-  max-width: 100%;
-  height: auto;
-  display: block;
-  margin: 15px auto;
-  border-radius: 8px;
-}
-
-/* Cajones de opciones de respuesta */
-.opciones {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin: 20px 0;
-}
-
-.opcion {
-  background: #ffffff;
-  border: 1px solid #cbd5e1;
-  border-radius: 8px;
-  padding: 14px 18px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.opcion:hover {
-  background: var(--azul-claro);
-  border-color: var(--azul);
-}
-
-.opcion input[type="radio"] {
-  accent-color: var(--azul);
-  transform: scale(1.2);
-}
-
-/* Botones de navegación */
-.boton, button, .btn {
-  background: var(--azul);
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 6px;
-  font-weight: bold;
-  cursor: pointer;
-  text-decoration: none;
-  display: inline-block;
-  text-align: center;
-  transition: background 0.2s;
-  margin-top: auto;
-}
-
-.boton:hover, button:hover {
-  background: #1e40af;
-}
-
-.footer-principal {
-  text-align: center;
-  padding: 20px;
-  color: #64748b;
-  font-size: 0.85rem;
-  border-top: 1px solid var(--borde);
-  background: rgba(255, 255, 255, 0.7);
-  margin-top: auto;
-}
-
-.oculto {
-  display: none !important;
-}
-
-/* Ajuste responsivo para los 6 cuadritos en pantallas medianas y celulares */
-@media (max-width: 820px) {
-  .rejilla-beneficios {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 540px) {
-  .rejilla-beneficios {
-    grid-template-columns: 1fr;
-  }
-
-  .header-principal {
-    padding: 12px 16px;
-  }
-}
+  margin: 0 0 10px
