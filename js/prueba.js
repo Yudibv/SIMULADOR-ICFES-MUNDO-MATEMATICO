@@ -62,6 +62,8 @@ async function init() {
     return;
   }
 
+  state.indiceTema = 0;
+
   if (esTodas) {
     state.todas = true;
     let preguntasGlobales = [];
@@ -90,10 +92,12 @@ async function init() {
     state.seleccion = state.seleccionGlobal.map(x => x.archivo);
     state.tiempoRestante = 90 * 60; 
   } else if (temaId) {
+    state.todas = false;
     state.cola = [temaId];
     prepararTemaActual();
     state.tiempoRestante = 20 * 60;
   } else {
+    state.todas = false;
     state.cola = [state.temas[0].id];
     prepararTemaActual();
     state.tiempoRestante = 20 * 60;
@@ -201,7 +205,7 @@ export function renderPregunta(st) {
     tema = actualGlobal.tema;
     archivo = actualGlobal.archivo;
   } else {
-    tema = temaPorId(st.cola[state.indiceTema]);
+    tema = temaPorId(st.cola[st.indiceTema]);
     archivo = st.seleccion[st.item];
   }
 
@@ -343,10 +347,6 @@ export function renderPregunta(st) {
   };
 }
 
-
-
-
-
 /**
  * ==========================================================================
  * SECCIÓN 5: RESULTADOS GLOBALES, PASARELA WOMPI Y REVISIÓN DE RESPUESTAS
@@ -395,7 +395,7 @@ function mostrarResultadosFinalesGlobal(st) {
   });
 
   const incorrectas = totalPreguntas - aciertos;
-  const porcentaje = Math.round((aciertos / totalPreguntas) * 100);
+  const porcentaje = totalPreguntas > 0 ? Math.round((aciertos / totalPreguntas) * 100) : 0;
   
   let nivelDesempeno = "1";
   if (porcentaje >= 75) nivelDesempeno = "4";
@@ -431,7 +431,6 @@ function mostrarResultadosFinalesGlobal(st) {
         <p style="color: #64748b; font-size: 0.85rem; margin: 0;">Evaluación bajo estándares analíticos TRI</p>
       </div>
 
-      <!-- Círculo Central de Puntaje -->
       <div style="text-align: center; margin-bottom: 25px;">
         <div style="width: 110px; height: 110px; border: 6px solid #e2e8f0; border-top-color: #ef4444; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 0 auto 10px auto;">
           <span style="font-size: 2rem; font-weight: 800; color: #1e293b; line-height: 1;">${porcentaje}%</span>
@@ -439,13 +438,12 @@ function mostrarResultadosFinalesGlobal(st) {
         <span style="font-size: 0.8rem; color: #64748b; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">Puntaje de la prueba (${aciertos}/${totalPreguntas})</span>
       </div>
 
-      <!-- Estadísticas de Aciertos, Incorrectas y Nivel -->
       <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 25px;">
         <div style="display: flex; align-items: center; justify-content: space-between; background: #f8fafc; padding: 10px 15px; border-radius: 6px; border: 1px solid #e2e8f0;">
           <span style="font-size: 0.9rem; color: #64748b; font-weight: 600;">✔️ CORRECTAS:</span>
           <div style="display: flex; align-items: center; gap: 10px; flex: 1; max-width: 200px; margin: 0 15px;">
             <div style="flex: 1; height: 8px; background: #e2e8f0; border-radius: 4px; overflow: hidden;">
-              <div style="width: ${(aciertos/totalPreguntas)*100}%; height: 100%; background: #10b981;"></div>
+              <div style="width: ${totalPreguntas > 0 ? (aciertos/totalPreguntas)*100 : 0}%; height: 100%; background: #10b981;"></div>
             </div>
           </div>
           <span style="font-size: 1rem; font-weight: bold; color: #10b981; min-width: 25px; text-align: right;">${aciertos}</span>
@@ -455,7 +453,7 @@ function mostrarResultadosFinalesGlobal(st) {
           <span style="font-size: 0.9rem; color: #64748b; font-weight: 600;">❌ INCORRECTAS:</span>
           <div style="display: flex; align-items: center; gap: 10px; flex: 1; max-width: 200px; margin: 0 15px;">
             <div style="flex: 1; height: 8px; background: #e2e8f0; border-radius: 4px; overflow: hidden;">
-              <div style="width: ${(incorrectas/totalPreguntas)*100}%; height: 100%; background: #ef4444;"></div>
+              <div style="width: ${totalPreguntas > 0 ? (incorrectas/totalPreguntas)*100 : 0}%; height: 100%; background: #ef4444;"></div>
             </div>
           </div>
           <span style="font-size: 1rem; font-weight: bold; color: #ef4444; min-width: 25px; text-align: right;">${incorrectas}</span>
@@ -472,22 +470,18 @@ function mostrarResultadosFinalesGlobal(st) {
         </div>
       </div>
 
-      <!-- Desglose por Competencias -->
       <div style="margin-bottom: 25px;">
         <h4 style="color: #1e3a8a; font-size: 0.95rem; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px;">Desempeño por Componentes:</h4>
         ${htmlCompetencias}
       </div>
 
-      <!-- BOTÓN PARA VER RESPUESTAS DETALLADAS -->
       <div style="margin-bottom: 25px;">
         <button id="btn-ver-respuestas" class="boton" style="background: #ef4444; color: white; padding: 14px 20px; border-radius: 6px; font-weight: bold; border: none; cursor: pointer; width: 100%; font-size: 1.05rem; box-shadow: 0 2px 4px rgba(239,68,68,0.3);">
           🔍 VER RESPUESTAS Y JUSTIFICACIONES
         </button>
       </div>
 
-      <!-- BLOQUE DE PAGO / DESCARGA DE CUADERNILLO PRO -->
       <div style="border: 2px solid ${yaPago ? '#10b981' : '#1e3a8a'}; background: ${yaPago ? '#f0fdf4' : '#eff6ff'}; padding: 20px; border-radius: 8px; text-align: center;">
-        
         ${yaPago ? `
           <span style="background: #10b981; color: white; padding: 4px 12px; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">¡PAGO VERIFICADO!</span>
           <h3 style="color: #10b981; margin: 10px 0 5px 0; font-size: 1.2rem;">Tu Cuadernillo Pro está listo</h3>
@@ -515,7 +509,6 @@ function mostrarResultadosFinalesGlobal(st) {
           🔄 Presentar Otro Examen (Nuevo Intento)
         </button>
       </div>
-
     </div>
   `;
 
@@ -620,7 +613,6 @@ function mostrarPantallaRevisionRespuestas(st) {
   document.getElementById("btn-volver-resumen-abajo").onclick = () => mostrarResultadosFinalesGlobal(st);
 }
 
-init();
 /**
  * ==========================================================================
  * SECCIÓN 6: PRÁCTICAS FOCALIZADAS (CARPETAS / MÓDULOS INDIVIDUALES)
@@ -735,6 +727,7 @@ function mostrarResultadosFinales(st, tema) {
     }
   }, 50);
 }
+
 /**
  * ==========================================================================
  * SECCIÓN 7: GENERACIÓN DE PDF NATIVO (CUADERNILLO PRO 100% PERSONALIZADO)
@@ -848,3 +841,5 @@ function generarPDFInformePersonalizado(aciertos, totalPreguntas, porcentaje, ni
   `);
   ventanaImpresion.document.close();
 }
+
+init();
